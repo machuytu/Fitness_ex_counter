@@ -1,5 +1,6 @@
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:khoaluan/data/fitness.dart';
 
 class BndBox extends StatefulWidget {
@@ -26,9 +27,19 @@ class BndBox extends StatefulWidget {
 class _BndBoxState extends State<BndBox> {
   Map<String, List<double>> inputArr;
   int _counter;
-  bool midCount, isCorrectPosture;
-  double lowerRange, upperRange;
   FlutterTts flutterTts;
+  double lowerRange, upperRange;
+  bool midCount, isCorrectPosture;
+
+  void setRangeBasedOnModel() {
+    if (widget.customModel == fitnessData[0]) {
+      upperRange = 300;
+      lowerRange = 500;
+    } else if (widget.customModel == fitnessData[1]) {
+      upperRange = 500;
+      lowerRange = 700;
+    }
+  }
 
   @override
   void initState() {
@@ -39,111 +50,14 @@ class _BndBoxState extends State<BndBox> {
     isCorrectPosture = false;
     setRangeBasedOnModel();
     flutterTts = new FlutterTts();
-    flutterTts.speak('Your ${widget.customModel} Has Started');
-  }
-
-  void setRangeBasedOnModel() {
-    // Push Up
-    if (widget.customModel == fitnessData[0]) {
-      upperRange = 300;
-      lowerRange = 500;
-    }
-    // Squat
-    else if (widget.customModel == fitnessData[1]) {
-      upperRange = 500;
-      lowerRange = 700;
-    }
+    flutterTts.speak("Your Workout Has Started");
   }
 
   void resetCounter() {
     setState(() {
       _counter = 0;
     });
-    flutterTts.speak('Your Workout Has Been Reset, Try Again!');
-  }
-
-  List<Widget> _renderKeypoints() {
-    var lists = <Widget>[];
-    widget.results.forEach((element) {
-      var list = element["keypoints"].value.map<Widget>((function) {
-        var _x = function["x"];
-        var _y = function["y"];
-        var scaleW, scaleH, x, y;
-        // change scale of screen
-        if (widget.screenH / widget.screenW >
-            widget.previewH / widget.previewW) {
-          scaleW = widget.screenH / widget.previewH * widget.previewW;
-          scaleH = widget.screenH;
-          // get diffrent width
-          var difw = (scaleW - widget.previewW) / scaleW;
-          x = (_x - difw / 2) * scaleW;
-          y = _y * scaleH;
-        } else {
-          scaleH = widget.screenW / widget.previewW * widget.previewH;
-          scaleW = widget.screenW;
-          // get diffent height
-          var difh = (scaleH - widget.screenH) / scaleH;
-          x = _x * scaleW;
-          y = (_y - difh / 2) * scaleH;
-        }
-
-        // create part of body
-        inputArr[function['part']] = [x, y];
-
-        // Solve mirror problem on front camera
-        if (x > 320) {
-          var require = x - 320;
-          x = 320 - require;
-        } else {
-          var require = 320 - x;
-          x = 320 + require;
-        }
-
-        return Positioned(
-          left: x - 275,
-          top: y - 50,
-          width: 100,
-          height: 15,
-          child: Container(
-            child: Text(
-              "●",
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 12.0,
-              ),
-            ),
-          ),
-        );
-      }).toList();
-
-      _countingLogic(inputArr);
-
-      inputArr.clear();
-      lists..addAll(list);
-    });
-    return lists;
-  }
-
-  Future<void> _countingLogic(Map<String, List<double>> poses) async {
-    if (poses != null) {
-      // check pose before begin count
-      if (isCorrectPosture &&
-          poses['leftShoulder'][1] > upperRange &&
-          poses['rightShoulder'][1] > upperRange) {
-        setMidCount(true);
-      }
-
-      if (midCount &&
-          poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange) {
-        incrementCounter();
-        setMidCount(false);
-      }
-      //check the posture when not in midcount
-      if (!midCount) {
-        _checkCorrectPosture(poses);
-      }
-    }
+    flutterTts.speak("Your Workout has been Reset");
   }
 
   void incrementCounter() {
@@ -163,6 +77,47 @@ class _BndBoxState extends State<BndBox> {
     });
   }
 
+  Color getCounterColor() {
+    if (isCorrectPosture) {
+      return Colors.green;
+    } else {
+      return Colors.red;
+    }
+  }
+
+  Positioned _createPositionedBlobs(double x, double y) {
+    return Positioned(
+      height: 5,
+      width: 40,
+      left: x,
+      top: y,
+      child: Container(
+        color: getCounterColor(),
+      ),
+    );
+  }
+
+  List<Widget> _renderHelperBlobs() {
+    List<Widget> listToReturn = <Widget>[];
+    listToReturn.add(_createPositionedBlobs(0, upperRange));
+    listToReturn.add(_createPositionedBlobs(0, lowerRange));
+    return listToReturn;
+  }
+
+  //region Core
+  bool _postureAccordingToExercise(Map<String, List<double>> poses) {
+    if (widget.customModel == fitnessData[1]) {
+      return poses['leftShoulder'][1] < upperRange &&
+          poses['rightShoulder'][1] < upperRange;
+    }
+    if (widget.customModel == fitnessData[0]) {
+      return poses['leftShoulder'][1] < upperRange &&
+          poses['rightShoulder'][1] < upperRange &&
+          poses['rightKnee'][1] > lowerRange &&
+          poses['leftKnee'][1] > lowerRange;
+    }
+  }
+
   _checkCorrectPosture(Map<String, List<double>> poses) {
     if (_postureAccordingToExercise(poses)) {
       if (!isCorrectPosture) {
@@ -179,86 +134,133 @@ class _BndBoxState extends State<BndBox> {
     }
   }
 
-  // check count
-  bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-    if (widget.customModel == fitnessData[1]) {
-      return poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange;
-    } else {
-      return poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange &&
-          poses['rightKnee'][1] > lowerRange &&
-          poses['leftKnee'][1] > lowerRange;
+  Future<void> _countingLogic(Map<String, List<double>> poses) async {
+    if (poses != null) {
+      //check posture before beginning count
+      if (isCorrectPosture &&
+          poses['leftShoulder'][1] > upperRange &&
+          poses['rightShoulder'][1] > upperRange) {
+        setMidCount(true);
+      }
+
+      if (midCount &&
+          poses['leftShoulder'][1] < upperRange &&
+          poses['rightShoulder'][1] < upperRange) {
+        incrementCounter();
+        setMidCount(false);
+      }
+      //check the posture when not in midcount
+      if (!midCount) {
+        _checkCorrectPosture(poses);
+      }
     }
   }
-
-  Color getCounterColor() {
-    if (isCorrectPosture) {
-      return Colors.green;
-    } else {
-      return Colors.red;
-    }
-  }
-
-  List<Widget> _renderHelperBlobs() {
-    List<Widget> listToReturn = <Widget>[];
-    listToReturn.add(_createPositionedBlobs(0, upperRange));
-    listToReturn.add(_createPositionedBlobs(0, lowerRange));
-    return listToReturn;
-  }
-
-  Positioned _createPositionedBlobs(double x, double y) {
-    return new Positioned(
-      height: 5,
-      width: 40,
-      left: x,
-      top: y,
-      child: Container(
-        color: getCounterColor(),
-      ),
-    );
-  }
+  //endregion
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Stack(
-          children: _renderHelperBlobs(),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: Container(
-                  height: 100,
-                  width: 100,
-                  child: FittedBox(
-                    child: FloatingActionButton(
-                      backgroundColor: getCounterColor(),
-                      onPressed: resetCounter,
-                      child: Text(
-                        '${_counter.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+    List<Widget> _renderKeypoints() {
+      var lists = <Widget>[];
+      widget.results.forEach((re) {
+        var list = re["keypoints"].values.map<Widget>((k) {
+          var _x = k["x"];
+          var _y = k["y"];
+          var scaleW, scaleH, x, y;
+
+          if (widget.screenH / widget.screenW >
+              widget.previewH / widget.previewW) {
+            scaleW = widget.screenH / widget.previewH * widget.previewW;
+            scaleH = widget.screenH;
+            var difW = (scaleW - widget.screenW) / scaleW;
+            x = (_x - difW / 2) * scaleW;
+            y = _y * scaleH;
+          } else {
+            scaleH = widget.screenW / widget.previewW * widget.previewH;
+            scaleW = widget.screenW;
+            var difH = (scaleH - widget.screenH) / scaleH;
+            x = _x * scaleW;
+            y = (_y - difH / 2) * scaleH;
+          }
+
+          inputArr[k['part']] = [x, y];
+
+          // To solve mirror problem on front camera
+          if (x > 320) {
+            var temp = x - 320;
+            x = 320 - temp;
+          } else {
+            var temp = 320 - x;
+            x = 320 + temp;
+          }
+          return Positioned(
+            left: x - 275,
+            top: y - 50,
+            width: 100,
+            height: 15,
+            child: Container(
+              child: Text(
+                "●",
+                style: TextStyle(
+                  color: Color.fromRGBO(37, 213, 253, 1.0),
+                  fontSize: 12.0,
+                ),
+              ),
+            ),
+          );
+        }).toList();
+
+        _countingLogic(inputArr);
+
+        inputArr.clear();
+        lists..addAll(list);
+      });
+      return lists;
+    }
+
+    return Stack(children: <Widget>[
+      Stack(
+        children: _renderHelperBlobs(),
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+//            child: LinearPercentIndicator(
+//              animation: true,
+//              lineHeight: 20.0,
+//              animationDuration: 500,
+//              animateFromLastPercent: true,
+//              percent: _counter,
+//              center: Text("${(_counter).toStringAsFixed(1)}"),
+//              linearStrokeCap: LinearStrokeCap.roundAll,
+//              progressColor: Colors.green,
+//            ),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Container(
+                height: 100,
+                width: 100,
+                child: FittedBox(
+                  child: FloatingActionButton(
+                    backgroundColor: getCounterColor(),
+                    onPressed: resetCounter,
+                    child: Text(
+                      '${_counter.toString()}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-        Stack(
-          children: _renderKeypoints(),
-        ),
-      ],
-    );
+          ),
+        ],
+      ),
+      Stack(
+        children: _renderKeypoints(),
+      ),
+    ]);
   }
 }
