@@ -55,12 +55,14 @@ class _InferencePageState extends State<InferencePage> {
               ),
               Center(
                 child: Container(
-                    width: screen.width * 0.7,
-                    height: screen.height * 0.7,
+                    width: screen.width * 0.8,
+                    height: screen.height * 0.8,
                     decoration: new BoxDecoration(
                       image: new DecorationImage(
                         image: ExactAssetImage('assets/poses/base_pose.png'),
                         fit: BoxFit.fitHeight,
+                        colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.5), BlendMode.dstIn),
                       ),
                     )),
               ),
