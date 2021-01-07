@@ -10,6 +10,8 @@ class BndBox extends StatefulWidget {
   final double screenH;
   final double screenW;
   final String customModel;
+  final double width;
+  final double height;
 
   BndBox({
     this.results,
@@ -18,6 +20,8 @@ class BndBox extends StatefulWidget {
     this.screenH,
     this.screenW,
     this.customModel,
+    this.width,
+    this.height,
   });
 
   @override
@@ -33,8 +37,7 @@ class _BndBoxState extends State<BndBox> {
 
   void setRangeBasedOnModel() {
     if (widget.customModel == fitnessData[0]) {
-      upperRange = 200; // pixel get on screen
-
+      upperRange = widget.height * 0.24; // pixel get on screen
       lowerRange = 500;
     } else if (widget.customModel == fitnessData[1]) {
       upperRange = 500;

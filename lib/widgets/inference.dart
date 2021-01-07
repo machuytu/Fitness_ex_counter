@@ -52,6 +52,8 @@ class _InferencePageState extends State<InferencePage> {
                 screenH: screen.height,
                 screenW: screen.width,
                 customModel: widget.customModel,
+                width: screen.width * 0.8,
+                height: screen.height * 0.8,
               ),
               Center(
                 child: Container(
