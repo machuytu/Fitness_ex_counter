@@ -38,18 +38,33 @@ class _InferencePageState extends State<InferencePage> {
         title: Text(widget.title),
       ),
       body: Stack(
-        children: <Widget>[
-          Camera(
-            cameras: widget.cameras,
-            setRecognitions: _setRecognitions,
-          ),
-          BndBox(
-            results: _recognitions == null ? [] : _recognitions,
-            previewH: max(_imageHeight, _imageWidth),
-            previewW: min(_imageHeight, _imageWidth),
-            screenH: screen.height,
-            screenW: screen.width,
-            customModel: widget.customModel,
+        children: [
+          Stack(
+            children: <Widget>[
+              Camera(
+                cameras: widget.cameras,
+                setRecognitions: _setRecognitions,
+              ),
+              BndBox(
+                results: _recognitions == null ? [] : _recognitions,
+                previewH: max(_imageHeight, _imageWidth),
+                previewW: min(_imageHeight, _imageWidth),
+                screenH: screen.height,
+                screenW: screen.width,
+                customModel: widget.customModel,
+              ),
+              Center(
+                child: Container(
+                    width: screen.width * 0.7,
+                    height: screen.height * 0.7,
+                    decoration: new BoxDecoration(
+                      image: new DecorationImage(
+                        image: ExactAssetImage('assets/poses/base_pose.png'),
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )),
+              ),
+            ],
           ),
         ],
       ),

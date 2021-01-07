@@ -33,11 +33,15 @@ class _BndBoxState extends State<BndBox> {
 
   void setRangeBasedOnModel() {
     if (widget.customModel == fitnessData[0]) {
-      upperRange = 300;
+      upperRange = 200; // pixel get on screen
+
       lowerRange = 500;
     } else if (widget.customModel == fitnessData[1]) {
       upperRange = 500;
       lowerRange = 700;
+    } else if (widget.customModel == fitnessData[2]) {
+      upperRange = 1000;
+      lowerRange = 400;
     }
   }
 
