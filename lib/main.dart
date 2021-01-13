@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
+import 'package:khoaluan/testsqlite.dart';
 import 'package:khoaluan/widgets/bottomnav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,9 +31,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-
-      // home: TensorFlow(cameras),
       home: BottomNav(cameras: cameras),
+      // home: TestSQLite(),
     );
   }
 }

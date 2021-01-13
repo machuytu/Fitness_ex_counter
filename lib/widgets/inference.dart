@@ -55,18 +55,9 @@ class _InferencePageState extends State<InferencePage> {
                 width: screen.width * 0.8,
                 height: screen.height * 0.8,
               ),
-              Center(
-                child: Container(
-                    width: screen.width * 0.8,
-                    height: screen.height * 0.8,
-                    decoration: new BoxDecoration(
-                      image: new DecorationImage(
-                        image: ExactAssetImage('assets/poses/base_pose.png'),
-                        fit: BoxFit.fitHeight,
-                        colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.5), BlendMode.dstIn),
-                      ),
-                    )),
+              BasePoseImage(
+                screen: screen,
+                title: widget.title,
               ),
             ],
           ),
@@ -90,5 +81,54 @@ class _InferencePageState extends State<InferencePage> {
     return await Tflite.loadModel(
       model: 'assets/models/posenet_mv1_075_float_from_checkpoints.tflite',
     );
+  }
+}
+
+class BasePoseImage extends StatefulWidget {
+  const BasePoseImage({
+    Key key,
+    @required this.screen,
+    @required this.title,
+  }) : super(key: key);
+
+  final Size screen;
+  final String title;
+
+  @override
+  _BasePoseImageState createState() => _BasePoseImageState();
+}
+
+class _BasePoseImageState extends State<BasePoseImage> {
+  int checkCenterImage;
+  Widget build(BuildContext context) {
+    if (widget.title == "back") {
+      return Center(
+        child: Container(
+            width: widget.screen.width * 0.8,
+            height: widget.screen.height * 0.8,
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: ExactAssetImage('assets/poses/base_pose.png'),
+                fit: BoxFit.fitHeight,
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
+              ),
+            )),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+            width: widget.screen.width,
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: ExactAssetImage('assets/poses/push_up_pose.png'),
+                fit: BoxFit.fitWidth,
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
+              ),
+            )),
+      );
+    }
   }
 }

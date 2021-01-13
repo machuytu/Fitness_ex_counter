@@ -37,11 +37,11 @@ class _BndBoxState extends State<BndBox> {
 
   void setRangeBasedOnModel() {
     if (widget.customModel == fitnessData[0]) {
-      upperRange = widget.height * 0.24; // pixel get on screen
-      lowerRange = 500;
+      upperRange = widget.height * 0.30; // pixel get on screen
+      lowerRange = widget.height * 0.60;
     } else if (widget.customModel == fitnessData[1]) {
-      upperRange = 500;
-      lowerRange = 700;
+      upperRange = widget.height * 0.48;
+      lowerRange = widget.height * 0.58;
     } else if (widget.customModel == fitnessData[2]) {
       upperRange = 1000;
       lowerRange = 400;
@@ -115,13 +115,15 @@ class _BndBoxState extends State<BndBox> {
   bool _postureAccordingToExercise(Map<String, List<double>> poses) {
     if (widget.customModel == fitnessData[1]) {
       return poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange;
+          poses['rightShoulder'][1] < upperRange &&
+          poses['leftHip'][1] < lowerRange &&
+          poses['rightHip'][1] < lowerRange;
     }
     if (widget.customModel == fitnessData[0]) {
       return poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange &&
-          poses['rightKnee'][1] > lowerRange &&
-          poses['leftKnee'][1] > lowerRange;
+          poses['leftShoulder'][1] > lowerRange &&
+          poses['rightShoulder'][1] > lowerRange;
     }
   }
 
