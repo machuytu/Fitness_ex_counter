@@ -113,17 +113,17 @@ class _BndBoxState extends State<BndBox> {
 
   //region Core
   bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-    if (widget.customModel == fitnessData[1]) {
+    if (widget.customModel == fitnessData[0]) {
       return poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange &&
           poses['leftHip'][1] < lowerRange &&
           poses['rightHip'][1] < lowerRange;
     }
-    if (widget.customModel == fitnessData[0]) {
-      return poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange &&
-          poses['leftShoulder'][1] > lowerRange &&
-          poses['rightShoulder'][1] > lowerRange;
+    if (widget.customModel == fitnessData[1]) {
+      return poses['leftShoulder'][1] > upperRange &&
+          poses['rightShoulder'][1] > upperRange &&
+          poses['leftShoulder'][1] < lowerRange &&
+          poses['rightShoulder'][1] < lowerRange;
     }
   }
 
