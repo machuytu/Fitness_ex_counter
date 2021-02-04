@@ -35,8 +35,8 @@ dev_dependencies:
   get: ^3.11.1
   shared_preferences: ^0.5.11
   flutter_swiper: ^1.1.6
-  camera: ^0.5.8+7
-  tflite: ^1.0.4
+  camera: ^0.7.0+2
+  tflite: ^1.1.1
   image_picker: ^0.6.7+11
   flutter_svg: ^0.19.1
   google_fonts: ^1.1.0

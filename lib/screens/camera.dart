@@ -50,13 +50,14 @@ class _CameraState extends State<Camera> {
               }).toList(),
               imageHeight: img.height,
               imageWidth: img.width,
+              imageMean: 0,
+              imageStd: 255.0,
               numResults: 1,
               rotation: -90,
-              threshold: 0.2,
-              nmsRadius: 10,
+              threshold: 0.1,
+              nmsRadius: 5,
             ).then((recognitions) {
               int endTime = new DateTime.now().millisecondsSinceEpoch;
-//              print("Detection took ${endTime - startTime}");
 
               widget.setRecognitions(recognitions, img.height, img.width);
 

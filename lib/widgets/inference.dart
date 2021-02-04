@@ -80,8 +80,9 @@ class _InferencePageState extends State<InferencePage> {
   loadModel() async {
     return await Tflite.loadModel(
       model: 'assets/models/posenet_mv1_075_float_from_checkpoints.tflite',
-      numThreads: 1, // defaults to 1
+      numThreads: 5, // defaults to 1
       isAsset: true,
+      useGpuDelegate: true,
     );
   }
 }
