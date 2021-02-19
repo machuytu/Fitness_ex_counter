@@ -51,11 +51,10 @@ class _CameraState extends State<Camera> {
               imageHeight: img.height,
               imageWidth: img.width,
               imageMean: 0,
-              imageStd: 255.0,
+              imageStd: 257,
               numResults: 1,
               rotation: -90,
               threshold: 0.1,
-              nmsRadius: 5,
             ).then((recognitions) {
               int endTime = new DateTime.now().millisecondsSinceEpoch;
 

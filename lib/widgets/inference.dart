@@ -104,7 +104,7 @@ class BasePoseImage extends StatefulWidget {
 class _BasePoseImageState extends State<BasePoseImage> {
   int checkCenterImage;
   Widget build(BuildContext context) {
-    if (widget.title == "back") {
+    if (widget.title == "Waist_Up") {
       return Center(
         child: Container(
             width: widget.screen.width * 0.8,
@@ -118,7 +118,7 @@ class _BasePoseImageState extends State<BasePoseImage> {
               ),
             )),
       );
-    } else {
+    } else if (widget.title == "Push_Up") {
       return Align(
         alignment: Alignment.bottomCenter,
         child: Container(
@@ -127,6 +127,20 @@ class _BasePoseImageState extends State<BasePoseImage> {
               image: new DecorationImage(
                 image: ExactAssetImage('assets/poses/push_up_pose.png'),
                 fit: BoxFit.fitWidth,
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
+              ),
+            )),
+      );
+    } else {
+      return Center(
+        child: Container(
+            width: widget.screen.width * 0.8,
+            height: widget.screen.height * 0.8,
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: ExactAssetImage('assets/poses/base_pose.png'),
+                fit: BoxFit.fitHeight,
                 colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.5), BlendMode.dstIn),
               ),

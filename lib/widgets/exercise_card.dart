@@ -36,7 +36,7 @@ class ExerciseCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              fitnessData.toUpperCase(),
+              replaceWord(fitnessData.toUpperCase()),
               style: kTitleStyle.copyWith(color: Colors.white),
             ),
             Divider(
@@ -47,6 +47,13 @@ class ExerciseCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String replaceWord(String text) {
+    final find = '_';
+    final replaceWith = " ";
+    final newString = text.replaceAll(find, replaceWith);
+    return newString;
   }
 
   void _onSelect(BuildContext context, String customModelName) async {

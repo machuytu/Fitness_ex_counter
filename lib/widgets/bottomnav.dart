@@ -72,7 +72,7 @@ class _BottomNavState extends State<BottomNav> {
             width: 25.0,
             color: kGreenColor,
           ),
-          title: Text(""),
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
@@ -85,7 +85,7 @@ class _BottomNavState extends State<BottomNav> {
             color: kGreenColor,
             width: 25.0,
           ),
-          title: Text(""),
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
@@ -98,7 +98,7 @@ class _BottomNavState extends State<BottomNav> {
             width: 25.0,
             color: kGreenColor,
           ),
-          title: Text(""),
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
@@ -111,7 +111,7 @@ class _BottomNavState extends State<BottomNav> {
             width: 25.0,
             color: kGreenColor,
           ),
-          title: Text(""),
+          label: "",
         ),
       ],
     );
