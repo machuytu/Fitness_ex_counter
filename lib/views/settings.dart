@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:khoaluan/services/auth_service.dart';
 
 class Setting extends StatelessWidget {
-  AuthService _auth = new AuthService();
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -16,7 +14,8 @@ class Setting extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+                padding:
+                    const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
                 child: Row(
                   children: [
                     ClipRRect(
@@ -42,7 +41,7 @@ class Setting extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
-                height: 1000.0,
+                height: size.height,
                 child: Stack(
                   children: [
                     Positioned(
@@ -58,21 +57,100 @@ class Setting extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ButtonTheme(
-                      height: 50,
-                      minWidth: 100,
-                      child: RaisedButton(
-                        onPressed: () {
-                          _auth.logout();
-                          Navigator.pushNamedAndRemoveUntil(context, "/login",
-                              (Route<dynamic> route) => false);
-                        },
-                        child: Text("Đăng xuất"),
+                    Positioned(
+                      top: 40.0,
+                      left: 0.0,
+                      right: 30.0,
+                      bottom: 0.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: kIndigoColor,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(40.0)),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 50.0,
+                      left: 5.0,
+                      right: 40.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: deepBlueColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Thông tin cá nhân",
+                                  style: TextStyle(
+                                      color: kGreyColor, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: deepBlueColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Cài đặt",
+                                  style: TextStyle(
+                                      color: kGreyColor, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: deepBlueColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Thông báo",
+                                  style: TextStyle(
+                                      color: kGreyColor, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: deepBlueColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Đăng xuất",
+                                  style: TextStyle(
+                                      color: kGreyColor, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

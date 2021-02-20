@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
           return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Flutter Fitness counter',
             theme: ThemeData(
               primarySwatch: Colors.blue,

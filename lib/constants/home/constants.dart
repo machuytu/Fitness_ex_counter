@@ -5,6 +5,7 @@ var kGreenColor = Color(0xFF0DEA88);
 var kBlackColor = Color(0xFF463F5F);
 var kGreyColor = Color(0xFFA5B4C0);
 var kIndigoColor = Color(0xFF1B2047);
+var deepBlueColor = Color(0xFF070A29);
 
 var kTitleStyle = GoogleFonts.openSans(
   fontSize: 18.0,
