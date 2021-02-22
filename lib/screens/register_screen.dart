@@ -150,8 +150,8 @@ class _ResigterScreenState extends State<ResigterScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, "/login", (Route<dynamic> route) => false);
+                        Navigator.pushNamedAndRemoveUntil(context, "/info_user",
+                            (Route<dynamic> route) => false);
                       },
                       child: RichText(
                         text: TextSpan(
@@ -195,7 +195,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: Text('Xác nhận'),
               onPressed: () {
                 if (returnScreen == true) {
                   Navigator.of(context).pop();

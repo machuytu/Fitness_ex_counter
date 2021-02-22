@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
+import 'package:khoaluan/screens/info_user.dart';
 import 'package:khoaluan/screens/login_screen.dart';
 import 'package:khoaluan/screens/register_screen.dart';
 import 'package:khoaluan/screens/splash_screen.dart';
 import 'package:khoaluan/widgets/bottomnav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 List<CameraDescription> cameras;
 Future<Null> main() async {
@@ -39,12 +39,13 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            initialRoute: "/splash",
+            initialRoute: "/info_user",
             routes: {
+              "/": (context) => BottomNav(cameras: cameras),
               "/splash": (context) => SplashScreen(),
               "/login": (context) => LoginScreen(),
-              "/": (context) => BottomNav(cameras: cameras),
               "/register": (context) => ResigterScreen(),
+              "/info_user": (context) => InfoUser(),
             },
           );
         });
