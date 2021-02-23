@@ -40,8 +40,10 @@ class _BndBoxState extends State<BndBox> {
       upperRange = widget.height * 0.30; // pixel get on screen
       lowerRange = widget.height * 0.60;
     } else if (widget.customModel == fitnessData[1]) {
-      upperRange = widget.height * 0.48;
-      lowerRange = widget.height * 0.58;
+      upperRange = widget.height * 0.5;
+      lowerRange = widget.height * 0.6;
+      // upperRange = widget.height * 0.48;
+      // lowerRange = widget.height * 0.58;
     } else if (widget.customModel == fitnessData[2]) {
       upperRange = widget.height * 0.30;
       lowerRange = widget.height * 0.80;
@@ -112,41 +114,66 @@ class _BndBoxState extends State<BndBox> {
   }
 
   //region Core
-  bool _postureAccordingToExercise(Map<String, List<double>> poses) {
+  // bool _postureAccordingToExercise(Map<String, List<double>> poses) {
+  //   if (widget.customModel == fitnessData[0]) {
+  //     return poses['leftShoulder'][1] < upperRange &&
+  //         poses['rightShoulder'][1] < upperRange &&
+  //         poses['leftHip'][1] < lowerRange &&
+  //         poses['rightHip'][1] < lowerRange;
+  //   }
+  //   if (widget.customModel == fitnessData[1]) {
+  //     return poses['leftShoulder'][1] > upperRange &&
+  //         poses['rightShoulder'][1] > upperRange;
+  //   }
+  //   if (widget.customModel == fitnessData[2]) {
+  //     return poses['leftShoulder'][1] < upperRange &&
+  //             poses['rightShoulder'][1] < upperRange &&
+  //             poses['leftKnee'][1] < lowerRange ||
+  //         poses['rightKnee'][1] < lowerRange;
+  //   }
+  // }
+
+  // _checkCorrectPosture(Map<String, List<double>> poses) {
+  //   if (_postureAccordingToExercise(poses)) {
+  //     if (!isCorrectPosture) {
+  //       setState(() {
+  //         isCorrectPosture = true;
+  //       });
+  //     }
+  //   } else {
+  //     if (isCorrectPosture) {
+  //       setState(() {
+  //         isCorrectPosture = false;
+  //       });
+  //     }
+  //   }
+  // }
+
+  void _checkCorrectPosture(Map<String, List<double>> poses) {
+    bool check;
+
     if (widget.customModel == fitnessData[0]) {
-      return poses['leftShoulder'][1] < upperRange &&
+      check = poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange &&
           poses['leftHip'][1] < lowerRange &&
           poses['rightHip'][1] < lowerRange;
     }
     if (widget.customModel == fitnessData[1]) {
-      return poses['leftShoulder'][1] > upperRange &&
+      check = poses['leftShoulder'][1] > upperRange &&
           poses['rightShoulder'][1] > upperRange &&
           poses['leftShoulder'][1] < lowerRange &&
           poses['rightShoulder'][1] < lowerRange;
     }
     if (widget.customModel == fitnessData[2]) {
-      return poses['leftShoulder'][1] < upperRange &&
-              poses['rightShoulder'][1] < upperRange &&
-              poses['leftKnee'][1] < lowerRange ||
-          poses['rightKnee'][1] < lowerRange;
+      check = poses['leftShoulder'][1] < upperRange &&
+          poses['rightShoulder'][1] < upperRange &&
+          (poses['leftKnee'][1] < lowerRange ||
+              poses['rightKnee'][1] < lowerRange);
     }
-  }
 
-  _checkCorrectPosture(Map<String, List<double>> poses) {
-    if (_postureAccordingToExercise(poses)) {
-      if (!isCorrectPosture) {
-        setState(() {
-          isCorrectPosture = true;
-        });
-      }
-    } else {
-      if (isCorrectPosture) {
-        setState(() {
-          isCorrectPosture = false;
-        });
-      }
-    }
+    setState(() {
+      isCorrectPosture = check;
+    });
   }
 
   Future<void> _countingLogic(Map<String, List<double>> poses) async {
@@ -157,7 +184,6 @@ class _BndBoxState extends State<BndBox> {
           poses['rightShoulder'][1] > upperRange) {
         setMidCount(true);
       }
-
       if (midCount &&
           poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange) {
@@ -208,20 +234,16 @@ class _BndBoxState extends State<BndBox> {
             x = 320 + temp;
           }
           return Positioned(
-            left: x - 275,
-            top: y - 50,
-            width: 100,
-            height: 15,
-            child: Container(
-              child: Text(
-                "●",
-                style: TextStyle(
+              left: x - 250,
+              top: y - 50,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: Color.fromRGBO(37, 213, 253, 1.0),
-                  fontSize: 12.0,
                 ),
-              ),
-            ),
-          );
+              ));
         }).toList();
 
         _countingLogic(inputArr);
@@ -232,16 +254,17 @@ class _BndBoxState extends State<BndBox> {
       return lists;
     }
 
-    return Stack(children: <Widget>[
-      Stack(
-        children: _renderHelperBlobs(),
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.center,
+    return Stack(
+      children: <Widget>[
+        Stack(
+          children: _renderHelperBlobs(),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Align(
+              alignment: Alignment.center,
 //            child: LinearPercentIndicator(
 //              animation: true,
 //              lineHeight: 20.0,
@@ -252,9 +275,8 @@ class _BndBoxState extends State<BndBox> {
 //              linearStrokeCap: LinearStrokeCap.roundAll,
 //              progressColor: Colors.green,
 //            ),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                 height: 100,
                 width: 100,
                 child: FittedBox(
@@ -270,12 +292,12 @@ class _BndBoxState extends State<BndBox> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      Stack(
-        children: _renderKeypoints(),
-      ),
-    ]);
+          ],
+        ),
+        Stack(
+          children: _renderKeypoints(),
+        ),
+      ],
+    );
   }
 }
