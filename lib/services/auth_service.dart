@@ -19,11 +19,18 @@ class AuthService with ChangeNotifier {
   Future<UserCredential> loginUser(
       {String email, String password, BuildContext context}) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      print(1111111111111);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password)
+          .catchError((onError) {
+        print(onError);
+      }).then((value) {
+        print(value.user.uid);
+      });
       Navigator.pushNamedAndRemoveUntil(
           context, "/", (Route<dynamic> route) => false);
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
+      print(2222222222222222);
       if (e.code == 'user-not-found') {
         buildShowDialog(context, "Lỗi", "Không tồn tại email",
             returnScreen: true);

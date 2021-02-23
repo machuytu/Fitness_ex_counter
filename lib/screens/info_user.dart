@@ -6,6 +6,8 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_database/firebase_database.dart';
 
 class InfoUser extends StatefulWidget {
   InfoUser({Key key}) : super(key: key);
@@ -17,10 +19,11 @@ class InfoUser extends StatefulWidget {
 class _InfoUserState extends State<InfoUser> {
   TextEditingController nameUser = new TextEditingController();
   TextEditingController weightUser = new TextEditingController();
-  TextEditingController heighttUser = new TextEditingController();
+  TextEditingController heightUser = new TextEditingController();
   int weightValue, heightValue;
   bool isMale = true;
   int modeFitness = 1;
+  String heightUnit, weightUnit;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,8 +121,8 @@ class _InfoUserState extends State<InfoUser> {
                           child: TextFormField(
                             controller: weightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerWeight, weightUser);
+                              showPickerArray(context, pickerWeight, weightUser,
+                                  weightValue, weightUnit);
                             },
                             showCursor: true,
                             readOnly: true,
@@ -144,10 +147,10 @@ class _InfoUserState extends State<InfoUser> {
                         child: Expanded(
                           flex: 1,
                           child: TextFormField(
-                            controller: heighttUser,
+                            controller: heightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerHeight, heighttUser);
+                              showPickerArray(context, pickerHeight, heightUser,
+                                  heightValue, heightUnit);
                             },
                             showCursor: true,
                             readOnly: true,
@@ -290,9 +293,25 @@ class _InfoUserState extends State<InfoUser> {
                           gravity: ToastGravity.CENTER,
                         );
                       },
-                      child: Text(
-                        "Xác nhận",
-                        style: TextStyle(fontSize: 18, color: kGreenColor),
+                      child: GestureDetector(
+                        onTap: () {
+                          FirebaseAuth auth = FirebaseAuth.instance;
+                          User user = auth.currentUser;
+                          // final databaseReference =
+                          //     FirebaseDatabase.instance.reference();
+                          // databaseReference.child("User").child(user.uid).set({
+                          //   'name': nameUser.text,
+                          //   'height': heightValue,
+                          //   'height_unit': heightUnit,
+                          //   'weight': weightValue,
+                          //   'weight_unit': weightUnit,
+                          //   'fitness_mode': modeFitness
+                          // });
+                        },
+                        child: Text(
+                          "Xác nhận",
+                          style: TextStyle(fontSize: 18, color: kGreenColor),
+                        ),
                       ),
                     ),
                   ),
@@ -305,8 +324,12 @@ class _InfoUserState extends State<InfoUser> {
     );
   }
 
-  showPickerArray(BuildContext context, String pickerData,
-      TextEditingController editTextValue) {
+  showPickerArray(
+      BuildContext context,
+      String pickerData,
+      TextEditingController editTextValue,
+      int pickerDataValue,
+      String pickerUnitValue) {
     new Picker(
         adapter: PickerDataAdapter<String>(
           pickerdata: new JsonDecoder().convert(pickerData),
@@ -318,7 +341,8 @@ class _InfoUserState extends State<InfoUser> {
           List list = picker.getSelectedValues();
           setState(() {
             editTextValue.text = list[0] + " " + list[1];
-            weightValue = int.parse(list[0]);
+            pickerDataValue = int.parse(list[0]);
+            pickerUnitValue = list[1];
           });
         }).showModal(context);
   }

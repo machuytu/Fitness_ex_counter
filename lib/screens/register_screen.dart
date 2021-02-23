@@ -108,7 +108,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
                                     password: passwordValid.text);
                             buildShowDialog(
                                 context, "Thành công", "Đăng ký thành công",
-                                returnScreen: false, route: "/login");
+                                returnScreen: false, route: "/info_user");
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               buildShowDialog(context, "Lỗi", "Mật khẩu yếu",
@@ -150,8 +150,8 @@ class _ResigterScreenState extends State<ResigterScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(context, "/info_user",
-                            (Route<dynamic> route) => false);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/login", (Route<dynamic> route) => false);
                       },
                       child: RichText(
                         text: TextSpan(
@@ -173,13 +173,8 @@ class _ResigterScreenState extends State<ResigterScreen> {
     );
   }
 
-  Future buildShowDialog(
-    BuildContext context,
-    String title,
-    String description, {
-    bool returnScreen,
-    String route,
-  }) {
+  Future buildShowDialog(BuildContext context, String title, String description,
+      {bool returnScreen, String route}) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -201,7 +196,10 @@ class _ResigterScreenState extends State<ResigterScreen> {
                   Navigator.of(context).pop();
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
-                      context, route, (Route<dynamic> route) => false);
+                    context,
+                    route,
+                    (Route<dynamic> route) => false,
+                  );
                 }
               },
             ),

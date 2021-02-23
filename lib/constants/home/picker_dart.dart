@@ -4,8 +4,7 @@ String pickerWeight = '''
 [
     $listWeight,
     [
-        "Kg",
-        "Jb"
+        "Kg",     
     ]
 ]
     ''';
@@ -15,7 +14,6 @@ String pickerHeight = '''
     $listHeight,
     [
         "Cm",
-        "Ft"
     ]
 ]
     ''';
