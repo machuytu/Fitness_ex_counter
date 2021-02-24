@@ -40,13 +40,16 @@ class _BndBoxState extends State<BndBox> {
       upperRange = widget.height * 0.30; // pixel get on screen
       lowerRange = widget.height * 0.60;
     } else if (widget.customModel == fitnessData[1]) {
-      upperRange = widget.height * 0.5;
-      lowerRange = widget.height * 0.6;
+      upperRange = widget.height * 0.45;
+      lowerRange = widget.height * 0.65;
       // upperRange = widget.height * 0.48;
       // lowerRange = widget.height * 0.58;
     } else if (widget.customModel == fitnessData[2]) {
       upperRange = widget.height * 0.30;
       lowerRange = widget.height * 0.80;
+    } else if (widget.customModel == fitnessData[3]) {
+      upperRange = widget.width * 0.7;
+      lowerRange = widget.width * 1.0;
     }
   }
 
@@ -94,10 +97,10 @@ class _BndBoxState extends State<BndBox> {
     }
   }
 
-  Positioned _createPositionedBlobs(double x, double y) {
+  Positioned _createPositionedBlobs(double h, double w, double x, double y) {
     return Positioned(
-      height: 5,
-      width: 40,
+      height: h,
+      width: w,
       left: x,
       top: y,
       child: Container(
@@ -108,85 +111,83 @@ class _BndBoxState extends State<BndBox> {
 
   List<Widget> _renderHelperBlobs() {
     List<Widget> listToReturn = <Widget>[];
-    listToReturn.add(_createPositionedBlobs(0, upperRange));
-    listToReturn.add(_createPositionedBlobs(0, lowerRange));
+    if (widget.customModel != fitnessData[3]) {
+      listToReturn.add(_createPositionedBlobs(5, 40, 0, upperRange));
+      listToReturn.add(_createPositionedBlobs(5, 40, 0, lowerRange));
+    } else {
+      listToReturn.add(_createPositionedBlobs(40, 5, upperRange, 0));
+      listToReturn.add(_createPositionedBlobs(40, 5, lowerRange, 0));
+    }
     return listToReturn;
   }
 
   //region Core
-  // bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-  //   if (widget.customModel == fitnessData[0]) {
-  //     return poses['leftShoulder'][1] < upperRange &&
-  //         poses['rightShoulder'][1] < upperRange &&
-  //         poses['leftHip'][1] < lowerRange &&
-  //         poses['rightHip'][1] < lowerRange;
-  //   }
-  //   if (widget.customModel == fitnessData[1]) {
-  //     return poses['leftShoulder'][1] > upperRange &&
-  //         poses['rightShoulder'][1] > upperRange;
-  //   }
-  //   if (widget.customModel == fitnessData[2]) {
-  //     return poses['leftShoulder'][1] < upperRange &&
-  //             poses['rightShoulder'][1] < upperRange &&
-  //             poses['leftKnee'][1] < lowerRange ||
-  //         poses['rightKnee'][1] < lowerRange;
-  //   }
-  // }
-
-  // _checkCorrectPosture(Map<String, List<double>> poses) {
-  //   if (_postureAccordingToExercise(poses)) {
-  //     if (!isCorrectPosture) {
-  //       setState(() {
-  //         isCorrectPosture = true;
-  //       });
-  //     }
-  //   } else {
-  //     if (isCorrectPosture) {
-  //       setState(() {
-  //         isCorrectPosture = false;
-  //       });
-  //     }
-  //   }
-  // }
-
-  void _checkCorrectPosture(Map<String, List<double>> poses) {
-    bool check;
-
+  bool _postureAccordingToExercise(Map<String, List<double>> poses) {
     if (widget.customModel == fitnessData[0]) {
-      check = poses['leftShoulder'][1] < upperRange &&
+      return poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange &&
           poses['leftHip'][1] < lowerRange &&
           poses['rightHip'][1] < lowerRange;
     }
     if (widget.customModel == fitnessData[1]) {
-      check = poses['leftShoulder'][1] > upperRange &&
+      return poses['leftShoulder'][1] > upperRange &&
           poses['rightShoulder'][1] > upperRange &&
           poses['leftShoulder'][1] < lowerRange &&
           poses['rightShoulder'][1] < lowerRange;
     }
     if (widget.customModel == fitnessData[2]) {
-      check = poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange &&
-          (poses['leftKnee'][1] < lowerRange ||
-              poses['rightKnee'][1] < lowerRange);
+      return poses['leftShoulder'][1] < upperRange &&
+              poses['rightShoulder'][1] < upperRange &&
+              poses['leftKnee'][1] < lowerRange ||
+          poses['rightKnee'][1] < lowerRange;
     }
+    if (widget.customModel == fitnessData[3]) {
+      return poses['rightShoulder'][0] > upperRange &&
+          poses['rightShoulder'][0] < lowerRange;
+    }
+  }
 
-    setState(() {
-      isCorrectPosture = check;
-    });
+  bool _midPostureExercise(Map<String, List<double>> poses) {
+    if (widget.customModel == fitnessData[0]) {
+      return poses['leftShoulder'][1] > upperRange &&
+          poses['rightShoulder'][1] > upperRange;
+    }
+    if (widget.customModel == fitnessData[1]) {
+      return poses['leftShoulder'][1] > lowerRange &&
+          poses['rightShoulder'][1] > lowerRange;
+    }
+    if (widget.customModel == fitnessData[2]) {
+      return poses['leftShoulder'][1] > upperRange &&
+          poses['rightShoulder'][1] > upperRange;
+    }
+    if (widget.customModel == fitnessData[3]) {
+      return poses['rightShoulder'][0] < upperRange;
+    }
+  }
+
+  _checkCorrectPosture(Map<String, List<double>> poses) {
+    if (_postureAccordingToExercise(poses)) {
+      if (!isCorrectPosture) {
+        setState(() {
+          isCorrectPosture = true;
+        });
+      }
+    } else {
+      if (isCorrectPosture) {
+        setState(() {
+          isCorrectPosture = false;
+        });
+      }
+    }
   }
 
   Future<void> _countingLogic(Map<String, List<double>> poses) async {
     if (poses != null) {
       //check posture before beginning count
-      if (isCorrectPosture &&
-          poses['leftShoulder'][1] > upperRange &&
-          poses['rightShoulder'][1] > upperRange) {
+      if (isCorrectPosture && _midPostureExercise(poses)) {
         setMidCount(true);
       }
-      if (midCount &&
-          poses['leftShoulder'][1] < upperRange &&
-          poses['rightShoulder'][1] < upperRange) {
+      if (midCount && _postureAccordingToExercise(poses)) {
         incrementCounter();
         setMidCount(false);
       }
