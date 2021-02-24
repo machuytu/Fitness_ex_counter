@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/auth_service.dart';
 
 class Setting extends StatelessWidget {
   @override
@@ -131,7 +132,8 @@ class Setting extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              FirebaseAuth.instance.signOut();
+                              AuthService _auth = new AuthService();
+                              _auth.logout();
                               Navigator.pushNamedAndRemoveUntil(context,
                                   "/login", (Route<dynamic> route) => false);
                             },

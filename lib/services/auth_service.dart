@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,65 +17,56 @@ class AuthService with ChangeNotifier {
     return result;
   }
 
-  Future<UserCredential> loginUser(
-      {String email, String password, BuildContext context}) async {
+  Future<void> loginUser(
+      String email, String password, BuildContext context) async {
     try {
-      print(1111111111111);
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password)
-          .catchError((onError) {
-        print(onError);
-      }).then((value) {
-        print(value.user.uid);
-      });
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       Navigator.pushNamedAndRemoveUntil(
           context, "/", (Route<dynamic> route) => false);
     } catch (e) {
-      print(2222222222222222);
       if (e.code == 'user-not-found') {
-        buildShowDialog(context, "Lỗi", "Không tồn tại email",
-            returnScreen: true);
+        Fluttertoast.showToast(
+          msg: "Tài khoản không tồn tại",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+        );
       } else if (e.code == 'wrong-password') {
-        buildShowDialog(context, "Lỗi", "Sai mật khẩu", returnScreen: true);
+        Fluttertoast.showToast(
+          msg: "Sai mật khẩu",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+        );
       }
     }
   }
 
-  Future buildShowDialog(
-    BuildContext context,
-    String title,
-    String description, {
-    bool returnScreen,
-    String route,
-  }) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(description),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                if (returnScreen == true) {
-                  Navigator.of(context).pop();
-                } else {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, route, (Route<dynamic> route) => false);
-                }
-              },
-            ),
-          ],
+  Future<void> registerUser(
+      String email, String password, BuildContext context) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      Fluttertoast.showToast(
+        msg: "Đăng ký thành công",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+
+      Navigator.pushNamedAndRemoveUntil(
+          context, "/info_user", (Route<dynamic> route) => false);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        Fluttertoast.showToast(
+          msg: "Mật khẩu yếu",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
         );
-      },
-    );
+      } else if (e.code == 'email-already-in-use') {
+        Fluttertoast.showToast(
+          msg: "Tài khoản đã tồn tại",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+        );
+      }
+    }
   }
 }

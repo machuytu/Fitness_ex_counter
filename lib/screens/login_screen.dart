@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/widgets/custom_curve.dart';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -11,8 +10,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailValid = new TextEditingController();
-  TextEditingController passwordVaild = new TextEditingController();
+  TextEditingController emailValid =
+      new TextEditingController(text: 'machuytu@gmail.com');
+  TextEditingController passwordVaild =
+      new TextEditingController(text: '123456');
   AuthService _auth = new AuthService();
   @override
   Widget build(BuildContext context) {
@@ -84,28 +85,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () async {
-                          // try {
-                          //   UserCredential userCredential = await FirebaseAuth
-                          //       .instance
-                          //       .signInWithEmailAndPassword(
-                          //           email: emailValid.text,
-                          //           password: passwordVaild.text);
-                          //   Navigator.pushNamedAndRemoveUntil(
-                          //       context, "/", (Route<dynamic> route) => false);
-                          // } on FirebaseAuthException catch (e) {
-                          //   if (e.code == 'user-not-found') {
-                          //     buildShowDialog(
-                          //         context, "Lỗi", "Không tồn tại email",
-                          //         returnScreen: true);
-                          //   } else if (e.code == 'wrong-password') {
-                          //     buildShowDialog(context, "Lỗi", "Sai mật khẩu",
-                          //         returnScreen: true);
-                          //   }
-                          // }
                           _auth.loginUser(
-                              email: emailValid.text,
-                              password: passwordVaild.text,
-                              context: context);
+                              emailValid.text, passwordVaild.text, context);
                         },
                         child: Container(
                           width: 150,

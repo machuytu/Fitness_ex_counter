@@ -33,7 +33,7 @@ class Analytics extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       "assets/images/fire.svg",
-                      width: 35.0,
+                      width: 35,
                     ),
                     SizedBox(
                       width: 10.0,
@@ -120,7 +120,7 @@ class Analytics extends StatelessWidget {
                           Container(
                             child: SvgPicture.asset(
                               "assets/images/shoulder.svg",
-                              width: 50.0,
+                              width: 50,
                               color: Colors.black,
                             ),
                           ),
@@ -164,7 +164,7 @@ class Analytics extends StatelessWidget {
                           Container(
                             child: SvgPicture.asset(
                               "assets/images/shoulder.svg",
-                              width: 50.0,
+                              width: 50,
                               color: Colors.black,
                             ),
                           ),
@@ -208,7 +208,7 @@ class Analytics extends StatelessWidget {
                           Container(
                             child: SvgPicture.asset(
                               "assets/images/shoulder.svg",
-                              width: 50.0,
+                              width: 50,
                               color: Colors.black,
                             ),
                           ),

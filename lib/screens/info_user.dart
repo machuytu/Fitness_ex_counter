@@ -7,7 +7,7 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class InfoUser extends StatefulWidget {
   InfoUser({Key key}) : super(key: key);
@@ -17,10 +17,12 @@ class InfoUser extends StatefulWidget {
 }
 
 class _InfoUserState extends State<InfoUser> {
-  TextEditingController nameUser = new TextEditingController();
+  TextEditingController nameUser =
+      new TextEditingController(text: 'Mạc Huy Tú');
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
   int weightValue, heightValue;
+  String kindValue;
   bool isMale = true;
   int modeFitness = 1;
   String heightUnit, weightUnit;
@@ -57,9 +59,9 @@ class _InfoUserState extends State<InfoUser> {
                       fillColor: isMale ? Colors.white : Colors.grey[200],
                       child: isMale
                           ? SvgPicture.asset("assets/images/masculine.svg",
-                              width: 55.0)
+                              width: 55)
                           : SvgPicture.asset("assets/images/masculine.svg",
-                              color: Colors.white, width: 55.0),
+                              color: Colors.white, width: 55),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
@@ -76,9 +78,9 @@ class _InfoUserState extends State<InfoUser> {
                       fillColor: !isMale ? Colors.white : Colors.grey[200],
                       child: !isMale
                           ? SvgPicture.asset("assets/images/femenine.svg",
-                              width: 60.0)
+                              width: 60)
                           : SvgPicture.asset("assets/images/femenine.svg",
-                              color: Colors.white, width: 60.0),
+                              color: Colors.white, width: 60),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
@@ -121,8 +123,8 @@ class _InfoUserState extends State<InfoUser> {
                           child: TextFormField(
                             controller: weightUser,
                             onTap: () {
-                              showPickerArray(context, pickerWeight, weightUser,
-                                  weightValue, weightUnit);
+                              showPickerArray(
+                                  context, pickerWeight, weightUser, 'weight');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -149,8 +151,8 @@ class _InfoUserState extends State<InfoUser> {
                           child: TextFormField(
                             controller: heightUser,
                             onTap: () {
-                              showPickerArray(context, pickerHeight, heightUser,
-                                  heightValue, heightUnit);
+                              showPickerArray(
+                                  context, pickerHeight, heightUser, 'height');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -196,12 +198,12 @@ class _InfoUserState extends State<InfoUser> {
                           child: modeFitness == 1
                               ? SvgPicture.asset(
                                   "assets/images/skipping_rope.svg",
-                                  width: 50.0)
+                                  width: 50)
                               : Opacity(
                                   opacity: 0.6,
                                   child: SvgPicture.asset(
                                       "assets/images/skipping_rope.svg",
-                                      width: 50.0),
+                                      width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -226,12 +228,12 @@ class _InfoUserState extends State<InfoUser> {
                               : Colors.grey[200],
                           child: modeFitness == 2
                               ? SvgPicture.asset("assets/images/dumbbell.svg",
-                                  width: 50.0)
+                                  width: 50)
                               : Opacity(
                                   opacity: 0.6,
                                   child: SvgPicture.asset(
                                       "assets/images/dumbbell.svg",
-                                      width: 50.0),
+                                      width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -256,12 +258,12 @@ class _InfoUserState extends State<InfoUser> {
                               : Colors.grey[200],
                           child: modeFitness == 3
                               ? SvgPicture.asset("assets/images/barbell.svg",
-                                  width: 50.0)
+                                  width: 50)
                               : Opacity(
                                   opacity: 0.6,
                                   child: SvgPicture.asset(
                                       "assets/images/barbell.svg",
-                                      width: 50.0),
+                                      width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -285,6 +287,19 @@ class _InfoUserState extends State<InfoUser> {
                           side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
                       onPressed: () {
+                        FirebaseAuth auth = FirebaseAuth.instance;
+                        User user = auth.currentUser;
+                        final databaseReference =
+                            FirebaseDatabase.instance.reference();
+                        databaseReference.child("User").child(user.uid).set({
+                          'name': nameUser.text,
+                          'height': heightValue,
+                          'height_unit': heightUnit,
+                          'weight': weightValue,
+                          'weight_unit': weightUnit,
+                          'fitness_mode': modeFitness,
+                          'gender': isMale
+                        });
                         Navigator.pushNamedAndRemoveUntil(
                             context, "/login", (Route<dynamic> route) => false);
                         Fluttertoast.showToast(
@@ -293,25 +308,9 @@ class _InfoUserState extends State<InfoUser> {
                           gravity: ToastGravity.CENTER,
                         );
                       },
-                      child: GestureDetector(
-                        onTap: () {
-                          FirebaseAuth auth = FirebaseAuth.instance;
-                          User user = auth.currentUser;
-                          // final databaseReference =
-                          //     FirebaseDatabase.instance.reference();
-                          // databaseReference.child("User").child(user.uid).set({
-                          //   'name': nameUser.text,
-                          //   'height': heightValue,
-                          //   'height_unit': heightUnit,
-                          //   'weight': weightValue,
-                          //   'weight_unit': weightUnit,
-                          //   'fitness_mode': modeFitness
-                          // });
-                        },
-                        child: Text(
-                          "Xác nhận",
-                          style: TextStyle(fontSize: 18, color: kGreenColor),
-                        ),
+                      child: Text(
+                        "Xác nhận",
+                        style: TextStyle(fontSize: 18, color: kGreenColor),
                       ),
                     ),
                   ),
@@ -324,12 +323,8 @@ class _InfoUserState extends State<InfoUser> {
     );
   }
 
-  showPickerArray(
-      BuildContext context,
-      String pickerData,
-      TextEditingController editTextValue,
-      int pickerDataValue,
-      String pickerUnitValue) {
+  showPickerArray(BuildContext context, String pickerData,
+      TextEditingController editTextValue, String kindValue) {
     new Picker(
         adapter: PickerDataAdapter<String>(
           pickerdata: new JsonDecoder().convert(pickerData),
@@ -341,8 +336,14 @@ class _InfoUserState extends State<InfoUser> {
           List list = picker.getSelectedValues();
           setState(() {
             editTextValue.text = list[0] + " " + list[1];
-            pickerDataValue = int.parse(list[0]);
-            pickerUnitValue = list[1];
+            if (kindValue == 'height') {
+              heightValue = int.parse(list[0]);
+              heightUnit = list[1];
+            }
+            if (kindValue == 'weight') {
+              weightValue = int.parse(list[0]);
+              weightUnit = list[1];
+            }
           });
         }).showModal(context);
   }
