@@ -30,30 +30,10 @@ class _HomeState extends State<Home> {
   AuthService _auth = new AuthService();
   final databaseReference = FirebaseDatabase.instance.reference();
   User _user = new User();
-  // @override
-  // void initState() {
-  //   String userId = _auth.getUser().uid;
-  //   databaseReference
-  //       .child("User")
-  //       .child(userId)
-  //       .once()
-  //       .then((DataSnapshot snapshot) {
-  //     _user = User(
-  //         gender: snapshot.value['gender'],
-  //         fitnessMode: snapshot.value['fitness_mode'],
-  //         height: snapshot.value['height'],
-  //         heightUnit: snapshot.value['height_unit'],
-  //         name: snapshot.value['name'],
-  //         weight: snapshot.value['weight'],
-  //         weightUnit: snapshot.value['weightt_unit']);
-  //     print(_user.fitnessMode);
-  //   });
-
-  //   super.initState();
-  // }
+  String userId;
 
   Future<User> getUser() async {
-    String userId = _auth.getUser().uid;
+    userId = _auth.getUser().uid;
     await databaseReference
         .child("User")
         .child(userId)
@@ -67,7 +47,6 @@ class _HomeState extends State<Home> {
           name: snapshot.value['name'],
           weight: snapshot.value['weight'],
           weightUnit: snapshot.value['weightt_unit']);
-      print(_user.fitnessMode);
     });
     return _user;
   }
@@ -79,60 +58,64 @@ class _HomeState extends State<Home> {
         future: getUser(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Container(
+            return SafeArea(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     SizedBox(height: 40.0),
-                    SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 18.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 50.0,
-                              height: 50.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage("assets/images/photo.jpeg"),
-                                  fit: BoxFit.cover,
-                                ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 18.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 50.0,
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/photo.jpeg"),
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                showPickerArray(context);
-                              },
-                              child: Row(
-                                children: [
-                                  Text("Gain Muscle", style: kTitleStyle),
-                                  Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.rotationY(math.pi),
-                                    child: SvgPicture.asset(
-                                      "assets/images/muscle.svg",
-                                      width: 35,
-                                      color: _user.fitnessMode == 1
-                                          ? kGreenColor
-                                          : _user.fitnessMode == 2
-                                              ? Colors.yellow
-                                              : Colors.red,
-                                    ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              showPickerArray(context);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                    _user.fitnessMode == 1
+                                        ? "Get Fit"
+                                        : _user.fitnessMode == 2
+                                            ? "Workout"
+                                            : "Gain Muscle",
+                                    style: kTitleStyle),
+                                Transform(
+                                  alignment: Alignment.center,
+                                  transform: Matrix4.rotationY(math.pi),
+                                  child: SvgPicture.asset(
+                                    "assets/images/muscle.svg",
+                                    width: 35,
+                                    color: _user.fitnessMode == 1
+                                        ? kGreenColor
+                                        : _user.fitnessMode == 2
+                                            ? Colors.yellow
+                                            : Colors.red,
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     ),
                     SizedBox(height: 15.0),
                     Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: CustomListTile(
-                        title: Text("Trần Quang Phúc", style: kTitleStyle),
+                        title: Text(_user.name, style: kTitleStyle),
                         subtitle: Text("You have new 12 notification",
                             style: kSubtitleStyle),
                         trailing: Image.asset(
@@ -325,12 +308,27 @@ class _HomeState extends State<Home> {
 
   showPickerArray(BuildContext context) {
     new Picker(
-            adapter: PickerDataAdapter<String>(
-              pickerdata: new JsonDecoder().convert(pickerModeFitness),
-              isArray: true,
-            ),
-            hideHeader: false,
-            onConfirm: (Picker picker, List value) {})
-        .showModal(context);
+        adapter: PickerDataAdapter<String>(
+          pickerdata: new JsonDecoder().convert(pickerModeFitness),
+          isArray: true,
+        ),
+        hideHeader: false,
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            if (value.toString() == "[0]") {
+              databaseReference.child("User").child(userId).update({
+                'fitness_mode': 1,
+              });
+            } else if (value.toString() == "[1]") {
+              databaseReference.child("User").child(userId).update({
+                'fitness_mode': 2,
+              });
+            } else {
+              databaseReference.child("User").child(userId).update({
+                'fitness_mode': 3,
+              });
+            }
+          });
+        }).showModal(context);
   }
 }

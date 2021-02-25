@@ -7,7 +7,7 @@ import 'package:khoaluan/screens/register_screen.dart';
 import 'package:khoaluan/screens/splash_screen.dart';
 import 'package:khoaluan/widgets/bottomnav.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 List<CameraDescription> cameras;
 Future<Null> main() async {
@@ -18,7 +18,7 @@ Future<Null> main() async {
   } on CameraException catch (e) {
     print('Error: $e.code\nError Message: $e.message');
   }
-  runApp(MyApp());
+  initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
