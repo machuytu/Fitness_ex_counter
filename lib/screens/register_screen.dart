@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/widgets/custom_curve.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ResigterScreen extends StatefulWidget {
   ResigterScreen({Key key}) : super(key: key);
@@ -10,8 +10,10 @@ class ResigterScreen extends StatefulWidget {
 }
 
 class _ResigterScreenState extends State<ResigterScreen> {
-  TextEditingController emailValid = new TextEditingController();
-  TextEditingController passwordValid = new TextEditingController();
+  TextEditingController emailValid =
+      new TextEditingController(text: 'machuytu@gmail.com');
+  TextEditingController passwordValid =
+      new TextEditingController(text: '123456');
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -101,28 +103,9 @@ class _ResigterScreenState extends State<ResigterScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () async {
-                          try {
-                            await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: emailValid.text,
-                                    password: passwordValid.text);
-                            buildShowDialog(
-                                context, "Thành công", "Đăng ký thành công",
-                                returnScreen: false, route: "/login");
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              buildShowDialog(context, "Lỗi", "Mật khẩu yếu",
-                                  returnScreen: true);
-                            } else if (e.code == 'email-already-in-use') {
-                              print(
-                                  'The account already exists for that email.');
-                              buildShowDialog(
-                                  context, "Lỗi", "tài khoản đã tồn tại",
-                                  returnScreen: true);
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
+                          AuthService _auth = new AuthService();
+                          _auth.registerUser(
+                              emailValid.text, passwordValid.text, context);
                         },
                         child: Container(
                           width: 150,
@@ -173,13 +156,8 @@ class _ResigterScreenState extends State<ResigterScreen> {
     );
   }
 
-  Future buildShowDialog(
-    BuildContext context,
-    String title,
-    String description, {
-    bool returnScreen,
-    String route,
-  }) {
+  Future buildShowDialog(BuildContext context, String title, String description,
+      {bool returnScreen, String route}) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -195,13 +173,16 @@ class _ResigterScreenState extends State<ResigterScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: Text('Xác nhận'),
               onPressed: () {
                 if (returnScreen == true) {
                   Navigator.of(context).pop();
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
-                      context, route, (Route<dynamic> route) => false);
+                    context,
+                    route,
+                    (Route<dynamic> route) => false,
+                  );
                 }
               },
             ),

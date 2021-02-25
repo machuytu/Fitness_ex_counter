@@ -64,6 +64,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0-nullsafety.1"
+  cloud_firestore:
+    dependency: "direct dev"
+    description:
+      name: cloud_firestore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.16.0+1"
+  cloud_firestore_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_firestore_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
+  cloud_firestore_web:
+    dependency: transitive
+    description:
+      name: cloud_firestore_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0+2"
   collection:
     dependency: transitive
     description:
@@ -162,6 +183,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1+3"
+  firebase_database:
+    dependency: "direct dev"
+    description:
+      name: firebase_database
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -174,6 +202,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.3"
+  flutter_picker:
+    dependency: "direct dev"
+    description:
+      name: flutter_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.5"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -212,6 +247,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluttertoast:
+    dependency: "direct dev"
+    description:
+      name: fluttertoast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.1.8"
   get:
     dependency: "direct dev"
     description:
@@ -304,7 +346,7 @@ packages:
     source: hosted
     version: "1.1.1"
   intl:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -428,7 +470,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   process:
     dependency: transitive
     description:
@@ -450,6 +492,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.5"
+  rxdart:
+    dependency: "direct main"
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.25.0"
   shared_preferences:
     dependency: "direct dev"
     description:
@@ -492,6 +541,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.1+1"
+  simple_gesture_detector:
+    dependency: transitive
+    description:
+      name: simple_gesture_detector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.6"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -567,6 +623,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0+2"
+  table_calendar:
+    dependency: "direct dev"
+    description:
+      name: table_calendar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.3"
   term_glyph:
     dependency: transitive
     description:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/auth_service.dart';
 
 class Setting extends StatelessWidget {
   @override
@@ -128,19 +130,27 @@ class Setting extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: deepBlueColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Đăng xuất",
-                                  style: TextStyle(
-                                      color: kGreyColor, fontSize: 20),
+                          GestureDetector(
+                            onTap: () {
+                              AuthService _auth = new AuthService();
+                              _auth.logout();
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  "/login", (Route<dynamic> route) => false);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Đăng xuất",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
+                                  ),
                                 ),
                               ),
                             ),

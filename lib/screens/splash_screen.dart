@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:khoaluan/services/auth_service.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,7 +9,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.delayed(Duration(seconds: 1), () {
       FirebaseAuth auth = FirebaseAuth.instance;

@@ -64,12 +64,12 @@ class _BottomNavState extends State<BottomNav> {
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             "assets/images/gym.svg",
-            width: 25.0,
+            width: 25,
             color: kGreyColor,
           ),
           activeIcon: SvgPicture.asset(
             "assets/images/gym.svg",
-            width: 25.0,
+            width: 25,
             color: kGreenColor,
           ),
           label: "",
@@ -78,24 +78,24 @@ class _BottomNavState extends State<BottomNav> {
           icon: SvgPicture.asset(
             "assets/images/chart.svg",
             color: kGreyColor,
-            width: 25.0,
+            width: 25,
           ),
           activeIcon: SvgPicture.asset(
             "assets/images/chart.svg",
             color: kGreenColor,
-            width: 25.0,
+            width: 25,
           ),
           label: "",
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             "assets/images/calendar.svg",
-            width: 25.0,
+            width: 25,
             color: kGreyColor,
           ),
           activeIcon: SvgPicture.asset(
             "assets/images/calendar.svg",
-            width: 25.0,
+            width: 25,
             color: kGreenColor,
           ),
           label: "",
@@ -103,12 +103,12 @@ class _BottomNavState extends State<BottomNav> {
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             "assets/images/settings.svg",
-            width: 25.0,
+            width: 25,
             color: kGreyColor,
           ),
           activeIcon: SvgPicture.asset(
             "assets/images/settings.svg",
-            width: 25.0,
+            width: 25,
             color: kGreenColor,
           ),
           label: "",
