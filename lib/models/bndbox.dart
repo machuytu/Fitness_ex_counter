@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:khoaluan/data/fitness.dart';
+import 'package:khoaluan/services/excercise_counter_service.dart';
 
 class BndBox extends StatefulWidget {
   final List<dynamic> results;
@@ -34,6 +35,7 @@ class _BndBoxState extends State<BndBox> {
   FlutterTts flutterTts;
   double lowerRange, upperRange;
   bool midCount, isCorrectPosture;
+  ExerciseCounterService exerciseCounterService;
 
   void setRangeBasedOnModel() {
     if (widget.customModel == fitnessData[0]) {
@@ -55,7 +57,7 @@ class _BndBoxState extends State<BndBox> {
 
   @override
   void initState() {
-    super.initState();
+    exerciseCounterService = ExerciseCounterService(widget.customModel);
     inputArr = new Map();
     _counter = 0;
     midCount = false;
@@ -63,13 +65,15 @@ class _BndBoxState extends State<BndBox> {
     setRangeBasedOnModel();
     flutterTts = new FlutterTts();
     flutterTts.speak("Your Workout Has Started");
+    super.initState();
   }
 
-  void resetCounter() {
-    setState(() {
-      _counter = 0;
-    });
-    flutterTts.speak("Your Workout has been Reset");
+  @override
+  void dispose() {
+    if (_counter != 0) {
+      exerciseCounterService.updateCounter(_counter);
+    }
+    super.dispose();
   }
 
   void incrementCounter() {
@@ -283,7 +287,7 @@ class _BndBoxState extends State<BndBox> {
                 child: FittedBox(
                   child: FloatingActionButton(
                     backgroundColor: getCounterColor(),
-                    onPressed: resetCounter,
+                    onPressed: null,
                     child: Text(
                       '${_counter.toString()}',
                       style: TextStyle(
