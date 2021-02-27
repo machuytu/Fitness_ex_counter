@@ -9,12 +9,12 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/fitness.dart';
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/user_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:convert' show utf8;
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -28,27 +28,33 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   AuthService _auth = new AuthService();
-  final databaseReference = FirebaseDatabase.instance.reference();
+  UserService user = new UserService();
   User _user = new User();
   String userId;
 
   Future<User> getUser() async {
-    userId = _auth.getUser().uid;
-    await databaseReference
-        .child("User")
-        .child(userId)
-        .once()
-        .then((DataSnapshot snapshot) {
-      _user = User(
-          gender: snapshot.value['gender'],
-          fitnessMode: snapshot.value['fitness_mode'],
-          height: snapshot.value['height'],
-          heightUnit: snapshot.value['height_unit'],
-          name: snapshot.value['name'],
-          weight: snapshot.value['weight'],
-          weightUnit: snapshot.value['weightt_unit']);
-    });
+    _user = await user.getUser(_auth);
     return _user;
+  }
+
+  showPickerArray(BuildContext context) {
+    new Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: new JsonDecoder().convert(pickerModeFitness),
+          isArray: true,
+        ),
+        hideHeader: false,
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            if (value.toString() == "[0]") {
+              user.updateUser(userId, 'fitness_mode', 1);
+            } else if (value.toString() == "[1]") {
+              user.updateUser(userId, 'fitness_mode', 2);
+            } else {
+              user.updateUser(userId, 'fitness_mode', 3);
+            }
+          });
+        }).showModal(context);
   }
 
   @override
@@ -302,33 +308,7 @@ class _HomeState extends State<Home> {
               ),
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
-  }
-
-  showPickerArray(BuildContext context) {
-    new Picker(
-        adapter: PickerDataAdapter<String>(
-          pickerdata: new JsonDecoder().convert(pickerModeFitness),
-          isArray: true,
-        ),
-        hideHeader: false,
-        onConfirm: (Picker picker, List value) {
-          setState(() {
-            if (value.toString() == "[0]") {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 1,
-              });
-            } else if (value.toString() == "[1]") {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 2,
-              });
-            } else {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 3,
-              });
-            }
-          });
-        }).showModal(context);
   }
 }

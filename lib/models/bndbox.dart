@@ -283,7 +283,7 @@ class _BndBoxState extends State<BndBox> {
                 child: FittedBox(
                   child: FloatingActionButton(
                     backgroundColor: getCounterColor(),
-                    onPressed: resetCounter,
+                    onPressed: () {},
                     child: Text(
                       '${_counter.toString()}',
                       style: TextStyle(

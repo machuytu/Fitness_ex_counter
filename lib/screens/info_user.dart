@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:khoaluan/services/user_service.dart';
 
 class InfoUser extends StatefulWidget {
   InfoUser({Key key}) : super(key: key);
@@ -24,7 +25,7 @@ class _InfoUserState extends State<InfoUser> {
   int weightValue, heightValue;
   String kindValue;
   bool isMale = true;
-  int modeFitness = 1;
+  int fitnessMode = 1;
   String heightUnit, weightUnit;
   @override
   Widget build(BuildContext context) {
@@ -189,13 +190,13 @@ class _InfoUserState extends State<InfoUser> {
                       children: [
                         RawMaterialButton(
                           onPressed: () {
-                            setState(() => modeFitness = 1);
+                            setState(() => fitnessMode = 1);
                           },
                           elevation: 2.0,
-                          fillColor: modeFitness == 1
+                          fillColor: fitnessMode == 1
                               ? Colors.white
                               : Colors.grey[200],
-                          child: modeFitness == 1
+                          child: fitnessMode == 1
                               ? SvgPicture.asset(
                                   "assets/images/skipping_rope.svg",
                                   width: 50)
@@ -220,13 +221,13 @@ class _InfoUserState extends State<InfoUser> {
                       children: [
                         RawMaterialButton(
                           onPressed: () {
-                            setState(() => modeFitness = 2);
+                            setState(() => fitnessMode = 2);
                           },
                           elevation: 2.0,
-                          fillColor: modeFitness == 2
+                          fillColor: fitnessMode == 2
                               ? Colors.white
                               : Colors.grey[200],
-                          child: modeFitness == 2
+                          child: fitnessMode == 2
                               ? SvgPicture.asset("assets/images/dumbbell.svg",
                                   width: 50)
                               : Opacity(
@@ -250,13 +251,13 @@ class _InfoUserState extends State<InfoUser> {
                       children: [
                         RawMaterialButton(
                           onPressed: () {
-                            setState(() => modeFitness = 3);
+                            setState(() => fitnessMode = 3);
                           },
                           elevation: 2.0,
-                          fillColor: modeFitness == 3
+                          fillColor: fitnessMode == 3
                               ? Colors.white
                               : Colors.grey[200],
-                          child: modeFitness == 3
+                          child: fitnessMode == 3
                               ? SvgPicture.asset("assets/images/barbell.svg",
                                   width: 50)
                               : Opacity(
@@ -289,17 +290,16 @@ class _InfoUserState extends State<InfoUser> {
                       onPressed: () {
                         FirebaseAuth auth = FirebaseAuth.instance;
                         User user = auth.currentUser;
-                        final databaseReference =
-                            FirebaseDatabase.instance.reference();
-                        databaseReference.child("User").child(user.uid).set({
-                          'name': nameUser.text,
-                          'height': heightValue,
-                          'height_unit': heightUnit,
-                          'weight': weightValue,
-                          'weight_unit': weightUnit,
-                          'fitness_mode': modeFitness,
-                          'gender': isMale
-                        });
+                        UserService userService = new UserService();
+                        userService.setValueRegister(
+                            user.uid,
+                            nameUser.text,
+                            heightValue,
+                            heightUnit,
+                            weightValue,
+                            weightUnit,
+                            fitnessMode,
+                            isMale);
                         Navigator.pushNamedAndRemoveUntil(
                             context, "/login", (Route<dynamic> route) => false);
                         Fluttertoast.showToast(
