@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:khoaluan/data/fitness.dart';
-import 'package:khoaluan/services/excercise_counter_service.dart';
+import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/practice_service.dart';
 
 class BndBox extends StatefulWidget {
   final List<dynamic> results;
@@ -35,7 +36,9 @@ class _BndBoxState extends State<BndBox> {
   FlutterTts flutterTts;
   double lowerRange, upperRange;
   bool midCount, isCorrectPosture;
-  ExerciseCounterService exerciseCounterService;
+  PracticeService _practiceService;
+  String _uid;
+  DateTime _startTime;
 
   void setRangeBasedOnModel() {
     if (widget.customModel == fitnessData[0]) {
@@ -57,7 +60,9 @@ class _BndBoxState extends State<BndBox> {
 
   @override
   void initState() {
-    exerciseCounterService = ExerciseCounterService(widget.customModel);
+    _practiceService = PracticeService();
+    _uid = AuthService().getUser().uid;
+    _startTime = DateTime.now();
     inputArr = new Map();
     _counter = 0;
     midCount = false;
@@ -70,8 +75,13 @@ class _BndBoxState extends State<BndBox> {
 
   @override
   void dispose() {
-    if (_counter != 0) {
-      exerciseCounterService.updateCounter(_counter);
+    if (_counter > 0) {
+      _practiceService.addPractice(
+        widget.customModel,
+        _uid,
+        _counter,
+        _startTime,
+      );
     }
     super.dispose();
   }
