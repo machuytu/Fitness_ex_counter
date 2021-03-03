@@ -8,13 +8,14 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/fitness.dart';
 import 'package:khoaluan/models/user.dart';
+import 'package:khoaluan/screens/test.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/user_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:convert' show utf8;
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -28,27 +29,33 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   AuthService _auth = new AuthService();
-  final databaseReference = FirebaseDatabase.instance.reference();
+  UserService user = new UserService();
   User _user = new User();
   String userId;
 
   Future<User> getUser() async {
-    userId = _auth.getUser().uid;
-    await databaseReference
-        .child("User")
-        .child(userId)
-        .once()
-        .then((DataSnapshot snapshot) {
-      _user = User(
-          gender: snapshot.value['gender'],
-          fitnessMode: snapshot.value['fitness_mode'],
-          height: snapshot.value['height'],
-          heightUnit: snapshot.value['height_unit'],
-          name: snapshot.value['name'],
-          weight: snapshot.value['weight'],
-          weightUnit: snapshot.value['weightt_unit']);
-    });
+    _user = await user.getUser(_auth);
     return _user;
+  }
+
+  showPickerArray(BuildContext context) {
+    new Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: new JsonDecoder().convert(pickerModeFitness),
+          isArray: true,
+        ),
+        hideHeader: false,
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            if (value.toString() == "[0]") {
+              user.updateUser(userId, 'fitness_mode', 1);
+            } else if (value.toString() == "[1]") {
+              user.updateUser(userId, 'fitness_mode', 2);
+            } else {
+              user.updateUser(userId, 'fitness_mode', 3);
+            }
+          });
+        }).showModal(context);
   }
 
   @override
@@ -62,7 +69,7 @@ class _HomeState extends State<Home> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 40.0),
+                    SizedBox(height: 10.0),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 18.0),
                       child: Row(
@@ -111,7 +118,7 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 15.0),
+                    SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: CustomListTile(
@@ -124,7 +131,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 25.0),
+                    SizedBox(height: 10.0),
                     CustomListTile(
                       title: Text("Các bài tập cho bạn", style: kTitleStyle),
                       trailing: SvgPicture.asset(
@@ -132,10 +139,10 @@ class _HomeState extends State<Home> {
                         width: 35,
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     Container(
                       width: double.infinity,
-                      height: 180.0,
+                      height: 150.0,
                       margin: EdgeInsets.only(left: 18.0),
                       child: ListView.builder(
                         itemCount: fitnessData.length,
@@ -149,10 +156,10 @@ class _HomeState extends State<Home> {
                         },
                       ),
                     ),
-                    SizedBox(height: 25.0),
+                    SizedBox(height: 10.0),
                     Container(
                       width: double.infinity,
-                      height: 380.0,
+                      height: 410.0,
                       child: Stack(
                         children: [
                           Positioned(
@@ -170,7 +177,7 @@ class _HomeState extends State<Home> {
                           ),
                           Positioned(
                             left: 0.0,
-                            top: 15.0,
+                            top: 10.0,
                             right: 0.0,
                             bottom: 0.0,
                             child: Container(
@@ -185,110 +192,98 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 18.0),
-                                    child: Row(
-                                      children: [
-                                        Text("Weekly Progress",
-                                            style: kTitle2Style),
-                                        Spacer(),
-                                        Text("10 Jun - 17 Jun",
-                                            style: kSubtitle2Style),
-                                      ],
-                                    ),
+                                    padding: const EdgeInsets.only(left: 25),
+                                    child: Text("Cường độ tập luyện",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
                                   ),
-                                  SizedBox(height: 25.0),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 18.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("80%", style: kProgressStyle),
-                                        SizedBox(width: 14.0),
-                                        VerticalDivider(
-                                          color: kGreenColor,
-                                          thickness: 5,
+                                  SizedBox(height: 10.0),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Container(
+                                          height: 300,
+                                          width: 200,
+                                          child: Test(),
                                         ),
-                                        SizedBox(width: 14.0),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    "Last Exercise",
-                                                    style:
-                                                        kTitle2Style.copyWith(
-                                                            fontSize: 12.0),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Top: ',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                                TextSpan(
+                                                  text: 'Need more',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: kGreenColor,
                                                   ),
-                                                  Spacer(),
-                                                  Icon(
-                                                    Icons.arrow_forward,
-                                                    color: kGreyColor,
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 5.0),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    "assets/images/shoulder.svg",
-                                                    width: 29,
-                                                    color: Color(0xFFC25BD6),
-                                                  ),
-                                                  SvgPicture.asset(
-                                                    "assets/images/chest.svg",
-                                                    width: 29,
-                                                    color: Color(0xFFFC902C),
-                                                  ),
-                                                  SvgPicture.asset(
-                                                    "assets/images/abdominal.svg",
-                                                    width: 29,
-                                                    color: Color(0xFF0295ED),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Slider(
-                                    value: 80,
-                                    onChanged: (val) => lol = val,
-                                    activeColor: Colors.green,
-                                    max: 100,
-                                    min: 0.0,
-                                    inactiveColor: Colors.white,
-                                  ),
-                                  SizedBox(height: 25.0),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 50.0,
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 18.0),
-                                    child: RaisedButton(
-                                      onPressed: () {},
-                                      color: Color(0xFF070A29),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
+                                          SizedBox(height: 20.0),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Middle: ',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                                TextSpan(
+                                                  text: 'Good',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.yellow,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: 20.0),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Bottom: ',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                                TextSpan(
+                                                  text: 'Need relax',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: Text(
-                                        "See all result",
-                                        style: kTitleStyle.copyWith(
-                                            color: Colors.white),
-                                      ),
-                                    ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -302,33 +297,7 @@ class _HomeState extends State<Home> {
               ),
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
-  }
-
-  showPickerArray(BuildContext context) {
-    new Picker(
-        adapter: PickerDataAdapter<String>(
-          pickerdata: new JsonDecoder().convert(pickerModeFitness),
-          isArray: true,
-        ),
-        hideHeader: false,
-        onConfirm: (Picker picker, List value) {
-          setState(() {
-            if (value.toString() == "[0]") {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 1,
-              });
-            } else if (value.toString() == "[1]") {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 2,
-              });
-            } else {
-              databaseReference.child("User").child(userId).update({
-                'fitness_mode': 3,
-              });
-            }
-          });
-        }).showModal(context);
   }
 }

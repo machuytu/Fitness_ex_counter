@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class Schedule extends StatefulWidget {
   @override
@@ -17,8 +18,10 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
-
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    DateTime dateTime = dateFormat.parse("2021-02-18");
     _events = {
+      dateTime: ['Event A0', 'Event B0', 'Event C0'],
       _selectedDay.subtract(Duration(days: 30)): [
         'Event A0',
         'Event B0',

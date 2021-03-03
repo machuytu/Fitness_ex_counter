@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:khoaluan/services/auth_service.dart';
 
 class Setting extends StatelessWidget {
@@ -115,17 +116,20 @@ class Setting extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: deepBlueColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Thông báo",
-                                  style: TextStyle(
-                                      color: kGreyColor, fontSize: 20),
+                            child: GestureDetector(
+                              onTap: () => Get.toNamed("/Notification"),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Thông báo",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
+                                  ),
                                 ),
                               ),
                             ),

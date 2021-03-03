@@ -1,3 +1,5 @@
+import 'package:firebase_database/firebase_database.dart';
+
 class User {
   bool gender;
   String heightUnit;
@@ -24,14 +26,14 @@ class User {
     this.height = height;
   }
 
-  User.fromJson(Map<String, dynamic> json) {
-    gender = json['gender'];
-    heightUnit = json['heightunit'];
-    weightUnit = json['weightunit'];
-    fitnessMode = json['fitnessmode'];
-    name = json['name'];
-    weight = json['weight'];
-    height = json['height'];
+  User.fromJson(DataSnapshot json) {
+    gender = json.value['gender'];
+    heightUnit = json.value['heightunit'];
+    weightUnit = json.value['weightunit'];
+    fitnessMode = json.value['fitnessmode'];
+    name = json.value['name'];
+    weight = json.value['weight'];
+    height = json.value['height'];
   }
 
   Map<String, dynamic> toJson() {
