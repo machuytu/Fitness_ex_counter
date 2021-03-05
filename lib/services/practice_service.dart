@@ -13,7 +13,7 @@ class PracticeService {
     String uid,
     int count,
     DateTime startTime,
-  ) async {
+  ) {
     Practice practice = Practice(
       excercise: excercise,
       uid: uid,
@@ -23,14 +23,19 @@ class PracticeService {
     );
     return _ref
         .add(practice.toJson())
-        .then((value) async => {print("add practice ${await value.get()}")})
+        .then((value) async => {print("add practice")})
         .catchError((err) => {print(err)});
   }
 
-  Future<List<Practice>> getPracticeByUser(String uid) async {
-    var docs = (await _ref.where('uid', isEqualTo: uid).get()).docs;
-    var result =
-        docs.map((data) => Practice.fromQueryDocumentSnapshot(data)).toList();
-    return result;
+  Future<List<Practice>> getPracticeByUser(String uid) {
+    return _ref
+        .where('uid', isEqualTo: uid)
+        .get()
+        .then((querySnapshot) => querySnapshot.docs
+            .map((doc) => Practice.fromQueryDocumentSnapshot(doc))
+            .toList())
+        .catchError((err) {
+      print(err);
+    });
   }
 }

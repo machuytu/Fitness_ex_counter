@@ -9,16 +9,16 @@ class UserService {
 
   CollectionReference _ref = FirebaseFirestore.instance.collection('users');
 
-  Future<User> getUser(AuthService auth) async {
+  Future<User> getUser(AuthService auth) {
     String userId = auth.getUser().uid;
-    _ref
-        .where('uid', isEqualTo: userId)
+
+    // var doc = (await _ref.doc(userId).get()).data();
+    // var result = User.fromJson(doc);
+    // return result;
+    return _ref
+        .doc(userId)
         .get()
-        .then((value) => {
-              value.docs.forEach((doc) {
-                _user = User.fromJson(doc);
-              })
-            })
+        .then((value) => User.fromJson(value.data()))
         .catchError((onError) {
       print(onError);
     });
@@ -27,7 +27,6 @@ class UserService {
     //   print(data.data()['gender']);
     //   _user = User.fromJson(data);
     // });
-    return _user;
   }
 
   Future<void> updateUser(String userId, String key, var valueUpdate) async {
@@ -46,7 +45,8 @@ class UserService {
       int fitnessMode,
       bool isMale) async {
     _ref
-        .add({
+        .doc(userId)
+        .set({
           'uid': userId,
           'name': nameUser,
           'height': heightValue,
@@ -56,7 +56,7 @@ class UserService {
           'fitness_mode': fitnessMode,
           'gender': isMale
         })
-        .then((value) async => {print("add practice ${await value.get()}")})
+        .then((value) async => {print("add user $userId")})
         .catchError((err) => {print(err)});
   }
 }
