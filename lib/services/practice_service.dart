@@ -25,17 +25,16 @@ class PracticeService {
     if (count == 0) {
       // return null;
     }
-
-    final practice = Practice(
-      exercise: exercise,
-      count: count,
-      timeStart: timeStart,
-      timeEnd: DateTime.now(),
-    );
-
     return _ref
-        .add(practice.toJson())
-        .then((value) async => {print("Add practice success")})
+        .add(
+          Practice(
+            exercise: exercise,
+            count: count,
+            timeStart: timeStart,
+            timeEnd: DateTime.now(),
+          ).addJson(),
+        )
+        .then((value) => {print("Add practice success")})
         .catchError((err) {
       print(err);
     });
@@ -45,11 +44,9 @@ class PracticeService {
     return _ref
         .orderBy('timeEnd', descending: true)
         .get()
-        .then((querySnapshot) => querySnapshot.docs.map((snapshot) {
-              var practice = Practice.fromJson(snapshot.data());
-              practice.uid = _uid;
-              return practice;
-            }).toList())
+        .then((querySnapshot) => querySnapshot.docs
+            .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))
+            .toList())
         .catchError((err) {
       print(err);
     });

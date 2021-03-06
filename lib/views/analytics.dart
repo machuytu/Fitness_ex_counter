@@ -10,9 +10,6 @@ class Analytics extends StatelessWidget {
 
   void getListPractice() async {
     var result = await _practiceService.getPracticeByUser();
-    result.forEach((element) {
-      print(element);
-    });
   }
 
   @override

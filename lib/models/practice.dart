@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Practice {
-  String exercise;
+  String id;
   String uid;
+  String exercise;
   int count;
   DateTime timeStart;
   DateTime timeEnd;
 
   Practice({
-    this.exercise,
+    this.id,
     this.uid,
+    this.exercise,
     this.count,
     this.timeStart,
     this.timeEnd,
@@ -17,21 +19,33 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.uid} / ${this.exercise} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
+      'Practice: ${this.id} / ${this.uid} / ${this.exercise} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
+
+  factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data();
+    data['id'] = snapshot.id;
+    data['uid'] = snapshot.reference.toString().split('/')[1];
+    return Practice.fromJson(data);
+  }
 
   Practice.fromJson(Map<String, dynamic> json)
-      : exercise = json['exercise'],
+      : id = json['id'],
+        uid = json['uid'],
+        exercise = json['exercise'],
         count = json['count'],
-        timeStart = json['timeStart'],
-        timeEnd = json['timeEnd'];
-
-  Practice.fromDocumentSnapshot(DocumentSnapshot snapshot)
-      : exercise = snapshot.data()['exercise'],
-        count = snapshot.data()['count'],
-        timeStart = (snapshot.data()['timeStart']).toDate(),
-        timeEnd = (snapshot.data()['timeEnd']).toDate();
+        timeStart = json['timeStart'].toDate(),
+        timeEnd = json['timeEnd'].toDate();
 
   Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'uid': this.uid,
+        'exercise': this.exercise,
+        'count': this.count,
+        'timeStart': this.timeStart,
+        'timeEnd': this.timeEnd,
+      };
+
+  Map<String, dynamic> addJson() => {
         'exercise': this.exercise,
         'count': this.count,
         'timeStart': this.timeStart,

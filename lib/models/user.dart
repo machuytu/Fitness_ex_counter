@@ -28,6 +28,12 @@ class User {
     this.height = height;
   }
 
+  factory User.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data();
+    data['uid'] = snapshot.id;
+    return User.fromJson(data);
+  }
+
   User.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
     uid = json['uid'];

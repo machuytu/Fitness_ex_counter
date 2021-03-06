@@ -12,11 +12,11 @@ class UserService {
   Future<User> getUser(AuthService auth) {
     String userId = auth.getUser().uid;
 
-    return _ref.doc(userId).get().then((value) {
-      var user = User.fromJson(value.data());
-      user.uid = userId;
-      return user;
-    }).catchError((onError) {
+    return _ref
+        .doc(userId)
+        .get()
+        .then((value) => User.fromFirestoreSnapshot(value))
+        .catchError((onError) {
       print(onError);
     });
   }
