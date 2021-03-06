@@ -63,6 +63,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     double lol;
+    var size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: getUser(),
         builder: (context, snapshot) {
@@ -71,97 +72,106 @@ class _HomeState extends State<Home> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18.0),
-                      child: Row(
+                    Container(
+                      height: 330,
+                      child: Column(
                         children: [
-                          Container(
-                            width: 50.0,
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage("assets/images/photo.jpeg"),
-                                fit: BoxFit.cover,
+                          SizedBox(height: 10.0),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 50.0,
+                                  height: 50.0,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/photo.jpeg"),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    showPickerArray(context);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                          _user.fitnessMode == 1
+                                              ? "Get Fit"
+                                              : _user.fitnessMode == 2
+                                                  ? "Workout"
+                                                  : "Gain Muscle",
+                                          style: kTitleStyle),
+                                      Transform(
+                                        alignment: Alignment.center,
+                                        transform: Matrix4.rotationY(math.pi),
+                                        child: SvgPicture.asset(
+                                          "assets/images/muscle.svg",
+                                          width: 35,
+                                          color: _user.fitnessMode == 1
+                                              ? kGreenColor
+                                              : _user.fitnessMode == 2
+                                                  ? Colors.yellow
+                                                  : Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10.0),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: CustomListTile(
+                              title: Text(_user.name, style: kTitleStyle),
+                              subtitle: Text("You have new 12 notification",
+                                  style: kSubtitleStyle),
+                              trailing: Image.asset(
+                                "assets/images/notification.png",
+                                width: 25.0,
                               ),
                             ),
                           ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              showPickerArray(context);
-                            },
-                            child: Row(
-                              children: [
-                                Text(
-                                    _user.fitnessMode == 1
-                                        ? "Get Fit"
-                                        : _user.fitnessMode == 2
-                                            ? "Workout"
-                                            : "Gain Muscle",
-                                    style: kTitleStyle),
-                                Transform(
-                                  alignment: Alignment.center,
-                                  transform: Matrix4.rotationY(math.pi),
-                                  child: SvgPicture.asset(
-                                    "assets/images/muscle.svg",
-                                    width: 35,
-                                    color: _user.fitnessMode == 1
-                                        ? kGreenColor
-                                        : _user.fitnessMode == 2
-                                            ? Colors.yellow
-                                            : Colors.red,
-                                  ),
-                                ),
-                              ],
+                          SizedBox(height: 10.0),
+                          CustomListTile(
+                            title:
+                                Text("Các bài tập cho bạn", style: kTitleStyle),
+                            trailing: SvgPicture.asset(
+                              "assets/images/fire.svg",
+                              width: 35,
                             ),
-                          )
+                          ),
+                          SizedBox(height: 10.0),
+                          Container(
+                            width: double.infinity,
+                            height: 150.0,
+                            margin: EdgeInsets.only(left: 18.0),
+                            child: ListView.builder(
+                              itemCount: fitnessData.length,
+                              scrollDirection: Axis.horizontal,
+                              physics: BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return ExerciseCard(
+                                    fitnessData: fitnessData[index],
+                                    cameras: widget.cameras);
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10.0),
                         ],
                       ),
                     ),
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: CustomListTile(
-                        title: Text(_user.name, style: kTitleStyle),
-                        subtitle: Text("You have new 12 notification",
-                            style: kSubtitleStyle),
-                        trailing: Image.asset(
-                          "assets/images/notification.png",
-                          width: 25.0,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    CustomListTile(
-                      title: Text("Các bài tập cho bạn", style: kTitleStyle),
-                      trailing: SvgPicture.asset(
-                        "assets/images/fire.svg",
-                        width: 35,
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
                     Container(
                       width: double.infinity,
-                      height: 150.0,
-                      margin: EdgeInsets.only(left: 18.0),
-                      child: ListView.builder(
-                        itemCount: fitnessData.length,
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ExerciseCard(
-                              fitnessData: fitnessData[index],
-                              cameras: widget.cameras);
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Container(
-                      width: double.infinity,
-                      height: 410.0,
+                      height: size.height - 330.0,
                       child: Stack(
                         children: [
                           Positioned(
