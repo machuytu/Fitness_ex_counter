@@ -39,7 +39,7 @@ class PracticeService {
     print('Hello $_uid');
 
     return _ref
-        // .where('uid', isEqualTo: _uid)
+        .where('uid', isEqualTo: _uid)
         .orderBy('endTime', descending: true)
         .get()
         .then((querySnapshot) => querySnapshot.docs
@@ -49,19 +49,4 @@ class PracticeService {
       print(err);
     });
   }
-
-  // Future<void> getPracticeByUser() {
-  //   print('Hello $_uid');
-
-  //   return _ref
-  //       // .where('uid', isEqualTo: _uid)
-  //       .orderBy('endTime', descending: true)
-  //       .get()
-  //       .then((querySnapshot) => querySnapshot.docs.forEach((element) {
-  //             print(element['exercise']);
-  //           }))
-  //       .catchError((err) {
-  //     print(err);
-  //   });
-  // }
 }

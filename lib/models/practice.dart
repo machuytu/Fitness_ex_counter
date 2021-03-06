@@ -26,10 +26,8 @@ class Practice {
       : exercise = snapshot.data()['exercise'],
         uid = snapshot.data()['email'],
         count = snapshot.data()['count'],
-        startTime =
-            DateTime.fromMicrosecondsSinceEpoch(snapshot.data()['startTime']),
-        endTime =
-            DateTime.fromMillisecondsSinceEpoch((snapshot.data()['endTime']));
+        startTime = (snapshot.data()['startTime']).toDate(),
+        endTime = (snapshot.data()['endTime']).toDate();
 
   Map<String, dynamic> toJson() => {
         'exercise': this.exercise,
