@@ -78,7 +78,6 @@ class _BndBoxState extends State<BndBox> {
     if (_counter > 0) {
       _practiceService.addPractice(
         widget.customModel,
-        _uid,
         _counter,
         _startTime,
       );

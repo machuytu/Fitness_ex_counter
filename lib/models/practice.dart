@@ -15,14 +15,21 @@ class Practice {
     this.endTime,
   });
 
-  Practice.fromJson(Map<String, dynamic> json)
+  // Practice.fromJson(Map<String, dynamic> json)
+  //     : excercise = json['excercise'],
+  //       uid = json['email'],
+  //       count = json['count'],
+  //       startTime = json['startTime'],
+  //       endTime = json['endTime'];
+
+  Practice.fromJson(dynamic json)
       : excercise = json['excercise'],
         uid = json['email'],
         count = json['count'],
         startTime = json['startTime'],
         endTime = json['endTime'];
 
-  Practice.fromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot)
+  Practice.fromDocumentSnapshot(DocumentSnapshot snapshot)
       : excercise = snapshot['excercise'],
         uid = snapshot['email'],
         count = snapshot['count'],
