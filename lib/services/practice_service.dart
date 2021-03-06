@@ -13,15 +13,16 @@ class PracticeService {
   }
 
   Future<void> addPractice(
-    String excercise,
+    String exercise,
     int count,
     DateTime startTime,
   ) {
     if (count == 0) {
-      return null;
+      // return null;
     }
+
     Practice practice = Practice(
-      excercise: excercise,
+      exercise: exercise,
       uid: _uid,
       count: count,
       startTime: startTime,
@@ -35,14 +36,32 @@ class PracticeService {
   }
 
   Future<List<Practice>> getPracticeByUser() {
-    print('Hello');
+    print('Hello $_uid');
+
     return _ref
-        .where('uid', isEqualTo: _uid)
+        // .where('uid', isEqualTo: _uid)
+        .orderBy('endTime', descending: true)
         .get()
-        .then((querySnapshot) =>
-            querySnapshot.docs.map((doc) => Practice.fromJson(doc)).toList())
+        .then((querySnapshot) => querySnapshot.docs
+            .map((doc) => Practice.fromDocumentSnapshot(doc))
+            .toList())
         .catchError((err) {
       print(err);
     });
   }
+
+  // Future<void> getPracticeByUser() {
+  //   print('Hello $_uid');
+
+  //   return _ref
+  //       // .where('uid', isEqualTo: _uid)
+  //       .orderBy('endTime', descending: true)
+  //       .get()
+  //       .then((querySnapshot) => querySnapshot.docs.forEach((element) {
+  //             print(element['exercise']);
+  //           }))
+  //       .catchError((err) {
+  //     print(err);
+  //   });
+  // }
 }
