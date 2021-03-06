@@ -4,36 +4,37 @@ class Practice {
   String exercise;
   String uid;
   int count;
-  DateTime startTime;
-  DateTime endTime;
+  DateTime timeStart;
+  DateTime timeEnd;
 
   Practice({
     this.exercise,
     this.uid,
     this.count,
-    this.startTime,
-    this.endTime,
+    this.timeStart,
+    this.timeEnd,
   });
+
+  @override
+  String toString() =>
+      'Practice: ${this.uid} / ${this.exercise} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
 
   Practice.fromJson(Map<String, dynamic> json)
       : exercise = json['exercise'],
-        uid = json['email'],
         count = json['count'],
-        startTime = json['startTime'],
-        endTime = json['endTime'];
+        timeStart = json['timeStart'],
+        timeEnd = json['timeEnd'];
 
   Practice.fromDocumentSnapshot(DocumentSnapshot snapshot)
       : exercise = snapshot.data()['exercise'],
-        uid = snapshot.data()['email'],
         count = snapshot.data()['count'],
-        startTime = (snapshot.data()['startTime']).toDate(),
-        endTime = (snapshot.data()['endTime']).toDate();
+        timeStart = (snapshot.data()['timeStart']).toDate(),
+        timeEnd = (snapshot.data()['timeEnd']).toDate();
 
   Map<String, dynamic> toJson() => {
         'exercise': this.exercise,
-        'uid': this.uid,
         'count': this.count,
-        'startTime': this.startTime,
-        'endTime': this.endTime,
+        'timeStart': this.timeStart,
+        'timeEnd': this.timeEnd,
       };
 }

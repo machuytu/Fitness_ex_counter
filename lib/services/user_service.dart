@@ -12,21 +12,13 @@ class UserService {
   Future<User> getUser(AuthService auth) {
     String userId = auth.getUser().uid;
 
-    // var doc = (await _ref.doc(userId).get()).data();
-    // var result = User.fromJson(doc);
-    // return result;
-    return _ref
-        .doc(userId)
-        .get()
-        .then((value) => User.fromJson(value.data()))
-        .catchError((onError) {
+    return _ref.doc(userId).get().then((value) {
+      var user = User.fromJson(value.data());
+      user.uid = userId;
+      return user;
+    }).catchError((onError) {
       print(onError);
     });
-
-    // docs.map((data) {
-    //   print(data.data()['gender']);
-    //   _user = User.fromJson(data);
-    // });
   }
 
   Future<void> updateUser(String userId, String key, var valueUpdate) async {
@@ -49,7 +41,6 @@ class UserService {
     _ref
         .doc(userId)
         .set({
-          'uid': userId,
           'name': nameUser,
           'height': heightValue,
           'height_unit': heightUnit,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/models/practice.dart';
 
@@ -8,43 +10,46 @@ class PracticeService {
   String _uid;
 
   PracticeService() {
-    _ref = FirebaseFirestore.instance.collection('practices');
     _uid = AuthService().getUser().uid;
+    _ref = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .collection('practices');
   }
 
   Future<void> addPractice(
     String exercise,
     int count,
-    DateTime startTime,
+    DateTime timeStart,
   ) {
     if (count == 0) {
       // return null;
     }
 
-    Practice practice = Practice(
+    final practice = Practice(
       exercise: exercise,
-      uid: _uid,
       count: count,
-      startTime: startTime,
-      endTime: DateTime.now(),
+      timeStart: timeStart,
+      timeEnd: DateTime.now(),
     );
 
     return _ref
         .add(practice.toJson())
         .then((value) async => {print("Add practice success")})
-        .catchError((err) => {print(err)});
+        .catchError((err) {
+      print(err);
+    });
   }
 
   Future<List<Practice>> getPracticeByUser() {
-    print('Hello $_uid');
-
     return _ref
-        .where('uid', isEqualTo: _uid)
-        .orderBy('endTime', descending: true)
+        .orderBy('timeEnd', descending: true)
         .get()
-        .then((querySnapshot) => querySnapshot.docs
-            .map((doc) => Practice.fromDocumentSnapshot(doc))
-            .toList())
+        .then((querySnapshot) => querySnapshot.docs.map((snapshot) {
+              var practice = Practice.fromJson(snapshot.data());
+              practice.uid = _uid;
+              return practice;
+            }).toList())
         .catchError((err) {
       print(err);
     });
