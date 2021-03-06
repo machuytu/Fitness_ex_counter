@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:khoaluan/services/practice_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Analytics extends StatelessWidget {
   final int kcalBurn = 74;
+  final PracticeService _practiceService = PracticeService();
+
+  void getListPractice() async {
+    var result = await _practiceService.getPracticeByUser();
+    result.forEach((element) {
+      print(element.excercise);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getListPractice();
     return Scaffold(
       backgroundColor: kIndigoColor,
       body: SafeArea(

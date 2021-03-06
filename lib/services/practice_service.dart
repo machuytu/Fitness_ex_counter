@@ -17,6 +17,9 @@ class PracticeService {
     int count,
     DateTime startTime,
   ) {
+    if (count == 0) {
+      return null;
+    }
     Practice practice = Practice(
       excercise: excercise,
       uid: _uid,
@@ -24,13 +27,15 @@ class PracticeService {
       startTime: startTime,
       endTime: DateTime.now(),
     );
+
     return _ref
         .add(practice.toJson())
-        .then((value) async => {print("add practice")})
+        .then((value) async => {print("Add practice success")})
         .catchError((err) => {print(err)});
   }
 
   Future<List<Practice>> getPracticeByUser() {
+    print('Hello');
     return _ref
         .where('uid', isEqualTo: _uid)
         .get()

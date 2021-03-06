@@ -75,13 +75,11 @@ class _BndBoxState extends State<BndBox> {
 
   @override
   void dispose() {
-    if (_counter > 0) {
-      _practiceService.addPractice(
-        widget.customModel,
-        _counter,
-        _startTime,
-      );
-    }
+    _practiceService.addPractice(
+      widget.customModel,
+      _counter,
+      _startTime,
+    );
     super.dispose();
   }
 
