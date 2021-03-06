@@ -30,9 +30,10 @@ class User {
 
   User.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
-    heightUnit = json['heightunit'];
-    weightUnit = json['weightunit'];
-    fitnessMode = json['fitnessmode'];
+    uid = json['uid'];
+    heightUnit = json['height_unit'];
+    weightUnit = json['weight_unit'];
+    fitnessMode = json['fitness_mode'];
     name = json['name'];
     weight = json['weight'];
     height = json['height'];
@@ -40,9 +41,10 @@ class User {
 
   User.fromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot) {
     gender = snapshot.data()['gender'];
-    heightUnit = snapshot.data()['heightunit'];
-    weightUnit = snapshot.data()['weightunit'];
-    fitnessMode = snapshot.data()['fitnessmode'];
+    heightUnit = snapshot.data()['height_unit'];
+    weightUnit = snapshot.data()['weight_unit'];
+    fitnessMode = snapshot.data()['fitness_mode'];
+    uid = snapshot.data()['uid'];
     name = snapshot.data()['name'];
     weight = snapshot.data()['weight'];
     height = snapshot.data()['height'];

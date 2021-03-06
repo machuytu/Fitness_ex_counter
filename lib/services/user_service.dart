@@ -30,8 +30,10 @@ class UserService {
   }
 
   Future<void> updateUser(String userId, String key, var valueUpdate) async {
-    databaseReference.child("User").child(userId).update({
-      key: valueUpdate,
+    return _ref.doc(userId).update({key: valueUpdate}).then((value) {
+      print("thanh cong");
+    }).catchError((e) {
+      print(e);
     });
   }
 
