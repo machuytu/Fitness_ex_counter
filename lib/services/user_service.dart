@@ -1,25 +1,39 @@
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/services/auth_service.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserService {
   final databaseReference = FirebaseDatabase.instance.reference();
   User _user;
-  Future<User> getUser(AuthService auth) async {
+
+  CollectionReference _ref = FirebaseFirestore.instance.collection('users');
+
+  Future<User> getUser(AuthService auth) {
     String userId = auth.getUser().uid;
-    await databaseReference
-        .child("User")
-        .child(userId)
-        .once()
-        .then((DataSnapshot snapshot) {
-      _user = User.fromJson(snapshot);
+
+    // var doc = (await _ref.doc(userId).get()).data();
+    // var result = User.fromJson(doc);
+    // return result;
+    return _ref
+        .doc(userId)
+        .get()
+        .then((value) => User.fromJson(value.data()))
+        .catchError((onError) {
+      print(onError);
     });
-    return _user;
+
+    // docs.map((data) {
+    //   print(data.data()['gender']);
+    //   _user = User.fromJson(data);
+    // });
   }
 
   Future<void> updateUser(String userId, String key, var valueUpdate) async {
-    databaseReference.child("User").child(userId).update({
-      key: valueUpdate,
+    return _ref.doc(userId).update({key: valueUpdate}).then((value) {
+      print("thanh cong");
+    }).catchError((e) {
+      print(e);
     });
   }
 
@@ -32,14 +46,19 @@ class UserService {
       String weightUnit,
       int fitnessMode,
       bool isMale) async {
-    databaseReference.child("User").child(userId).set({
-      'name': nameUser,
-      'height': heightValue,
-      'height_unit': heightUnit,
-      'weight': weightValue,
-      'weight_unit': weightUnit,
-      'fitness_mode': fitnessMode,
-      'gender': isMale
-    });
+    _ref
+        .doc(userId)
+        .set({
+          'uid': userId,
+          'name': nameUser,
+          'height': heightValue,
+          'height_unit': heightUnit,
+          'weight': weightValue,
+          'weight_unit': weightUnit,
+          'fitness_mode': fitnessMode,
+          'gender': isMale
+        })
+        .then((value) async => {print("add user $userId")})
+        .catchError((err) => {print(err)});
   }
 }

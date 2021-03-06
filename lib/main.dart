@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
                 primarySwatch: Colors.blue,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-              initialRoute: "/notification",
+              initialRoute: "/splash",
               routes: {
                 "/test": (context) => Test(),
                 "/notification": (context) => NotificationScreen(),

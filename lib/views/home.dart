@@ -35,6 +35,7 @@ class _HomeState extends State<Home> {
 
   Future<User> getUser() async {
     _user = await user.getUser(_auth);
+    userId = _user.uid;
     return _user;
   }
 
@@ -45,14 +46,15 @@ class _HomeState extends State<Home> {
           isArray: true,
         ),
         hideHeader: false,
-        onConfirm: (Picker picker, List value) {
+        onConfirm: (Picker picker, List value) async {
+          _user = await user.getUser(_auth);
           setState(() {
             if (value.toString() == "[0]") {
-              user.updateUser(userId, 'fitness_mode', 1);
+              user.updateUser(_user.uid, 'fitness_mode', 1);
             } else if (value.toString() == "[1]") {
-              user.updateUser(userId, 'fitness_mode', 2);
+              user.updateUser(_user.uid, 'fitness_mode', 2);
             } else {
-              user.updateUser(userId, 'fitness_mode', 3);
+              user.updateUser(_user.uid, 'fitness_mode', 3);
             }
           });
         }).showModal(context);

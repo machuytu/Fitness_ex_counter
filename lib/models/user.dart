@@ -1,6 +1,7 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
+  String uid;
   bool gender;
   String heightUnit;
   String weightUnit;
@@ -10,7 +11,8 @@ class User {
   int height;
 
   User(
-      {bool gender,
+      {String uid,
+      bool gender,
       String heightUnit,
       String weightUnit,
       int fitnessMode,
@@ -26,14 +28,26 @@ class User {
     this.height = height;
   }
 
-  User.fromJson(DataSnapshot json) {
-    gender = json.value['gender'];
-    heightUnit = json.value['heightunit'];
-    weightUnit = json.value['weightunit'];
-    fitnessMode = json.value['fitnessmode'];
-    name = json.value['name'];
-    weight = json.value['weight'];
-    height = json.value['height'];
+  User.fromJson(Map<String, dynamic> json) {
+    gender = json['gender'];
+    uid = json['uid'];
+    heightUnit = json['height_unit'];
+    weightUnit = json['weight_unit'];
+    fitnessMode = json['fitness_mode'];
+    name = json['name'];
+    weight = json['weight'];
+    height = json['height'];
+  }
+
+  User.fromQueryDocumentSnapshot(QueryDocumentSnapshot snapshot) {
+    gender = snapshot.data()['gender'];
+    heightUnit = snapshot.data()['height_unit'];
+    weightUnit = snapshot.data()['weight_unit'];
+    fitnessMode = snapshot.data()['fitness_mode'];
+    uid = snapshot.data()['uid'];
+    name = snapshot.data()['name'];
+    weight = snapshot.data()['weight'];
+    height = snapshot.data()['height'];
   }
 
   Map<String, dynamic> toJson() {
