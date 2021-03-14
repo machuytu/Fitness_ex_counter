@@ -1,6 +1,6 @@
 List<String> fitnessData = [
   'Waist_Up',
   'Push_Up',
-  'Stationary_lunge',
+  'Stationary_Lunge',
   'Belly_Sticks',
 ];

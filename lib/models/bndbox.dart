@@ -51,10 +51,10 @@ class _BndBoxState extends State<BndBox> {
       // lowerRange = widget.height * 0.58;
     } else if (widget.customModel == fitnessData[2]) {
       upperRange = widget.height * 0.30;
-      lowerRange = widget.height * 0.80;
+      lowerRange = widget.height * 0.85;
     } else if (widget.customModel == fitnessData[3]) {
-      upperRange = widget.width * 0.7;
-      lowerRange = widget.width * 1.0;
+      upperRange = widget.width * 0.70;
+      lowerRange = widget.width * 1.00;
     }
   }
 
@@ -148,9 +148,7 @@ class _BndBoxState extends State<BndBox> {
     }
     if (widget.customModel == fitnessData[2]) {
       return poses['leftShoulder'][1] < upperRange &&
-              poses['rightShoulder'][1] < upperRange &&
-              poses['leftKnee'][1] < lowerRange ||
-          poses['rightKnee'][1] < lowerRange;
+          poses['rightShoulder'][1] < upperRange;
     }
     if (widget.customModel == fitnessData[3]) {
       return poses['rightShoulder'][0] > upperRange &&
@@ -169,7 +167,11 @@ class _BndBoxState extends State<BndBox> {
     }
     if (widget.customModel == fitnessData[2]) {
       return poses['leftShoulder'][1] > upperRange &&
-          poses['rightShoulder'][1] > upperRange;
+          poses['rightShoulder'][1] > upperRange &&
+          (poses['leftKnee'][1] > lowerRange ||
+              poses['rightKnee'][1] > lowerRange) &&
+          (poses['leftKnee'][1] < lowerRange ||
+              poses['rightKnee'][1] < lowerRange);
     }
     if (widget.customModel == fitnessData[3]) {
       return poses['rightShoulder'][0] < upperRange;
