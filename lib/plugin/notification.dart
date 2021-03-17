@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../main.dart';
 
-class NotificationScreen extends StatefulWidget {
-  NotificationScreen({Key key}) : super(key: key);
+class NotificationScreen1 extends StatefulWidget {
+  NotificationScreen1({Key key}) : super(key: key);
 
   @override
   _NotificationState createState() => _NotificationState();
 }
 
-class _NotificationState extends State<NotificationScreen> {
+class _NotificationState extends State<NotificationScreen1> {
   @override
   void initState() {
     tz.initializeTimeZones();
@@ -50,7 +53,7 @@ class _NotificationState extends State<NotificationScreen> {
         0,
         'scheduled title',
         'scheduled body',
-        _nextInstanceOfDaily(0, 0),
+        nextInstanceOfMondayTenAM(),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description')),
@@ -58,6 +61,7 @@ class _NotificationState extends State<NotificationScreen> {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
   }
 
   tz.TZDateTime _nextInstanceOfDaily(int hour, int minute) {
@@ -67,6 +71,17 @@ class _NotificationState extends State<NotificationScreen> {
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  tz.TZDateTime nextInstanceOfMondayTenAM(
+      {int hour, int minute, List<int> listDaily}) {
+    tz.TZDateTime scheduledDate = _nextInstanceOfDaily(hour, minute);
+    for (int i = 0; i < listDaily.length; i++) {
+      while (scheduledDate.weekday != listDaily[i]) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
     }
     return scheduledDate;
   }

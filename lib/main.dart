@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:khoaluan/plugin/notification.dart';
 import 'package:khoaluan/screens/info_user.dart';
 import 'package:khoaluan/screens/login_screen.dart';
 import 'package:khoaluan/screens/register_screen.dart';
@@ -121,15 +122,15 @@ class _MyAppState extends State<MyApp> {
                 primarySwatch: Colors.blue,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-              initialRoute: "/splash",
+              initialRoute: "/test1",
               routes: {
-                "/test": (context) => Test(),
                 "/notification": (context) => NotificationScreen(),
                 "/": (context) => BottomNav(cameras: cameras),
                 "/splash": (context) => SplashScreen(),
                 "/login": (context) => LoginScreen(),
                 "/register": (context) => ResigterScreen(),
                 "/info_user": (context) => InfoUser(),
+                "/test1": (context) => NotificationScreen1(),
               },
             );
           }

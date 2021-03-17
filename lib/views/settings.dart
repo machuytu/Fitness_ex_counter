@@ -117,7 +117,7 @@ class Setting extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
-                              onTap: () => Get.toNamed("/Notification"),
+                              onTap: () => Get.toNamed("/notification"),
                               child: Container(
                                 height: 50,
                                 decoration: BoxDecoration(

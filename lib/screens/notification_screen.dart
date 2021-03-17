@@ -4,8 +4,10 @@ import 'package:khoaluan/constants/home/style.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:khoaluan/utils/time_ago.dart';
+import 'package:khoaluan/widgets/bottomsheet_notification.dart';
 import 'package:khoaluan/widgets/notification_view.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class NotificationScreen extends StatefulWidget {
   NotificationScreen({Key key}) : super(key: key);
@@ -49,17 +51,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Lịch thông báo", style: white22Regular),
-                    Container(
-                      height: 40,
-                      width: 60,
-                      decoration: BoxDecoration(
-                          color: kIndigoColor,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Center(
-                          child: Text(
-                        "Tạo",
-                        style: white16Regular,
-                      )),
+                    GestureDetector(
+                      onTap: () {
+                        showMaterialModalBottomSheet(
+                          context: context,
+                          builder: (context) => BottomsheetNotification(),
+                        );
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 60,
+                        decoration: BoxDecoration(
+                            color: kIndigoColor,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(
+                            child: Text(
+                          "Tạo",
+                          style: white16Regular,
+                        )),
+                      ),
                     ),
                   ],
                 ),
