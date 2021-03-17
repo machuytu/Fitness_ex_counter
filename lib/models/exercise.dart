@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-
 class Exercise {
-  String title;
-  double cal;
+  final String name;
+  final double kcal;
 
-  Exercise(this.title, this.cal);
+  Exercise({this.name, this.kcal});
 }
