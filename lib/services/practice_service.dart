@@ -8,9 +8,10 @@ import 'auth_service.dart';
 class PracticeService {
   CollectionReference _ref;
   String _uid;
+  AuthService _auth = new AuthService();
 
   PracticeService() {
-    _uid = AuthService().getUser().uid;
+    _uid = _auth.getUser().uid;
     _ref = FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
@@ -45,7 +46,8 @@ class PracticeService {
         .orderBy('timeEnd', descending: true)
         .get()
         .then((querySnapshot) => querySnapshot.docs
-            .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot)))
+            .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))
+            .toList())
         .catchError((err) {
       print(err);
     });
