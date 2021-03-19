@@ -44,8 +44,11 @@ class PracticeService {
     return _ref
         .orderBy('timeEnd', descending: true)
         .get()
-        .then((querySnapshot) => querySnapshot.docs
-            .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot)))
+        .then(
+          (querySnapshot) => querySnapshot.docs.map(
+            (snapshot) => Practice.fromFirestoreSnapshot(snapshot),
+          ),
+        )
         .catchError((err) {
       print(err);
     });
