@@ -9,8 +9,15 @@ class Analytics extends StatelessWidget {
   final PracticeService _practiceService = PracticeService();
 
   void getListPractice() async {
-    var result = await _practiceService.getPracticeByUser();
-    result.forEach((element) {
+    // var result = await _practiceService.getPracticeByUser();
+    // print('List Practices');
+    // result?.forEach((element) {
+    //   print(element);
+    // });
+
+    var result1 = await _practiceService.getPracticeByDate(DateTime.now());
+    print('List Practices by date');
+    result1?.forEach((element) {
       print(element);
     });
   }
