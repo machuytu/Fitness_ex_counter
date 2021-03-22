@@ -18,7 +18,7 @@ class PracticeService {
   }
 
   Future<void> addPractice(
-    String exerciseName,
+    int exerciseid,
     int count,
     DateTime timeStart,
   ) {
@@ -29,7 +29,7 @@ class PracticeService {
     return _ref
         .add(
           Practice(
-            exerciseName: exerciseName,
+            exerciseid: exerciseid,
             count: count,
             timeStart: timeStart,
             timeEnd: DateTime.now(),
@@ -53,7 +53,7 @@ class PracticeService {
     });
   }
 
-  Future<List<Practice>> getPracticeByDate(DateTime date) {
+  Future<List<Practice>> getPracticeByDay(DateTime date) {
     var today = DateTime(date.year, date.month, date.day);
     var tomorrow = today.add(Duration(days: 1));
 

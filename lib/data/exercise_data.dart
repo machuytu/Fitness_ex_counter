@@ -1,8 +1,8 @@
 import 'package:khoaluan/models/exercise.dart';
 
 final exercises = <Exercise>[
-  Exercise(name: 'Waist_Up', kcal: 1),
-  Exercise(name: 'Push_Up', kcal: 1),
-  Exercise(name: 'Stationary_Lunge', kcal: 1),
-  Exercise(name: 'Belly_Sticks', kcal: 1),
+  Exercise(0, 'Squat', 1),
+  Exercise(1, 'Push Up', 1),
+  Exercise(2, 'Stationary Lunge', 1),
+  Exercise(3, 'Belly Sticks', 1),
 ];

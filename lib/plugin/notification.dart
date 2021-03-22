@@ -7,53 +7,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
-class NotificationScreen1 extends StatefulWidget {
-  NotificationScreen1({Key key}) : super(key: key);
+class NotificationPlugin {
+  int idNotification;
+  Future<void> scheduleDailyNotification(String title, String message, int hour,
+      int minute, List<int> listDaily) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getInt("idNotification") == null) {
+      prefs.setInt("idNotification", 0);
+      idNotification = 0;
+    } else {
+      idNotification = prefs.getInt("idNotification") + 1;
+    }
 
-  @override
-  _NotificationState createState() => _NotificationState();
-}
-
-class _NotificationState extends State<NotificationScreen1> {
-  @override
-  void initState() {
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation("Asia/Ho_Chi_Minh"));
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              RaisedButton(
-                onPressed: () async {
-                  await _showNotification();
-                },
-                child: Text("push notification"),
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  await _scheduleDailyTenAMNotification();
-                },
-                child: Text("push notification timezone"),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _scheduleDailyTenAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        nextInstanceOfMondayTenAM(),
+        idNotification,
+        title,
+        message,
+        nextInstanceOfTime(hour: hour, minute: minute, listDaily: listDaily),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description')),
@@ -61,7 +31,7 @@ class _NotificationState extends State<NotificationScreen1> {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("idNotification", idNotification);
   }
 
   tz.TZDateTime _nextInstanceOfDaily(int hour, int minute) {
@@ -75,28 +45,17 @@ class _NotificationState extends State<NotificationScreen1> {
     return scheduledDate;
   }
 
-  tz.TZDateTime nextInstanceOfMondayTenAM(
+  tz.TZDateTime nextInstanceOfTime(
       {int hour, int minute, List<int> listDaily}) {
     tz.TZDateTime scheduledDate = _nextInstanceOfDaily(hour, minute);
-    for (int i = 0; i < listDaily.length; i++) {
-      while (scheduledDate.weekday != listDaily[i]) {
-        scheduledDate = scheduledDate.add(const Duration(days: 1));
+    if (listDaily != null) {
+      for (int i = 0; i < listDaily.length; i++) {
+        while (scheduledDate.weekday != listDaily[i]) {
+          scheduledDate = scheduledDate.add(const Duration(days: 1));
+        }
       }
     }
-    return scheduledDate;
-  }
 
-  Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'x');
+    return scheduledDate;
   }
 }

@@ -11,7 +11,7 @@ class BndBox extends StatefulWidget {
   final int previewW;
   final double screenH;
   final double screenW;
-  final String customModel;
+  final int exerciseid;
   final double width;
   final double height;
 
@@ -21,9 +21,9 @@ class BndBox extends StatefulWidget {
     this.previewW,
     this.screenH,
     this.screenW,
-    this.customModel,
     this.width,
     this.height,
+    this.exerciseid,
   });
 
   @override
@@ -37,23 +37,23 @@ class _BndBoxState extends State<BndBox> {
   double lowerRange, upperRange;
   bool midCount, isCorrectPosture;
   PracticeService _practiceService;
-  String _uid;
+  // String _uid;
   DateTime _startTime;
 
   void setRangeBasedOnModel() {
-    if (widget.customModel == fitnessData[0]) {
+    if (widget.exerciseid == 0) {
       upperRange = widget.height * 0.30; // pixel get on screen
       lowerRange = widget.height * 0.60;
-    } else if (widget.customModel == fitnessData[1]) {
+    } else if (widget.exerciseid == 1) {
       upperRange = widget.height * 0.45;
       lowerRange = widget.height * 0.65;
-      // upperRange = widget.height * 0.48;
-      // lowerRange = widget.height * 0.58;
-    } else if (widget.customModel == fitnessData[2]) {
+    } else if (widget.exerciseid == 2) {
       upperRange = widget.height * 0.30;
       lowerRange = widget.height * 0.85;
-    } else if (widget.customModel == fitnessData[3]) {
-      upperRange = widget.width * 0.70;
+    } else if (widget.exerciseid == 3) {
+      // upperRange = widget.width * 0.50;
+      // lowerRange = widget.width * 0.80;
+      upperRange = widget.width * 0.50;
       lowerRange = widget.width * 1.00;
     }
   }
@@ -61,7 +61,6 @@ class _BndBoxState extends State<BndBox> {
   @override
   void initState() {
     _practiceService = PracticeService();
-    _uid = AuthService().getUser().uid;
     _startTime = DateTime.now();
     inputArr = new Map();
     _counter = 0;
@@ -76,7 +75,7 @@ class _BndBoxState extends State<BndBox> {
   @override
   void dispose() {
     _practiceService.addPractice(
-      widget.customModel,
+      widget.exerciseid,
       _counter,
       _startTime,
     );
@@ -122,7 +121,7 @@ class _BndBoxState extends State<BndBox> {
 
   List<Widget> _renderHelperBlobs() {
     List<Widget> listToReturn = <Widget>[];
-    if (widget.customModel != fitnessData[3]) {
+    if (widget.exerciseid != 3) {
       listToReturn.add(_createPositionedBlobs(5, 40, 0, upperRange));
       listToReturn.add(_createPositionedBlobs(5, 40, 0, lowerRange));
     } else {
@@ -134,38 +133,38 @@ class _BndBoxState extends State<BndBox> {
 
   //region Core
   bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-    if (widget.customModel == fitnessData[0]) {
+    if (widget.exerciseid == 0) {
       return poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange &&
           poses['leftHip'][1] < lowerRange &&
           poses['rightHip'][1] < lowerRange;
     }
-    if (widget.customModel == fitnessData[1]) {
+    if (widget.exerciseid == 1) {
       return poses['leftShoulder'][1] > upperRange &&
           poses['rightShoulder'][1] > upperRange &&
           poses['leftShoulder'][1] < lowerRange &&
           poses['rightShoulder'][1] < lowerRange;
     }
-    if (widget.customModel == fitnessData[2]) {
+    if (widget.exerciseid == 2) {
       return poses['leftShoulder'][1] < upperRange &&
           poses['rightShoulder'][1] < upperRange;
     }
-    if (widget.customModel == fitnessData[3]) {
+    if (widget.exerciseid == 3) {
       return poses['rightShoulder'][0] > upperRange &&
           poses['rightShoulder'][0] < lowerRange;
     }
   }
 
   bool _midPostureExercise(Map<String, List<double>> poses) {
-    if (widget.customModel == fitnessData[0]) {
+    if (widget.exerciseid == 0) {
       return poses['leftShoulder'][1] > upperRange &&
           poses['rightShoulder'][1] > upperRange;
     }
-    if (widget.customModel == fitnessData[1]) {
+    if (widget.exerciseid == 1) {
       return poses['leftShoulder'][1] > lowerRange &&
           poses['rightShoulder'][1] > lowerRange;
     }
-    if (widget.customModel == fitnessData[2]) {
+    if (widget.exerciseid == 2) {
       return poses['leftShoulder'][1] > upperRange &&
           poses['rightShoulder'][1] > upperRange &&
           (poses['leftKnee'][1] > lowerRange ||
@@ -173,7 +172,7 @@ class _BndBoxState extends State<BndBox> {
           (poses['leftKnee'][1] < lowerRange ||
               poses['rightKnee'][1] < lowerRange);
     }
-    if (widget.customModel == fitnessData[3]) {
+    if (widget.exerciseid == 3) {
       return poses['rightShoulder'][0] < upperRange;
     }
   }
