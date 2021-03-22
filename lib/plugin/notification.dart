@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
-class Notification {
+class NotificationPlugin {
   int idNotification;
   Future<void> scheduleDailyNotification(String title, String message, int hour,
       int minute, List<int> listDaily) async {
@@ -31,6 +31,7 @@ class Notification {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time);
+    prefs.setInt("idNotification", idNotification);
   }
 
   tz.TZDateTime _nextInstanceOfDaily(int hour, int minute) {

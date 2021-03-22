@@ -22,7 +22,13 @@ class NotificationService {
       String title, String message, int hour, int minute, List<int> listDaily) {
     return _ref
         .add(
-          NotificationModel().addJson(),
+          NotificationModel(
+                  title: title,
+                  message: message,
+                  hour: hour,
+                  minute: minute,
+                  listDaily: listDaily)
+              .addJson(),
         )
         .then((value) => {print("Add Notification success")})
         .catchError((err) {

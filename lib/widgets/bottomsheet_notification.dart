@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/models/daily.dart';
+import 'package:khoaluan/models/notification_model.dart';
+import 'package:khoaluan/plugin/notification.dart';
+import 'package:khoaluan/services/notification_service.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'bottomsheet_set_day.dart';
@@ -19,9 +22,13 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
   bool repeat = false;
   Daily daily = Daily();
   String title = "Báo thức";
+  String message = "Báo thức";
   DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+  NotificationService notificationService = new NotificationService();
+
   int hour = DateTime.now().hour;
   int minute = DateTime.now().minute;
+  NotificationPlugin notification = NotificationPlugin();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +39,12 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              notification.scheduleDailyNotification(
+                  title, message, hour, minute, daily.getListDay());
+              notificationService.addNotification(
+                  title, message, hour, minute, daily.getListDay());
+            },
             child: Text("Lưu", style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -100,7 +112,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Lặp lại",
+                      "Các ngày",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     GestureDetector(
@@ -149,6 +161,44 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                           if (value != null) {
                             setState(() {
                               title = value;
+                            });
+                          }
+                        });
+                      },
+                      child: Text(
+                        title,
+                        style: TextStyle(color: Colors.grey, fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              height: 60,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: kIndigoColor,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Nội dung",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showMaterialModalBottomSheet(
+                          context: context,
+                          builder: (context) =>
+                              BottomsheetSetTitle(context: context),
+                        ).then((value) {
+                          if (value != null) {
+                            setState(() {
+                              message = value;
                             });
                           }
                         });

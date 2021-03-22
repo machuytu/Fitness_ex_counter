@@ -66,7 +66,7 @@ class Daily {
   }
 
   List<int> getListDay() {
-    List list = [];
+    List list;
 
     if (isMonday == true) {
       list.add(1);
