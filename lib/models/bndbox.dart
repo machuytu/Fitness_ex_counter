@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:khoaluan/data/fitness.dart';
-import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 
 class BndBox extends StatefulWidget {
@@ -37,7 +35,6 @@ class _BndBoxState extends State<BndBox> {
   double lowerRange, upperRange;
   bool midCount, isCorrectPosture;
   PracticeService _practiceService;
-  // String _uid;
   DateTime _startTime;
 
   void setRangeBasedOnModel() {
@@ -51,8 +48,6 @@ class _BndBoxState extends State<BndBox> {
       upperRange = widget.height * 0.30;
       lowerRange = widget.height * 0.85;
     } else if (widget.exerciseid == 3) {
-      // upperRange = widget.width * 0.50;
-      // lowerRange = widget.width * 0.80;
       upperRange = widget.width * 0.50;
       lowerRange = widget.width * 1.00;
     }

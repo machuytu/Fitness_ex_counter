@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';

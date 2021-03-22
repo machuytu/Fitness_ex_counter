@@ -53,7 +53,7 @@ class PracticeService {
     });
   }
 
-  Future<List<Practice>> getPracticeByDay(DateTime date) {
+  Future<List<Practice>> getPracticeByDate(DateTime date) {
     var today = DateTime(date.year, date.month, date.day);
     var tomorrow = today.add(Duration(days: 1));
 

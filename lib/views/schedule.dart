@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
 
 class Schedule extends StatefulWidget {
   @override
@@ -23,7 +21,7 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
     super.initState();
     final _selectedDay = DateTime.now();
     DateTime now = DateTime.now();
-    _practiceService.getPracticeByDay(now).then((value) {
+    _practiceService.getPracticeByDate(now).then((value) {
       _selectedEvents = value;
     });
     _calendarController = CalendarController();
@@ -106,7 +104,7 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
         ),
       ),
       onDaySelected: (day, events, holidays) {
-        _practiceService.getPracticeByDay(day).then((value) {
+        _practiceService.getPracticeByDate(day).then((value) {
           setState(() {
             _selectedEvents = value;
           });

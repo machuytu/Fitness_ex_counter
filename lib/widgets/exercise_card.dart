@@ -30,9 +30,8 @@ class ExerciseCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           image: DecorationImage(
-            image: AssetImage("assets/images/" +
-                exercises[exerciseid].name.replaceAll(' ', '_') +
-                ".jpg"),
+            image: AssetImage(
+                'assets/images/${exercises[exerciseid].name.replaceAll(' ', '_')}.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Color(0xFF636477),
