@@ -52,4 +52,19 @@ class PracticeService {
       print(err);
     });
   }
+
+  Future<List<Practice>> getPracticeByDay(DateTime endTime) {
+    DateTime tomorrow = endTime.subtract(Duration(days: 1));
+    return _ref
+        .orderBy('timeEnd', descending: true)
+        .where('timeEnd', isGreaterThanOrEqualTo: endTime)
+        .where('timeEnd', isGreaterThanOrEqualTo: tomorrow)
+        .get()
+        .then((querySnapshot) => querySnapshot.docs
+            .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))
+            .toList())
+        .catchError((err) {
+      print(err);
+    });
+  }
 }

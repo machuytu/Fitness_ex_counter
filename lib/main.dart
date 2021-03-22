@@ -130,7 +130,6 @@ class _MyAppState extends State<MyApp> {
                 "/login": (context) => LoginScreen(),
                 "/register": (context) => ResigterScreen(),
                 "/info_user": (context) => InfoUser(),
-                "/test1": (context) => NotificationScreen1(),
               },
             );
           }

@@ -151,7 +151,7 @@ class _HomeState extends State<Home> {
                           SizedBox(height: 10.0),
                           Container(
                             width: double.infinity,
-                            height: 150.0,
+                            height: 145.0,
                             margin: EdgeInsets.only(left: 18.0),
                             child: ListView.builder(
                               itemCount: fitnessData.length,
@@ -230,70 +230,72 @@ class _HomeState extends State<Home> {
                                           child: Test(),
                                         ),
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: 'Top: ',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                                TextSpan(
-                                                  text: 'Need more',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: kGreenColor,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Top: ',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(height: 20.0),
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: 'Middle: ',
-                                                  style: TextStyle(
+                                                  TextSpan(
+                                                    text: 'Need more',
+                                                    style: TextStyle(
                                                       fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                                TextSpan(
-                                                  text: 'Good',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.yellow,
+                                                      color: kGreenColor,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(height: 20.0),
-                                          Text.rich(
-                                            TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: 'Bottom: ',
-                                                  style: TextStyle(
+                                            SizedBox(height: 20.0),
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Middle: ',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  TextSpan(
+                                                    text: 'Good',
+                                                    style: TextStyle(
                                                       fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                                TextSpan(
-                                                  text: 'Need relax',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.red,
+                                                      color: Colors.yellow,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 20.0),
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Bottom: ',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
+                                                  TextSpan(
+                                                    text: 'Need relax',
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),

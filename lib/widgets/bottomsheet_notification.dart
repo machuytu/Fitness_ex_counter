@@ -162,26 +162,6 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                 ),
               ),
             ),
-            Container(
-              height: 60,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: kIndigoColor,
-              ),
-              child: CheckboxListTile(
-                activeColor: Colors.orange,
-                title: Text(
-                  "Lặp lại",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                value: repeat,
-                onChanged: (value) {
-                  setState(() {
-                    repeat = value;
-                  });
-                },
-              ),
-            ),
           ],
         ),
       ),
