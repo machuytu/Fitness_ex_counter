@@ -160,8 +160,7 @@ class _HomeState extends State<Home> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 return ExerciseCard(
-                                    fitnessData: fitnessData[index],
-                                    cameras: widget.cameras);
+                                    exerciseid: index, cameras: widget.cameras);
                               },
                             ),
                           ),

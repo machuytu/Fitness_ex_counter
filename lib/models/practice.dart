@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:khoaluan/data/exercise_data.dart';
 
 class Practice {
   String id;
   String uid;
-  String exercise;
+  int exerciseid;
   int count;
   DateTime timeStart;
   DateTime timeEnd;
@@ -11,7 +12,7 @@ class Practice {
   Practice({
     this.id,
     this.uid,
-    this.exercise,
+    this.exerciseid,
     this.count,
     this.timeStart,
     this.timeEnd,
@@ -19,7 +20,9 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.uid} / ${this.exercise} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
+      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
+
+  String getExerciseName() => exercises[this.exerciseid].name;
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
@@ -31,7 +34,7 @@ class Practice {
   Practice.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         uid = json['uid'],
-        exercise = json['exercise'],
+        exerciseid = json['exerciseid'],
         count = json['count'],
         timeStart = json['timeStart'].toDate(),
         timeEnd = json['timeEnd'].toDate();
@@ -39,14 +42,14 @@ class Practice {
   Map<String, dynamic> toJson() => {
         'id': this.id,
         'uid': this.uid,
-        'exercise': this.exercise,
+        'exerciseid': this.exerciseid,
         'count': this.count,
         'timeStart': this.timeStart,
         'timeEnd': this.timeEnd,
       };
 
   Map<String, dynamic> addJson() => {
-        'exercise': this.exercise,
+        'exerciseid': this.exerciseid,
         'count': this.count,
         'timeStart': this.timeStart,
         'timeEnd': this.timeEnd,

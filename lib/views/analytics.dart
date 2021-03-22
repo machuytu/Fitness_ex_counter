@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -18,7 +19,7 @@ class Analytics extends StatelessWidget {
           if (snapshot.hasData) {
             List<Practice> listPractice = snapshot.data;
             listPractice.forEach((element) {
-              print(element.exercise);
+              print(element);
             });
             return Scaffold(
               backgroundColor: kIndigoColor,
@@ -116,7 +117,7 @@ class Analytics extends StatelessWidget {
                       ),
                       ListView.builder(
                         shrinkWrap: true,
-                        itemCount: 4,
+                        itemCount: listPractice.length,
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           return Padding(
@@ -147,7 +148,10 @@ class Analytics extends StatelessWidget {
                                       SizedBox(
                                         width: 20.0,
                                       ),
-                                      Text(listPractice[index].exercise,
+                                      Text(
+                                          exercises[listPractice[index]
+                                                  .exerciseid]
+                                              .name,
                                           style: TextStyle(
                                               fontSize: 20,
                                               color: kIndigoColor,

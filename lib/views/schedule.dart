@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,7 +13,7 @@ class Schedule extends StatefulWidget {
 
 class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
   Map<DateTime, List> _events;
-  List _selectedEvents;
+  List<Practice> _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
   PracticeService _practiceService = new PracticeService();
@@ -129,7 +130,7 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
                     margin: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     child: ListTile(
-                      title: Text(event.exercise),
+                      title: Text(exercises[event.exerciseid].name),
                       onTap: () => print('$event tapped!'),
                     ),
                   ),

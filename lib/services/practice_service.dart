@@ -19,7 +19,7 @@ class PracticeService {
   }
 
   Future<void> addPractice(
-    String exercise,
+    int exerciseid,
     int count,
     DateTime timeStart,
   ) {
@@ -29,7 +29,7 @@ class PracticeService {
     return _ref
         .add(
           Practice(
-            exercise: exercise,
+            exerciseid: exerciseid,
             count: count,
             timeStart: timeStart,
             timeEnd: DateTime.now(),

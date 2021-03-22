@@ -1,16 +1,16 @@
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/screens/camera.dart';
 import 'package:khoaluan/models/bndbox.dart';
 import 'package:tflite/tflite.dart';
 
 class InferencePage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  final String title;
-  final String customModel;
+  final int exerciseid;
 
-  const InferencePage({this.cameras, this.title, this.customModel});
+  const InferencePage({this.cameras, this.exerciseid});
 
   @override
   _InferencePageState createState() => _InferencePageState();
@@ -35,7 +35,7 @@ class _InferencePageState extends State<InferencePage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text(widget.title),
+        title: Text(exercises[widget.exerciseid].name),
       ),
       body: Stack(
         children: [
@@ -51,19 +51,30 @@ class _InferencePageState extends State<InferencePage> {
                 previewW: min(_imageHeight, _imageWidth),
                 screenH: screen.height,
                 screenW: screen.width,
-                customModel: widget.customModel,
+                exerciseid: widget.exerciseid,
                 width: screen.width * 0.8,
                 height: screen.height * 0.8,
               ),
-              BasePoseImage(
-                screen: screen,
-                title: widget.title,
-              ),
+              Center(
+                child: Image(
+                  image: AssetImage(_assetName()),
+                  color: Colors.black.withOpacity(0.5),
+                  colorBlendMode: BlendMode.dstIn,
+                ),
+              )
             ],
           ),
         ],
       ),
     );
+  }
+
+  String _assetName() {
+    String name = (widget.exerciseid == 3)
+        ? 'lie_pose'
+        : ((widget.exerciseid == 1) ? 'push_up_pose' : 'stand_pose');
+
+    return 'assets/poses/$name.png';
   }
 
   _setRecognitions(recognitions, imageHeight, imageWidth) {
@@ -84,48 +95,5 @@ class _InferencePageState extends State<InferencePage> {
       isAsset: true,
       useGpuDelegate: true,
     );
-  }
-}
-
-class BasePoseImage extends StatefulWidget {
-  const BasePoseImage({
-    Key key,
-    @required this.screen,
-    @required this.title,
-  }) : super(key: key);
-
-  final Size screen;
-  final String title;
-
-  @override
-  _BasePoseImageState createState() => _BasePoseImageState();
-}
-
-class _BasePoseImageState extends State<BasePoseImage> {
-  Widget build(BuildContext context) {
-    return Center(
-      child: Image(
-        image: AssetImage(_assetName(widget.title)),
-        color: Colors.black.withOpacity(0.5),
-        colorBlendMode: BlendMode.dstIn,
-      ),
-    );
-  }
-
-  String _assetName(String title) {
-    // String name;
-    // if (title == 'Belly_Sticks') {
-    //   name = 'lie_pose';
-    // } else if (title == 'Push_Up') {
-    //   name = 'push_up_pose';
-    // } else {
-    //   name = 'stand_pose';
-    // }
-
-    String name = (title == 'Belly_Sticks')
-        ? 'lie_pose'
-        : ((title == 'Push_Up') ? 'push_up_pose' : 'stand_pose');
-
-    return 'assets/poses/$name.png';
   }
 }
