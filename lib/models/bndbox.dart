@@ -47,13 +47,13 @@ class _BndBoxState extends State<BndBox> {
     } else if (widget.customModel == fitnessData[1]) {
       upperRange = widget.height * 0.45;
       lowerRange = widget.height * 0.65;
-      // upperRange = widget.height * 0.48;
-      // lowerRange = widget.height * 0.58;
     } else if (widget.customModel == fitnessData[2]) {
       upperRange = widget.height * 0.30;
       lowerRange = widget.height * 0.85;
     } else if (widget.customModel == fitnessData[3]) {
-      upperRange = widget.width * 0.70;
+      // upperRange = widget.width * 0.50;
+      // lowerRange = widget.width * 0.80;
+      upperRange = widget.width * 0.50;
       lowerRange = widget.width * 1.00;
     }
   }

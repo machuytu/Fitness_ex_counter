@@ -53,12 +53,14 @@ class PracticeService {
     });
   }
 
-  Future<List<Practice>> getPracticeByDay(DateTime endTime) {
-    DateTime tomorrow = endTime.subtract(Duration(days: 1));
+  Future<List<Practice>> getPracticeByDay(DateTime date) {
+    var today = DateTime(date.year, date.month, date.day);
+    var tomorrow = today.add(Duration(days: 1));
+
     return _ref
         .orderBy('timeEnd', descending: true)
-        .where('timeEnd', isGreaterThanOrEqualTo: endTime)
-        .where('timeEnd', isGreaterThanOrEqualTo: tomorrow)
+        .where('timeEnd', isGreaterThanOrEqualTo: today)
+        .where('timeEnd', isLessThan: tomorrow)
         .get()
         .then((querySnapshot) => querySnapshot.docs
             .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))

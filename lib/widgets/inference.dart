@@ -102,50 +102,30 @@ class BasePoseImage extends StatefulWidget {
 }
 
 class _BasePoseImageState extends State<BasePoseImage> {
-  int checkCenterImage;
   Widget build(BuildContext context) {
-    if (widget.title == "Waist_Up") {
-      return Center(
-        child: Container(
-            width: widget.screen.width * 0.8,
-            height: widget.screen.height * 0.8,
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: ExactAssetImage('assets/poses/base_pose.png'),
-                fit: BoxFit.fitHeight,
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
-              ),
-            )),
-      );
-    } else if (widget.title == "Push_Up") {
-      return Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-            width: widget.screen.width,
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: ExactAssetImage('assets/poses/push_up_pose.png'),
-                fit: BoxFit.fitWidth,
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
-              ),
-            )),
-      );
-    } else {
-      return Center(
-        child: Container(
-            width: widget.screen.width * 0.8,
-            height: widget.screen.height * 0.8,
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: ExactAssetImage('assets/poses/base_pose.png'),
-                fit: BoxFit.fitHeight,
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.5), BlendMode.dstIn),
-              ),
-            )),
-      );
-    }
+    return Center(
+      child: Image(
+        image: AssetImage(_assetName(widget.title)),
+        color: Colors.black.withOpacity(0.5),
+        colorBlendMode: BlendMode.dstIn,
+      ),
+    );
+  }
+
+  String _assetName(String title) {
+    // String name;
+    // if (title == 'Belly_Sticks') {
+    //   name = 'lie_pose';
+    // } else if (title == 'Push_Up') {
+    //   name = 'push_up_pose';
+    // } else {
+    //   name = 'stand_pose';
+    // }
+
+    String name = (title == 'Belly_Sticks')
+        ? 'lie_pose'
+        : ((title == 'Push_Up') ? 'push_up_pose' : 'stand_pose');
+
+    return 'assets/poses/$name.png';
   }
 }
