@@ -20,9 +20,11 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.timeStart} -> ${this.timeEnd}';
+      'Practice: ${this.id} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}';
 
   String getExerciseName() => exercises[this.exerciseid].name;
+
+  double getKcal() => exercises[this.exerciseid].kcal * this.count;
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
