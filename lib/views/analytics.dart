@@ -114,58 +114,65 @@ class Analytics extends StatelessWidget {
                       SizedBox(
                         height: 15.0,
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 4,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                right: 10.0, left: 10.0, bottom: 15.0),
-                            child: Container(
-                              height: 100,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 5.0,
-                                      ),
-                                      Container(
-                                        child: SvgPicture.asset(
-                                          "assets/images/shoulder.svg",
-                                          width: 50,
-                                          color: Colors.black,
+                      listPractice != null
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: listPractice.length < 4
+                                  ? listPractice.length
+                                  : 4,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 10.0, left: 10.0, bottom: 15.0),
+                                  child: Container(
+                                    height: 100,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 5.0,
+                                            ),
+                                            Container(
+                                              child: SvgPicture.asset(
+                                                "assets/images/shoulder.svg",
+                                                width: 50,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 20.0,
+                                            ),
+                                            Text(listPractice[index].exercise,
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: kIndigoColor,
+                                                    fontWeight:
+                                                        FontWeight.bold))
+                                          ],
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 20.0,
-                                      ),
-                                      Text(listPractice[index].exercise,
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              color: kIndigoColor,
-                                              fontWeight: FontWeight.bold))
-                                    ],
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 10.0),
+                                          child: Text(timeago.format(
+                                              listPractice[index].timeEnd,
+                                              locale: 'en')),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10.0),
-                                    child: Text(timeago.format(
-                                        listPractice[index].timeEnd,
-                                        locale: 'en')),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                );
+                              },
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
