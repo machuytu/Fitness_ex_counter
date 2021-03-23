@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationModel {
   String id;
-  String idNotification;
+  int idNotification;
   String title;
   String message;
   int hour;
   int minute;
   List<int> listDaily;
+  bool isOn;
 
   NotificationModel({
     this.id,
@@ -17,6 +18,7 @@ class NotificationModel {
     this.hour,
     this.minute,
     this.listDaily,
+    this.isOn,
   });
 
   @override
@@ -37,7 +39,8 @@ class NotificationModel {
         message = json['message'],
         hour = json['hour'],
         minute = json['minute'],
-        listDaily = json['listDaily'];
+        listDaily = json['listDaily'],
+        isOn = json['is_on'];
 
   Map<String, dynamic> toJson() => {
         'id': this.id,
@@ -47,6 +50,7 @@ class NotificationModel {
         'hour': this.hour,
         'minute': this.minute,
         'listDaily': this.listDaily.toList(),
+        'is_on': this.isOn,
       };
 
   Map<String, dynamic> addJson() => {
@@ -56,5 +60,6 @@ class NotificationModel {
         'hour': this.hour,
         'minute': this.minute,
         'listDaily': this.listDaily,
+        'is_on': this.isOn,
       };
 }

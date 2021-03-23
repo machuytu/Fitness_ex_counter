@@ -18,17 +18,19 @@ class NotificationService {
         .collection('notifications');
   }
 
-  Future<void> addNotification(
-      String title, String message, int hour, int minute, List<int> listDaily) {
+  Future<void> addNotification(int id, String title, String message, int hour,
+      int minute, List<int> listDaily) {
     return _ref
         .add(
           NotificationModel(
-                  title: title,
-                  message: message,
-                  hour: hour,
-                  minute: minute,
-                  listDaily: listDaily)
-              .addJson(),
+            idNotification: id,
+            title: title,
+            message: message,
+            hour: hour,
+            minute: minute,
+            listDaily: listDaily,
+            isOn: true,
+          ).addJson(),
         )
         .then((value) => {print("Add Notification success")})
         .catchError((err) {
@@ -36,7 +38,27 @@ class NotificationService {
     });
   }
 
-  Future<List<NotificationModel>> getNotificationByDay(DateTime endTime) {
+  Future<void> updateNotification(int id, String title, String message,
+      int hour, int minute, List<int> listDaily) {
+    return _ref
+        .add(
+          NotificationModel(
+            idNotification: id,
+            title: title,
+            message: message,
+            hour: hour,
+            minute: minute,
+            listDaily: listDaily,
+            isOn: true,
+          ).addJson(),
+        )
+        .then((value) => {print("Add Notification success")})
+        .catchError((err) {
+      print(err);
+    });
+  }
+
+  Future<List<NotificationModel>> getNotificationByDay() {
     return _ref
         .get()
         .then((querySnapshot) => querySnapshot.docs

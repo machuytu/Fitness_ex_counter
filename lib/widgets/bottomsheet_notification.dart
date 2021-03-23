@@ -9,6 +9,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'bottomsheet_set_day.dart';
 import 'bottomsheet_settitle.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 class BottomsheetNotification extends StatefulWidget {
   BottomsheetNotification({Key key}) : super(key: key);
@@ -42,8 +43,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
             onPressed: () {
               notification.scheduleDailyNotification(
                   title, message, hour, minute, daily.getListDay());
-              notificationService.addNotification(
-                  title, message, hour, minute, daily.getListDay());
+              Get.back();
             },
             child: Text("Lưu", style: TextStyle(color: Colors.white)),
           ),
