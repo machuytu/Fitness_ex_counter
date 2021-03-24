@@ -3,6 +3,8 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/style.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:khoaluan/models/notification_model.dart';
+import 'package:khoaluan/services/notification_service.dart';
 import 'package:khoaluan/utils/time_ago.dart';
 import 'package:khoaluan/widgets/bottomsheet_notification.dart';
 import 'package:khoaluan/widgets/notification_view.dart';
@@ -19,6 +21,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   DateTime before = new DateTime.now().subtract(Duration(hours: -1));
   DateFormat dateFormat = DateFormat("dd-MM-yyyy h:mma");
+  NotificationService notificationService = new NotificationService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +76,30 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                NotificationView(),
-                SizedBox(height: 10),
-                NotificationView(),
-                SizedBox(height: 10),
-                NotificationView(),
+                FutureBuilder(
+                    future: notificationService.getNotificationByDay(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<NotificationModel> list = snapshot.data;
+                        if (list != null) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: list.length,
+                            itemBuilder: (context, index) {
+                              return NotificationView(
+                                hour: list[index].hour,
+                                minute: list[index].minute,
+                                lights: list[index].isOn,
+                              );
+                            },
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }
+                      return CircularProgressIndicator();
+                    }),
                 SizedBox(height: 40),
                 Text("Lịch sử thông báo", style: white22Regular),
                 Container(

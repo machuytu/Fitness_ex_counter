@@ -8,6 +8,7 @@ class NotificationModel {
   int hour;
   int minute;
   List<int> listDaily;
+  bool isOn;
 
   NotificationModel({
     this.id,
@@ -17,6 +18,7 @@ class NotificationModel {
     this.hour,
     this.minute,
     this.listDaily,
+    this.isOn,
   });
 
   @override
@@ -37,6 +39,8 @@ class NotificationModel {
         hour = json['hour'],
         minute = json['minute'],
         listDaily = (json['listDaily']).toList();
+        listDaily = json['listDaily'],
+        isOn = json['is_on'];
 
   Map<String, dynamic> toJson() => {
         'id': this.id,
@@ -45,7 +49,8 @@ class NotificationModel {
         'message': this.message,
         'hour': this.hour,
         'minute': this.minute,
-        'listDaily': this.listDaily,
+        'listDaily': this.listDaily.toList(),
+        'is_on': this.isOn,
       };
 
   Map<String, dynamic> addJson() => {
@@ -55,6 +60,7 @@ class NotificationModel {
         'hour': this.hour,
         'minute': this.minute,
         'listDaily': this.listDaily,
+        'is_on': this.isOn,
       };
 
   Map<String, dynamic> updateJson() => {
