@@ -74,6 +74,18 @@ class NotificationService {
     });
   }
 
+  Future<void> deleteNotification(
+    String id,
+  ) {
+    return _ref
+        .doc(id)
+        .delete()
+        .then((value) => print("Notification Delete"))
+        .catchError((err) {
+      print(err);
+    });
+  }
+
   Future<List<NotificationModel>> getNotification() {
     return _ref
         .get()

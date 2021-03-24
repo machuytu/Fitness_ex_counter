@@ -22,6 +22,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   DateTime before = new DateTime.now().subtract(Duration(hours: -1));
   DateFormat dateFormat = DateFormat("dd-MM-yyyy h:mma");
   NotificationService notificationService = new NotificationService();
+  NotificationView notificationView;
+
+  Widget currentPage;
+  void callback(Widget nextPage) {
+    setState(() {
+      this.currentPage = nextPage;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +101,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             itemBuilder: (context, index) {
                               return NotificationView(
                                 notification: list[index],
+                                callback: this.callback,
                               );
                             },
                           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:khoaluan/models/notification_model.dart';
+import 'package:khoaluan/screens/notification_screen.dart';
 import 'package:khoaluan/services/notification_service.dart';
 import 'package:khoaluan/plugin/notification.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,8 +12,14 @@ class NotificationView extends StatefulWidget {
   final int minute;
   final bool lights;
   final NotificationModel notification;
+  Function callback;
   NotificationView(
-      {this.lights, this.hour, this.minute, key, this.notification})
+      {this.lights,
+      this.hour,
+      this.minute,
+      key,
+      this.notification,
+      this.callback})
       : super(key: key);
 
   @override
@@ -36,7 +43,16 @@ class _NotificationViewState extends State<NotificationView> {
               caption: 'Delete',
               color: Colors.red,
               icon: Icons.delete,
-              onTap: () {},
+              onTap: () {
+                setState(() {
+                  this.widget.callback(NotificationScreen());
+                  notificationPlugin.deleteScheduleDailyNotification(
+                      widget.notification.idNotification);
+                  notificationService.deleteNotification(
+                    widget.notification.id,
+                  );
+                });
+              },
             ),
           ],
           child: Container(
