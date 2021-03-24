@@ -80,7 +80,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
                 FutureBuilder(
-                    future: notificationService.getNotificationByDay(),
+                    future: notificationService.getNotification(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         List<NotificationModel> list = snapshot.data;
@@ -91,9 +91,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             itemCount: list.length,
                             itemBuilder: (context, index) {
                               return NotificationView(
-                                hour: list[index].hour,
-                                minute: list[index].minute,
-                                lights: list[index].isOn,
+                                notification: list[index],
                               );
                             },
                           );
@@ -104,26 +102,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       return CircularProgressIndicator();
                     }),
                 SizedBox(height: 40),
-                Text("Lịch sử thông báo", style: white22Regular),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0)),
-                  width: double.infinity,
-                  height: 70,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.notifications),
-                        Text(
-                            TimeAgo.timeAgoSinceDate(dateFormat.format(before)),
-                            style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ),
-                )
               ],
             ),
           ),

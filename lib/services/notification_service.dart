@@ -48,22 +48,25 @@ class NotificationService {
 
   Future<void> updateNotification(
     String id,
+    int idNotification,
     String title,
     String message,
     int hour,
     int minute,
     List<int> listDaily,
+    bool isOn,
   ) {
     return _ref
         .doc(id)
         .set(
           NotificationModel(
-                  title: title,
-                  message: message,
-                  hour: hour,
-                  minute: minute,
-                  listDaily: listDaily)
-              .updateJson(),
+            title: title,
+            message: message,
+            hour: hour,
+            minute: minute,
+            listDaily: listDaily,
+            isOn: isOn,
+          ).updateJson(),
         )
         .then((value) => print("Notification Updated"))
         .catchError((err) {
@@ -71,7 +74,7 @@ class NotificationService {
     });
   }
 
-  Future<List<NotificationModel>> getNotificationByDay() {
+  Future<List<NotificationModel>> getNotification() {
     return _ref
         .get()
         .then((querySnapshot) => querySnapshot.docs

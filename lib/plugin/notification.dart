@@ -41,6 +41,29 @@ class NotificationPlugin {
         idNotification, title, message, hour, minute, listDaily);
   }
 
+  Future<void> updateScheduleDailyNotification(int id, String title,
+      String message, int hour, int minute, List<int> listDaily) async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Ho_Chi_Minh"));
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        message,
+        nextInstanceOfTime(hour: hour, minute: minute, listDaily: listDaily),
+        const NotificationDetails(
+            android: AndroidNotificationDetails('your channel id',
+                'your channel name', 'your channel description')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
+  Future<void> deleteScheduleDailyNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
   tz.TZDateTime _nextInstanceOfDaily(int hour, int minute) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
 
