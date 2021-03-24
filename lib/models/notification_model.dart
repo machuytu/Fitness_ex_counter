@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationModel {
   String id;
-  String idNotification;
+  int idNotification;
   String title;
   String message;
   int hour;
@@ -26,7 +26,6 @@ class NotificationModel {
   factory NotificationModel.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
     data['id'] = snapshot.id;
-    data['uid'] = snapshot.reference.toString().split('/')[1];
     return NotificationModel.fromJson(data);
   }
 
@@ -37,7 +36,7 @@ class NotificationModel {
         message = json['message'],
         hour = json['hour'],
         minute = json['minute'],
-        listDaily = json['listDaily'];
+        listDaily = (json['listDaily']).toList();
 
   Map<String, dynamic> toJson() => {
         'id': this.id,
@@ -46,11 +45,19 @@ class NotificationModel {
         'message': this.message,
         'hour': this.hour,
         'minute': this.minute,
-        'listDaily': this.listDaily.toList(),
+        'listDaily': this.listDaily,
       };
 
   Map<String, dynamic> addJson() => {
         'id_notification': this.idNotification,
+        'title': this.title,
+        'message': this.message,
+        'hour': this.hour,
+        'minute': this.minute,
+        'listDaily': this.listDaily,
+      };
+
+  Map<String, dynamic> updateJson() => {
         'title': this.title,
         'message': this.message,
         'hour': this.hour,

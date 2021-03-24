@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 
 class Practice {
-  String id;
-  String uid;
-  int exerciseid;
-  int count;
-  DateTime timeStart;
-  DateTime timeEnd;
+  final String id;
+  final String uid;
+  final int exerciseid;
+  final int count;
+  final DateTime timeStart;
+  final DateTime timeEnd;
 
   Practice({
     this.id,
@@ -20,7 +20,7 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}';
+      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}';
 
   String getExerciseName() => exercises[this.exerciseid].name;
 
@@ -29,7 +29,7 @@ class Practice {
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
     data['id'] = snapshot.id;
-    data['uid'] = snapshot.reference.toString().split('/')[1];
+    data['uid'] = snapshot.reference.parent.parent.id;
     return Practice.fromJson(data);
   }
 

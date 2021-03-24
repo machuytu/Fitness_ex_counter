@@ -35,7 +35,7 @@ class PracticeService {
             timeEnd: DateTime.now(),
           ).addJson(),
         )
-        .then((value) => {print("Add practice success")})
+        .then((value) => {print("Add practice success ${value.id}")})
         .catchError((err) {
       print(err);
     });

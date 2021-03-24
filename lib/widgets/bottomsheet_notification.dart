@@ -40,9 +40,9 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
         actions: [
           TextButton(
             onPressed: () {
-              notification.scheduleDailyNotification(
-                  title, message, hour, minute, daily.getListDay());
               notificationService.addNotification(
+                  0, title, message, hour, minute, daily.getListDay());
+              notification.scheduleDailyNotification(
                   title, message, hour, minute, daily.getListDay());
             },
             child: Text("Lưu", style: TextStyle(color: Colors.white)),
