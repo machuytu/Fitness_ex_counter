@@ -58,8 +58,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       onTap: () {
                         showMaterialModalBottomSheet(
                           context: context,
-                          builder: (context) => BottomsheetNotification(),
-                        );
+                          builder: (context) =>
+                              BottomsheetNotification(context: context),
+                        ).then((value) {
+                          setState(() {});
+                        });
                       },
                       child: Container(
                         height: 40,

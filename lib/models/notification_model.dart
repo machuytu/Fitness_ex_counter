@@ -38,8 +38,7 @@ class NotificationModel {
         message = json['message'],
         hour = json['hour'],
         minute = json['minute'],
-        listDaily = (json['listDaily']).toList();
-        listDaily = json['listDaily'],
+        listDaily = (json['listDaily']).cast<int>(),
         isOn = json['is_on'];
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +68,6 @@ class NotificationModel {
         'hour': this.hour,
         'minute': this.minute,
         'listDaily': this.listDaily,
+        'is_on': this.isOn,
       };
 }

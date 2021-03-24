@@ -12,7 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 
 class BottomsheetNotification extends StatefulWidget {
-  BottomsheetNotification({Key key}) : super(key: key);
+  final BuildContext context;
+  BottomsheetNotification({Key key, this.context}) : super(key: key);
 
   @override
   _BottomsheetNotificationState createState() =>
@@ -41,8 +42,6 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
         actions: [
           TextButton(
             onPressed: () {
-              notificationService.addNotification(
-                  0, title, message, hour, minute, daily.getListDay());
               notification.scheduleDailyNotification(
                   title, message, hour, minute, daily.getListDay());
               Get.back();
