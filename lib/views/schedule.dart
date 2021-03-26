@@ -103,11 +103,10 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
-      onDaySelected: (day, events, holidays) {
-        _practiceService.getPracticeByDate(day).then((value) {
-          setState(() {
-            _selectedEvents = value;
-          });
+      onDaySelected: (day, events, holidays) async {
+        List<Practice> value = await _practiceService.getPracticeByDate(day);
+        setState(() {
+          _selectedEvents = value;
         });
       },
       onVisibleDaysChanged: _onVisibleDaysChanged,

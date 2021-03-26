@@ -82,34 +82,20 @@ class Setting extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: deepBlueColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Thông tin cá nhân",
-                                  style: TextStyle(
-                                      color: kGreyColor, fontSize: 20),
+                            child: GestureDetector(
+                              onTap: () => Get.toNamed("/info_screen"),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: deepBlueColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Cài đặt",
-                                  style: TextStyle(
-                                      color: kGreyColor, fontSize: 20),
+                                child: Center(
+                                  child: Text(
+                                    "Thông tin cá nhân",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
+                                  ),
                                 ),
                               ),
                             ),

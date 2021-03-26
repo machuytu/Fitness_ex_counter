@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserService {
   final databaseReference = FirebaseDatabase.instance.reference();
-  User _user;
 
   CollectionReference _ref = FirebaseFirestore.instance.collection('users');
 
@@ -50,6 +49,30 @@ class UserService {
           'gender': isMale
         })
         .then((value) async => {print("add user $userId")})
+        .catchError((err) => {print(err)});
+  }
+
+  void updateValueRegister(
+      String userId,
+      String nameUser,
+      int heightValue,
+      String heightUnit,
+      int weightValue,
+      String weightUnit,
+      int fitnessMode,
+      bool isMale) async {
+    _ref
+        .doc(userId)
+        .set({
+          'name': nameUser,
+          'height': heightValue,
+          'height_unit': heightUnit,
+          'weight': weightValue,
+          'weight_unit': weightUnit,
+          'fitness_mode': fitnessMode,
+          'gender': isMale
+        })
+        .then((value) async => {print("update user $userId")})
         .catchError((err) => {print(err)});
   }
 }

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:khoaluan/screens/info_screen.dart';
 import 'package:khoaluan/screens/info_user.dart';
 import 'package:khoaluan/screens/login_screen.dart';
 import 'package:khoaluan/screens/register_screen.dart';
 import 'package:khoaluan/screens/splash_screen.dart';
+import 'package:khoaluan/screens/update_account.dart';
 import 'package:khoaluan/widgets/bottomnav.dart';
 import 'package:khoaluan/screens/notification_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -128,6 +130,8 @@ class _MyAppState extends State<MyApp> {
                 "/login": (context) => LoginScreen(),
                 "/register": (context) => ResigterScreen(),
                 "/info_user": (context) => InfoUser(),
+                "/info_screen": (context) => InfoScreen(),
+                "/update_account": (context) => UpdateAccount(),
               },
             );
           }
