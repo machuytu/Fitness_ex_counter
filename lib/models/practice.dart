@@ -9,24 +9,26 @@ class Practice {
   final int count;
   final DateTime timeStart;
   final DateTime timeEnd;
-  Exercise exercise;
+  Exercise _exercise;
 
-  Practice({
-    this.id,
-    this.uid,
-    int exerciseid = 0,
+  Practice(
+    int exerciseid,
     this.count,
     this.timeStart,
-    this.timeEnd,
+    this.timeEnd, {
+    this.id,
+    this.uid,
   }) {
-    this.exercise = exercises[exerciseid];
+    this._exercise = exercises[exerciseid];
   }
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.uid} / ${this.exercise.name} / ${this.count} / ${this.getKcal()}';
+      'Practice: ${this.id} / ${this.uid} / ${this.exercise.name} / ${this.count} / ${this.kcal}';
 
-  double getKcal() => this.exercise.kcal * this.count;
+  Exercise get exercise => _exercise;
+
+  double get kcal => this.exercise.kcal * this.count;
 
   double getKcalBodyPart(BodyPart bodyPart) =>
       this.exercise.kcalBodyPart(bodyPart) * this.count;
@@ -41,7 +43,7 @@ class Practice {
   Practice.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         uid = json['uid'],
-        exercise = exercises[json['exerciseid']],
+        _exercise = exercises[json['exerciseid']],
         count = json['count'],
         timeStart = json['timeStart'].toDate(),
         timeEnd = json['timeEnd'].toDate();

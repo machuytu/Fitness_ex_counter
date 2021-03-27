@@ -64,7 +64,7 @@ class Analytics extends StatelessWidget {
                         List<Practice> list = snapshot.data;
                         double totalKcal = 0;
                         for (int i = 0; i < list.length; i++) {
-                          totalKcal += list[i].getKcal();
+                          totalKcal += list[i].kcal;
                         }
                         return Container(
                           color: kIndigoColor,
@@ -123,9 +123,10 @@ class Analytics extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<Practice> listPractice = snapshot.data;
-                      var result = _practiceService
-                          .getAllBodyPartKcalByPractices(listPractice);
-                      print('Kcal $result');
+                      var result =
+                          _practiceService.getBodyPartKcal(listPractice);
+                      print('Body Part Kcal: $result');
+                      // print('SHOULDERS Kcal ${result[BodyPart.SHOULDERS]}');
                       listPractice.forEach((element) {
                         print(element);
                       });

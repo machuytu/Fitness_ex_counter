@@ -28,14 +28,7 @@ class PracticeService {
     }
 
     return _ref
-        .add(
-          Practice(
-            exerciseid: exerciseid,
-            count: count,
-            timeStart: timeStart,
-            timeEnd: DateTime.now(),
-          ).addJson(),
-        )
+        .add(Practice(exerciseid, count, timeStart, DateTime.now()).addJson())
         .then((value) => {print("Add practice success ${value.id}")})
         .catchError((err) {
       print(err);
@@ -71,17 +64,23 @@ class PracticeService {
     });
   }
 
-  List<double> getAllBodyPartKcalByPractices(List<Practice> practices) {
-    return BodyPart.values.map((part) {
-      double sum = 0.0;
-      practices.forEach((practice) => sum += practice.getKcalBodyPart(part));
-      return sum;
-    }).toList();
-  }
+  // List<double> getBodyPartKcal(List<Practice> practices) {
+  //   return BodyPart.values.map((part) {
+  //     double sum = 0.0;
+  //     practices.forEach((practice) {
+  //       sum += practice.getKcalBodyPart(part);
+  //     });
+  //     return sum;
+  //   });
+  // }
 
-  double getKcalByPractices(List<Practice> practices) {
-    double sum = 0.0;
-    practices.forEach((practice) => sum += practice.getKcal());
-    return sum;
-  }
+  Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) =>
+      Map.fromIterables(
+          BodyPart.values,
+          BodyPart.values.map((part) => practices
+              .map((p) => p.getKcalBodyPart(part))
+              .reduce((a, b) => a + b)));
+
+  double getTotalKcal(List<Practice> practices) =>
+      practices.map((p) => p.kcal).reduce((a, b) => a + b);
 }
