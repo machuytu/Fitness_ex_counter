@@ -10,6 +10,7 @@ class Practice {
   final int count;
   final DateTime timeStart;
   final DateTime timeEnd;
+  Exercise exercise;
 
   Practice({
     this.id,
@@ -18,21 +19,18 @@ class Practice {
     this.count,
     this.timeStart,
     this.timeEnd,
-  });
+  }) {
+    this.exercise = exercises[this.exerciseid];
+  }
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}}';
+      'Practice: ${this.id} / ${this.uid} / ${this.exercise.name} / ${this.count} / ${this.getKcal()}}';
 
-  String getExerciseName() => exercises[this.exerciseid].name;
+  double getKcal() => this.exercise.kcal * this.count;
 
-  double getKcal() => exercises[this.exerciseid].kcal * this.count;
-
-  List<BodyPart> getBodyParts() => exercises[this.exerciseid].bodyParts;
-
-  double getKcalByBodyPart(BodyPart bodyPart) {
-    return (this.getBodyParts().contains(bodyPart)) ? this.getKcal() : 0;
-  }
+  double getKcalByBodyPart(BodyPart bodyPart) =>
+      this.exercise.getKcalByBodyPart(bodyPart) * this.count;
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
@@ -45,6 +43,7 @@ class Practice {
       : id = json['id'],
         uid = json['uid'],
         exerciseid = json['exerciseid'],
+        exercise = exercises[json['exerciseid']],
         count = json['count'],
         timeStart = json['timeStart'].toDate(),
         timeEnd = json['timeEnd'].toDate();

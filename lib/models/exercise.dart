@@ -6,6 +6,9 @@ class Exercise {
 
   Exercise(this.id, this.name, this.kcal, this.bodyParts);
 
+  double getKcalByBodyPart(BodyPart bodyPart) =>
+      (this.bodyParts.contains(bodyPart)) ? this.kcal : 0.0;
+
   @override
   String toString() => 'Exercise: ${this.id} / ${this.name} / ${this.kcal}';
 }

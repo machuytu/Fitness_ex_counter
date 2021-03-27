@@ -127,7 +127,7 @@ class _ScheduleState extends State<Schedule> with TickerProviderStateMixin {
                     margin: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     child: ListTile(
-                      title: Text(event.getExerciseName()),
+                      title: Text(event.exercise.name),
                       onTap: () => print('$event tapped!'),
                     ),
                   ),

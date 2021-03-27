@@ -168,7 +168,8 @@ class Analytics extends StatelessWidget {
                                             ),
                                             Text(
                                                 listPractice[index]
-                                                    .getExerciseName(),
+                                                    .exercise
+                                                    .name,
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     color: kIndigoColor,
