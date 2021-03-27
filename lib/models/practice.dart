@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 
+import 'exercise.dart';
+
 class Practice {
   final String id;
   final String uid;
@@ -20,11 +22,17 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}';
+      'Practice: ${this.id} / ${this.uid} / ${this.getExerciseName()} / ${this.count} / ${this.getKcal()}}';
 
   String getExerciseName() => exercises[this.exerciseid].name;
 
   double getKcal() => exercises[this.exerciseid].kcal * this.count;
+
+  List<BodyPart> getBodyParts() => exercises[this.exerciseid].bodyParts;
+
+  double getKcalByBodyPart(BodyPart bodyPart) {
+    return (this.getBodyParts().contains(bodyPart)) ? this.getKcal() : 0;
+  }
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/practice.dart';
 
 import 'auth_service.dart';
@@ -69,4 +70,12 @@ class PracticeService {
       print(err);
     });
   }
+
+  List<double> getAllBodyPartKcalByPractices(List<Practice> practices) =>
+      BodyPart.values.map((part) {
+        double sum = 0.0;
+        practices
+            .forEach((practice) => sum += practice.getKcalByBodyPart(part));
+        return sum;
+      }).toList();
 }
