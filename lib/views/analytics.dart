@@ -17,6 +17,9 @@ class Analytics extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Practice> listPractice = snapshot.data;
+            var listKcal =
+                _practiceService.getAllBodyPartKcalByPractices(listPractice);
+            print('All Kcal $listKcal: ');
             listPractice.forEach((element) {
               print(element);
             });
