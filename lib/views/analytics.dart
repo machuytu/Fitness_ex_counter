@@ -9,63 +9,64 @@ import 'package:timeago/timeago.dart' as timeago;
 class Analytics extends StatelessWidget {
   final int kcalBurn = 74;
   final PracticeService _practiceService = PracticeService();
-
+  DateTime now = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _practiceService.getPracticeByUser(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Practice> listPractice = snapshot.data;
-            listPractice.forEach((element) {
-              print(element);
-            });
-            return Scaffold(
-              backgroundColor: kIndigoColor,
-              body: SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                        child: Text(
-                          "Analytic",
-                          style: TextStyle(
-                              color: kGreenColor,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
-                        ),
+    return Scaffold(
+      backgroundColor: kIndigoColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                child: Text(
+                  "Analytic",
+                  style: TextStyle(
+                      color: kGreenColor,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      "assets/images/fire.svg",
+                      width: 35,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      "Burnning today:",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
                       ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              "assets/images/fire.svg",
-                              width: 35,
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Text(
-                              "Burnning today:",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Center(
-                        child: Container(
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Center(
+                child: FutureBuilder(
+                    future: _practiceService.getPracticeByDate(now),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Practice> list = snapshot.data;
+                        double totalKcal = 0;
+                        for (int i = 0; i < list.length; i++) {
+                          totalKcal += list[i].getKcal();
+                        }
+                        return Container(
                           color: kIndigoColor,
                           child: CircularStepProgressIndicator(
                             totalSteps: 100,
@@ -83,7 +84,7 @@ class Analytics extends StatelessWidget {
                               text: TextSpan(
                                 children: <TextSpan>[
                                   TextSpan(
-                                      text: kcalBurn.toString(),
+                                      text: totalKcal.toString(),
                                       style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.bold,
@@ -96,25 +97,36 @@ class Analytics extends StatelessWidget {
                               ),
                             )),
                           ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "List excercise recently",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      listPractice != null
+                        );
+                      }
+                      return CircularProgressIndicator();
+                    }),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  "List excercise recently",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              FutureBuilder(
+                  future: _practiceService.getPracticeByUser(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Practice> listPractice = snapshot.data;
+                      listPractice.forEach((element) {
+                        print(element);
+                      });
+                      return listPractice != null
                           ? ListView.builder(
                               shrinkWrap: true,
                               itemCount: listPractice.length < 4
@@ -174,14 +186,14 @@ class Analytics extends StatelessWidget {
                                 );
                               },
                             )
-                          : Container(),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-          return CircularProgressIndicator();
-        });
+                          : Container();
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  }),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

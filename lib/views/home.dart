@@ -62,7 +62,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    double lol;
     var size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: getUser(),
@@ -75,6 +74,7 @@ class _HomeState extends State<Home> {
                     Container(
                       height: 330,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10.0),
                           Padding(
@@ -126,18 +126,22 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
+                          // SizedBox(height: 10.0),
+                          // Container(
+                          //   height: 50,
+                          //   width: double.infinity,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(15),
+                          //   ),
+                          //   child: Image(
+                          //       fit: BoxFit.cover,
+                          //       image:
+                          //           AssetImage("assets/images/start_list.png")),
+                          // ),
                           SizedBox(height: 10.0),
                           Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: CustomListTile(
-                              title: Text(_user.name, style: kTitleStyle),
-                              subtitle: Text("You have new 12 notification",
-                                  style: kSubtitleStyle),
-                              trailing: Image.asset(
-                                "assets/images/notification.png",
-                                width: 25.0,
-                              ),
-                            ),
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: Text(_user.name, style: kTitleStyle),
                           ),
                           SizedBox(height: 10.0),
                           CustomListTile(
