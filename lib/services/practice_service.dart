@@ -74,7 +74,7 @@ class PracticeService {
   List<double> getAllBodyPartKcalByPractices(List<Practice> practices) {
     return BodyPart.values.map((part) {
       double sum = 0.0;
-      practices.forEach((practice) => sum += practice.getKcalByBodyPart(part));
+      practices.forEach((practice) => sum += practice.getKcalBodyPart(part));
       return sum;
     }).toList();
   }

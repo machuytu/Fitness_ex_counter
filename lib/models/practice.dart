@@ -6,7 +6,6 @@ import 'exercise.dart';
 class Practice {
   final String id;
   final String uid;
-  final int exerciseid;
   final int count;
   final DateTime timeStart;
   final DateTime timeEnd;
@@ -15,12 +14,12 @@ class Practice {
   Practice({
     this.id,
     this.uid,
-    this.exerciseid,
+    int exerciseid = 0,
     this.count,
     this.timeStart,
     this.timeEnd,
   }) {
-    this.exercise = exercises[this.exerciseid];
+    this.exercise = exercises[exerciseid];
   }
 
   @override
@@ -29,8 +28,8 @@ class Practice {
 
   double getKcal() => this.exercise.kcal * this.count;
 
-  double getKcalByBodyPart(BodyPart bodyPart) =>
-      this.exercise.getKcalByBodyPart(bodyPart) * this.count;
+  double getKcalBodyPart(BodyPart bodyPart) =>
+      this.exercise.kcalBodyPart(bodyPart) * this.count;
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
@@ -42,7 +41,6 @@ class Practice {
   Practice.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         uid = json['uid'],
-        exerciseid = json['exerciseid'],
         exercise = exercises[json['exerciseid']],
         count = json['count'],
         timeStart = json['timeStart'].toDate(),
@@ -51,14 +49,14 @@ class Practice {
   Map<String, dynamic> toJson() => {
         'id': this.id,
         'uid': this.uid,
-        'exerciseid': this.exerciseid,
+        'exerciseid': this.exercise.id,
         'count': this.count,
         'timeStart': this.timeStart,
         'timeEnd': this.timeEnd,
       };
 
   Map<String, dynamic> addJson() => {
-        'exerciseid': this.exerciseid,
+        'exerciseid': this.exercise.id,
         'count': this.count,
         'timeStart': this.timeStart,
         'timeEnd': this.timeEnd,

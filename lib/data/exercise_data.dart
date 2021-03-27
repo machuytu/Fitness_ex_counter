@@ -2,7 +2,6 @@ import 'package:khoaluan/models/exercise.dart';
 
 final exercises = <Exercise>[
   Exercise(
-    0,
     'Squats',
     0.32,
     [
@@ -13,7 +12,6 @@ final exercises = <Exercise>[
     ],
   ),
   Exercise(
-    1,
     'Push Ups',
     0.45,
     [
@@ -26,7 +24,6 @@ final exercises = <Exercise>[
     ],
   ),
   Exercise(
-    2,
     'Stationary Lunges',
     0.3,
     [
@@ -37,7 +34,6 @@ final exercises = <Exercise>[
     ],
   ),
   Exercise(
-    3,
     'Crunches',
     0.25,
     [

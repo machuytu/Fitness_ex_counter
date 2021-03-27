@@ -1,12 +1,15 @@
 class Exercise {
-  final int id;
+  static int autoId = 0;
+  final int id = autoId;
   final String name;
   final double kcal;
   final List<BodyPart> bodyParts;
 
-  Exercise(this.id, this.name, this.kcal, this.bodyParts);
+  Exercise(this.name, this.kcal, this.bodyParts) {
+    autoId++;
+  }
 
-  double getKcalByBodyPart(BodyPart bodyPart) =>
+  double kcalBodyPart(BodyPart bodyPart) =>
       (this.bodyParts.contains(bodyPart)) ? this.kcal : 0.0;
 
   @override
