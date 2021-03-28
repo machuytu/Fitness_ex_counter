@@ -74,13 +74,24 @@ class PracticeService {
   //   });
   // }
 
-  Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) =>
-      Map.fromIterables(
-          BodyPart.values,
-          BodyPart.values.map((part) => practices
-              .map((p) => p.getKcalBodyPart(part))
-              .reduce((a, b) => a + b)));
+  Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) {
+    return Map.fromIterables(
+      BodyPart.values,
+      BodyPart.values.map((part) {
+        double sum = 0.0;
+        practices.forEach((practice) {
+          sum += practice.getKcalBodyPart(part);
+        });
+        return sum;
+      }),
+    );
+  }
 
-  double getTotalKcal(List<Practice> practices) =>
-      practices.map((p) => p.kcal).reduce((a, b) => a + b);
+  double getTotalKcal(List<Practice> practices) {
+    double sum = 0.0;
+    practices.forEach((practice) {
+      sum += practice.kcal;
+    });
+    return sum;
+  }
 }
