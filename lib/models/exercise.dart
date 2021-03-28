@@ -9,7 +9,7 @@ class Exercise {
     autoId++;
   }
 
-  double kcalBodyPart(BodyPart bodyPart) =>
+  double getkcalBodyPart(BodyPart bodyPart) =>
       (this.bodyParts.contains(bodyPart)) ? this.kcal : 0.0;
 
   @override
