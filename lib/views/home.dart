@@ -8,8 +8,9 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/fitness.dart';
 import 'package:khoaluan/models/user.dart';
-import 'package:khoaluan/screens/test.dart';
+import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
@@ -32,6 +33,8 @@ class _HomeState extends State<Home> {
   UserService user = new UserService();
   User _user = new User();
   String userId;
+  final PracticeService _practiceService = PracticeService();
+  DateTime now = DateTime.now();
 
   Future<User> getUser() async {
     _user = await user.getUser(_auth);
@@ -62,7 +65,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: getUser(),
         builder: (context, snapshot) {
@@ -72,7 +74,6 @@ class _HomeState extends State<Home> {
                 child: Column(
                   children: [
                     Container(
-                      height: 330,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -126,22 +127,21 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          // SizedBox(height: 10.0),
-                          // Container(
-                          //   height: 50,
-                          //   width: double.infinity,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(15),
-                          //   ),
-                          //   child: Image(
-                          //       fit: BoxFit.cover,
-                          //       image:
-                          //           AssetImage("assets/images/start_list.png")),
-                          // ),
                           SizedBox(height: 10.0),
                           Padding(
                             padding: const EdgeInsets.only(left: 18.0),
                             child: Text(_user.name, style: kTitleStyle),
+                          ),
+                          SizedBox(height: 10.0),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                      "assets/images/start_list.png")),
+                            ),
                           ),
                           SizedBox(height: 10.0),
                           CustomListTile(
@@ -174,28 +174,18 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: size.height - 330.0,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: 0.0,
-                            left: 20.0,
-                            right: 0.0,
-                            bottom: 0.0,
-                            child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 40.0),
+                        child: Stack(
+                          children: [
+                            Container(
                               decoration: BoxDecoration(
                                 color: kGreenColor,
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(40.0)),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            left: 0.0,
-                            top: 10.0,
-                            right: 0.0,
-                            bottom: 0.0,
-                            child: Container(
+                            Container(
                               padding: EdgeInsets.symmetric(
                                 // horizontal: 20.0,
                                 vertical: 25.0,
@@ -227,11 +217,27 @@ class _HomeState extends State<Home> {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 10),
-                                        child: Container(
-                                          height: 300,
-                                          width: 200,
-                                          child: Test(),
-                                        ),
+                                        child: FutureBuilder(
+                                            future: _practiceService
+                                                .getPracticeByDate(now),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                print(_practiceService
+                                                    .getBodyPartKcal(
+                                                        snapshot.data));
+                                                return Container(
+                                                  height: 300,
+                                                  width: 200,
+                                                  child: BodyPartWidget(
+                                                    getBodyPartKcal:
+                                                        _practiceService
+                                                            .getBodyPartKcal(
+                                                                snapshot.data),
+                                                  ),
+                                                );
+                                              }
+                                              return CircularProgressIndicator();
+                                            }),
                                       ),
                                       Expanded(
                                         child: Column(
@@ -305,8 +311,8 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

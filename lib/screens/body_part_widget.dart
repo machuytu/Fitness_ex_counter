@@ -1,23 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:khoaluan/models/exercise.dart';
 
-class Test extends StatefulWidget {
-  Test({Key key}) : super(key: key);
+class BodyPartWidget extends StatefulWidget {
+  final Map<BodyPart, double> getBodyPartKcal;
+  BodyPartWidget({Key key, this.getBodyPartKcal}) : super(key: key);
 
   @override
-  _TestState createState() => _TestState();
+  _BodyPartWidgetState createState() => _BodyPartWidgetState();
 }
 
-class _TestState extends State<Test> {
+class _BodyPartWidgetState extends State<BodyPartWidget> {
   double ratio = 0.8;
+
+  Color getColor(double bodyPart) {
+    if (0 < bodyPart && bodyPart <= 50) {
+      return Colors.green;
+    } else if (50 < bodyPart && bodyPart <= 100) {
+      return Colors.yellow;
+    } else if (100 < bodyPart) {
+      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(widget.getBodyPartKcal[BodyPart.TRAPS].toString());
+
     return SafeArea(
         child: Container(
       child: Stack(
         children: [
           Positioned.fill(
+              // tay phai
               left: 140 * ratio,
               top: 15 * ratio,
               child: Align(
@@ -25,10 +43,11 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/right_arm.svg",
                   height: 75 * ratio,
-                  color: Colors.yellow,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.FOREARM]),
                 ),
               )),
           Positioned.fill(
+              //tay trai
               right: 140 * ratio,
               top: 15 * ratio,
               child: Align(
@@ -36,29 +55,55 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/left_arm.svg",
                   height: 75 * ratio,
-                  color: Colors.yellow,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.FOREARM]),
                 ),
               )),
           Positioned.fill(
+              // vai trai
+              right: 85 * ratio,
+              top: 62.5 * ratio,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: SvgPicture.asset(
+                  "assets/check_pose/left_bicep.svg",
+                  height: 65 * ratio,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.BICEPS]),
+                ),
+              )),
+          Positioned.fill(
+              // vai phai
               right: 85 * ratio,
               top: 62.5 * ratio,
               child: Align(
                 alignment: Alignment.topCenter,
                 child: SvgPicture.asset(
                   "assets/check_pose/left_shoulder.svg",
-                  height: 65 * ratio,
-                  color: Colors.grey,
+                  height: 50.5 * ratio,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.SHOULDERS]),
                 ),
               )),
           Positioned.fill(
+              // vai phai
+              left: 85 * ratio,
+              top: 62.5 * ratio,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: SvgPicture.asset(
+                  "assets/check_pose/right_bicept.svg",
+                  height: 65 * ratio,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.BICEPS]),
+                ),
+              )),
+          Positioned.fill(
+              // vai phai
               left: 85 * ratio,
               top: 62.5 * ratio,
               child: Align(
                 alignment: Alignment.topCenter,
                 child: SvgPicture.asset(
                   "assets/check_pose/right_shoulder.svg",
-                  height: 65 * ratio,
-                  color: Colors.grey,
+                  height: 50.5 * ratio,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.SHOULDERS]),
                 ),
               )),
           Positioned.fill(
@@ -72,6 +117,7 @@ class _TestState extends State<Test> {
                 ),
               )),
           Positioned.fill(
+              // Co
               right: 5 * ratio,
               top: 45 * ratio,
               child: Align(
@@ -101,7 +147,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/chest.svg",
                   height: 65 * ratio,
-                  color: Colors.grey,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.CHEST]),
                 ),
               )),
           Positioned.fill(
@@ -134,7 +180,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/stomach.svg",
                   height: 50 * ratio,
-                  color: Colors.grey,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.ABS]),
                 ),
               )),
           Positioned.fill(
@@ -156,7 +202,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/left_femoral.svg",
                   height: 120 * ratio,
-                  color: Colors.grey,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.QUADS]),
                 ),
               )),
           Positioned.fill(
@@ -167,7 +213,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/right_femoral.svg",
                   height: 120 * ratio,
-                  color: Colors.grey,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.QUADS]),
                 ),
               )),
           Positioned.fill(
@@ -178,7 +224,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/butt.svg",
                   height: 50 * ratio,
-                  color: Colors.red,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.GLUTES]),
                 ),
               )),
           Positioned.fill(
@@ -189,7 +235,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/left_leg.svg",
                   height: 120 * ratio,
-                  color: Colors.green,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.CALVES]),
                 ),
               )),
           Positioned.fill(
@@ -200,7 +246,7 @@ class _TestState extends State<Test> {
                 child: SvgPicture.asset(
                   "assets/check_pose/right_leg.svg",
                   height: 120 * ratio,
-                  color: Colors.green,
+                  color: getColor(widget.getBodyPartKcal[BodyPart.CALVES]),
                 ),
               )),
           Positioned.fill(

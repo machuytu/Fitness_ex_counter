@@ -62,10 +62,8 @@ class Analytics extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         List<Practice> list = snapshot.data;
-                        double totalKcal = 0;
-                        for (int i = 0; i < list.length; i++) {
-                          totalKcal += list[i].kcal;
-                        }
+                        double totalKcal = _practiceService.getTotalKcal(list);
+
                         return Container(
                           color: kIndigoColor,
                           child: CircularStepProgressIndicator(
