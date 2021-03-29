@@ -74,13 +74,26 @@ class PracticeService {
   //   });
   // }
 
+  // Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) {
+  //   return Map.fromIterables(
+  //     BodyPart.values,
+  //     BodyPart.values.map((part) {
+  //       double sum = 0.0;
+  //       practices.forEach((practice) {
+  //         sum += practice.getKcalBodyPart(part);
+  //       });
+  //       return sum;
+  //     }),
+  //   );
+  // }
+
   Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) {
     return Map.fromIterables(
       BodyPart.values,
       BodyPart.values.map((part) {
-        double sum = 0.0;
+        var sum = 0.0;
         practices.forEach((practice) {
-          sum += practice.getKcalBodyPart(part);
+          sum += practice.bodyPartKcal[part.index];
         });
         return sum;
       }),
