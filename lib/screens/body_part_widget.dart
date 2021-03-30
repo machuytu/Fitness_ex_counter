@@ -28,8 +28,6 @@ class _BodyPartWidgetState extends State<BodyPartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.getBodyPartKcal[BodyPart.TRAPS].toString());
-
     return SafeArea(
         child: Container(
       child: Stack(

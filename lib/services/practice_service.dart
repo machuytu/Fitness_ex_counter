@@ -87,6 +87,38 @@ class PracticeService {
     );
   }
 
+  List<double> getBodyMainPartKcal(List<Practice> practices) {
+    List<double> listMainPart = [];
+    double sumTopPart = 0.0;
+    double sumMiddlePart = 0.0;
+    double sumBottomPart = 0.0;
+    Map<BodyPart, double> list = Map.fromIterables(
+      BodyPart.values,
+      BodyPart.values.map((part) {
+        double sum = 0.0;
+        practices.forEach((practice) {
+          sum += practice.getKcalBodyPart(part);
+        });
+        return sum;
+      }),
+    );
+    list.forEach((key, value) {
+      if (key == BodyPart.TRAPS ||
+          key == BodyPart.CHEST ||
+          key == BodyPart.SHOULDERS ||
+          key == BodyPart.BICEPS ||
+          key == BodyPart.FOREARM) {
+        sumTopPart += value;
+      } else if (key == BodyPart.ABS || key == BodyPart.BACK) {
+        sumMiddlePart += value;
+      } else {
+        sumBottomPart += value;
+      }
+    });
+    listMainPart.addAll([sumTopPart, sumMiddlePart, sumBottomPart]);
+    return listMainPart;
+  }
+
   double getTotalKcal(List<Practice> practices) {
     double sum = 0.0;
     practices.forEach((practice) {
