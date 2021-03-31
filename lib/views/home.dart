@@ -16,7 +16,6 @@ import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;

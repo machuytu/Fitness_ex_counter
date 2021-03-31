@@ -64,29 +64,6 @@ class PracticeService {
     });
   }
 
-  // List<double> getBodyPartKcal(List<Practice> practices) {
-  //   return BodyPart.values.map((part) {
-  //     double sum = 0.0;
-  //     practices.forEach((practice) {
-  //       sum += practice.getKcalBodyPart(part);
-  //     });
-  //     return sum;
-  //   });
-  // }
-
-  // Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) {
-  //   return Map.fromIterables(
-  //     BodyPart.values,
-  //     BodyPart.values.map((part) {
-  //       double sum = 0.0;
-  //       practices.forEach((practice) {
-  //         sum += practice.getKcalBodyPart(part);
-  //       });
-  //       return sum;
-  //     }),
-  //   );
-  // }
-
   Map<BodyPart, double> getBodyPartKcal(List<Practice> practices) {
     return Map.fromIterables(
       BodyPart.values,
@@ -100,36 +77,53 @@ class PracticeService {
     );
   }
 
+  // List<double> getBodyMainPartKcal(List<Practice> practices) {
+  //   List<double> listMainPart = [];
+  //   double sumTopPart = 0.0;
+  //   double sumMiddlePart = 0.0;
+  //   double sumBottomPart = 0.0;
+  //   Map<BodyPart, double> list = Map.fromIterables(
+  //     BodyPart.values,
+  //     BodyPart.values.map((part) {
+  //       double sum = 0.0;
+  //       practices.forEach((practice) {
+  //         sum += practice.bodyPartKcal[part.index];
+  //       });
+  //       return sum;
+  //     }),
+  //   );
+  //   list.forEach((key, value) {
+  //     if (key == BodyPart.TRAPS ||
+  //         key == BodyPart.CHEST ||
+  //         key == BodyPart.SHOULDERS ||
+  //         key == BodyPart.BICEPS ||
+  //         key == BodyPart.FOREARM) {
+  //       sumTopPart += value;
+  //     } else if (key == BodyPart.ABS || key == BodyPart.BACK) {
+  //       sumMiddlePart += value;
+  //     } else {
+  //       sumBottomPart += value;
+  //     }
+  //   });
+  //   listMainPart.addAll([sumTopPart, sumMiddlePart, sumBottomPart]);
+  //   return listMainPart;
+  // }
+
   List<double> getBodyMainPartKcal(List<Practice> practices) {
-    List<double> listMainPart = [];
-    double sumTopPart = 0.0;
-    double sumMiddlePart = 0.0;
-    double sumBottomPart = 0.0;
-    Map<BodyPart, double> list = Map.fromIterables(
-      BodyPart.values,
-      BodyPart.values.map((part) {
-        double sum = 0.0;
-        practices.forEach((practice) {
-          sum += practice.getKcalBodyPart(part);
-        });
-        return sum;
-      }),
-    );
-    list.forEach((key, value) {
-      if (key == BodyPart.TRAPS ||
-          key == BodyPart.CHEST ||
-          key == BodyPart.SHOULDERS ||
-          key == BodyPart.BICEPS ||
-          key == BodyPart.FOREARM) {
-        sumTopPart += value;
-      } else if (key == BodyPart.ABS || key == BodyPart.BACK) {
-        sumMiddlePart += value;
-      } else {
-        sumBottomPart += value;
-      }
-    });
-    listMainPart.addAll([sumTopPart, sumMiddlePart, sumBottomPart]);
-    return listMainPart;
+    final map = this.getBodyPartKcal(practices);
+
+    final topPart = map[BodyPart.TRAPS] +
+        map[BodyPart.CHEST] +
+        map[BodyPart.SHOULDERS] +
+        map[BodyPart.BICEPS] +
+        map[BodyPart.FOREARM];
+
+    final middlePart = map[BodyPart.ABS] + map[BodyPart.BACK];
+
+    final bottomPart =
+        map[BodyPart.GLUTES] + map[BodyPart.QUADS] + map[BodyPart.CALVES];
+
+    return <double>[topPart, middlePart, bottomPart];
   }
 
   double getTotalKcal(List<Practice> practices) {
