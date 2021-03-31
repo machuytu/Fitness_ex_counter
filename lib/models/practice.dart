@@ -30,8 +30,13 @@ class Practice {
 
   double get kcal => this.exercise.kcal * this.count;
 
-  double getKcalBodyPart(BodyPart bodyPart) =>
-      this.exercise.getkcalBodyPart(bodyPart) * this.count;
+  List<double> get bodyPartKcal {
+    return BodyPart.values
+        .map((part) => (this.exercise.bodyParts.contains(part))
+            ? this.exercise.kcal * this.count
+            : 0.0)
+        .toList();
+  }
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();

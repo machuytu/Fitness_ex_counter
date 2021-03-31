@@ -9,9 +9,6 @@ class Exercise {
     autoId++;
   }
 
-  double getkcalBodyPart(BodyPart bodyPart) =>
-      (this.bodyParts.contains(bodyPart)) ? this.kcal : 0.0;
-
   @override
   String toString() => 'Exercise: ${this.id} / ${this.name} / ${this.kcal}';
 }
