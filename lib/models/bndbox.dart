@@ -196,8 +196,8 @@ class _BndBoxState extends State<BndBox> {
         setMidCount(true);
       }
       if (midCount && _postureAccordingToExercise(poses)) {
-        incrementCounter();
         setMidCount(false);
+        incrementCounter();
       }
       //check the posture when not in midcount
       if (!midCount) {
@@ -301,7 +301,7 @@ class _BndBoxState extends State<BndBox> {
                     backgroundColor: getCounterColor(),
                     onPressed: () {},
                     child: Text(
-                      '${_counter.toString()}',
+                      '$_counter',
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),

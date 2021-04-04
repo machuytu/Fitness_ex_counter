@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:khoaluan/data/fitness.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/models/arguments_model.dart';
 import 'package:khoaluan/models/user.dart';

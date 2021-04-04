@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/practice.dart';
-
 import 'auth_service.dart';
 
 class PracticeService {
@@ -76,38 +74,6 @@ class PracticeService {
       }),
     );
   }
-
-  // List<double> getBodyMainPartKcal(List<Practice> practices) {
-  //   List<double> listMainPart = [];
-  //   double sumTopPart = 0.0;
-  //   double sumMiddlePart = 0.0;
-  //   double sumBottomPart = 0.0;
-  //   Map<BodyPart, double> list = Map.fromIterables(
-  //     BodyPart.values,
-  //     BodyPart.values.map((part) {
-  //       double sum = 0.0;
-  //       practices.forEach((practice) {
-  //         sum += practice.bodyPartKcal[part.index];
-  //       });
-  //       return sum;
-  //     }),
-  //   );
-  //   list.forEach((key, value) {
-  //     if (key == BodyPart.TRAPS ||
-  //         key == BodyPart.CHEST ||
-  //         key == BodyPart.SHOULDERS ||
-  //         key == BodyPart.BICEPS ||
-  //         key == BodyPart.FOREARM) {
-  //       sumTopPart += value;
-  //     } else if (key == BodyPart.ABS || key == BodyPart.BACK) {
-  //       sumMiddlePart += value;
-  //     } else {
-  //       sumBottomPart += value;
-  //     }
-  //   });
-  //   listMainPart.addAll([sumTopPart, sumMiddlePart, sumBottomPart]);
-  //   return listMainPart;
-  // }
 
   List<double> getBodyMainPartKcal(List<Practice> practices) {
     final map = this.getBodyPartKcal(practices);

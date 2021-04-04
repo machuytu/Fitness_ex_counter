@@ -19,11 +19,9 @@ enum BodyPart {
   BACK, // lưng
   SHOULDERS, // vai
   BICEPS, // bắp tay trước
-  // TRICEPS, // bắp tay sau
   FOREARM, // cẳng tay
   ABS, // bụng
   GLUTES, // mông
   QUADS, // đùi trước
-  // HAMSTRINGS, // bắp đùi sau
   CALVES, // cẳng chân
 }
