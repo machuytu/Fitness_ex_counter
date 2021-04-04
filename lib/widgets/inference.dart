@@ -55,26 +55,11 @@ class _InferencePageState extends State<InferencePage> {
                 width: screen.width * 0.8,
                 height: screen.height * 0.8,
               ),
-              Center(
-                child: Image(
-                  image: AssetImage(_assetName()),
-                  color: Colors.black.withOpacity(0.5),
-                  colorBlendMode: BlendMode.dstIn,
-                ),
-              )
             ],
           ),
         ],
       ),
     );
-  }
-
-  String _assetName() {
-    String name = (widget.exerciseid == 3)
-        ? 'lie_pose'
-        : ((widget.exerciseid == 1) ? 'push_up_pose' : 'stand_pose');
-
-    return 'assets/poses/$name.png';
   }
 
   _setRecognitions(recognitions, imageHeight, imageWidth) {

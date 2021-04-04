@@ -33,7 +33,8 @@ class _BndBoxState extends State<BndBox> {
   int _counter;
   FlutterTts flutterTts;
   double lowerRange, upperRange;
-  bool midCount, isCorrectPosture;
+  bool midCount;
+  bool isCorrectPosture = false;
   PracticeService _practiceService;
   DateTime _startTime;
 
@@ -204,7 +205,15 @@ class _BndBoxState extends State<BndBox> {
       }
     }
   }
+
   //endregion
+  String _assetName() {
+    String name = (widget.exerciseid == 3)
+        ? 'lie_pose'
+        : ((widget.exerciseid == 1) ? 'push_up_pose' : 'stand_pose');
+
+    return 'assets/poses/$name.png';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,6 +314,15 @@ class _BndBoxState extends State<BndBox> {
         Stack(
           children: _renderKeypoints(),
         ),
+        isCorrectPosture == false
+            ? Center(
+                child: Image(
+                  image: AssetImage(_assetName()),
+                  color: Colors.black.withOpacity(0.5),
+                  colorBlendMode: BlendMode.dstIn,
+                ),
+              )
+            : Container(),
       ],
     );
   }
