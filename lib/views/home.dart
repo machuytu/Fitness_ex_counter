@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
-
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
-import 'package:khoaluan/data/fitness.dart';
+import 'package:khoaluan/data/exercise_data.dart';
+import 'package:get/get.dart';
+import 'package:khoaluan/main.dart';
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
@@ -16,6 +17,7 @@ import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
+import 'package:khoaluan/widgets/inference.dart';
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -142,10 +144,23 @@ class _HomeState extends State<Home> {
                           padding: const EdgeInsets.all(8.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: Image(
-                                fit: BoxFit.cover,
-                                image:
-                                    AssetImage("assets/images/start_list.png")),
+                            child: InkWell(
+                              onTap: () => Get.to(
+                                InferencePage(
+                                  exercises: exercises,
+                                  cameras: cameras,
+                                  max: _user.fitnessMode == 1
+                                      ? 10
+                                      : _user.fitnessMode == 2
+                                          ? 15
+                                          : 20,
+                                ),
+                              ),
+                              child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                      "assets/images/start_list.png")),
+                            ),
                           ),
                         ),
                         SizedBox(height: 10.0),
@@ -163,13 +178,15 @@ class _HomeState extends State<Home> {
                           height: 145.0,
                           margin: EdgeInsets.only(left: 18.0),
                           child: ListView.builder(
-                            itemCount: fitnessData.length,
+                            itemCount: exercises.length,
                             scrollDirection: Axis.horizontal,
                             physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               return ExerciseCard(
-                                  exerciseid: index, cameras: widget.cameras);
+                                exercise: exercises[index],
+                                cameras: widget.cameras,
+                              );
                             },
                           ),
                         ),

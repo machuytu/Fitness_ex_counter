@@ -2,15 +2,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:khoaluan/data/exercise_data.dart';
+import 'package:khoaluan/models/exercise.dart';
 
 import 'inference.dart';
 
 class ExerciseCard extends StatelessWidget {
-  final int exerciseid;
+  final Exercise exercise;
   final List<CameraDescription> cameras;
   ExerciseCard({
-    this.exerciseid,
+    this.exercise,
     this.cameras,
   });
 
@@ -20,7 +20,7 @@ class ExerciseCard extends StatelessWidget {
       onTap: () => Get.to(
         InferencePage(
           cameras: cameras,
-          exerciseid: exerciseid,
+          exercises: [exercise],
         ),
       ),
       child: Container(
@@ -31,7 +31,7 @@ class ExerciseCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
           image: DecorationImage(
             image: AssetImage(
-                'assets/images/${exercises[exerciseid].name.replaceAll(' ', '_')}.jpg'),
+                'assets/images/${exercise.name.replaceAll(' ', '_')}.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Color(0xFF636477),
@@ -43,7 +43,7 @@ class ExerciseCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              exercises[exerciseid].name.toUpperCase(),
+              exercise.name.toUpperCase(),
               style: kTitleStyle.copyWith(color: Colors.white),
             ),
             Divider(

@@ -22,7 +22,7 @@ class PracticeService {
     DateTime timeStart,
   ) {
     if (count == 0) {
-      // return null;
+      return null;
     }
 
     return _ref
