@@ -25,6 +25,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
   TextEditingController nameUser = new TextEditingController();
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
+  TextEditingController ageUser = new TextEditingController();
   int weightValue, heightValue;
   String kindValue;
   bool isMale = true;
@@ -35,6 +36,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
   void initState() {
     super.initState();
     nameUser.text = argument.user.name;
+    ageUser.text = argument.user.age.toString();
     weightUser.text =
         argument.user.weight.toString() + " " + argument.user.weightUnit;
     heightUser.text =
@@ -124,6 +126,33 @@ class _UpdateAccountState extends State<UpdateAccount> {
                       },
                       decoration: InputDecoration(
                         labelText: 'Họ và tên',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  child: Container(
+                    width: double.infinity,
+                    child: TextFormField(
+                      controller: ageUser,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value.trim().isEmpty) {
+                          return 'Tuổi trống';
+                        } else if (int.parse(value) > 100) {
+                          return 'Tuổi lớn hơn 100';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Tuổi',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ),
@@ -314,6 +343,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                         userService.updateValueRegister(
                             user.uid,
                             nameUser.text,
+                            int.parse(ageUser.text),
                             heightValue,
                             heightUnit,
                             weightValue,

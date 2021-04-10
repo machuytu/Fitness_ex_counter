@@ -19,6 +19,7 @@ class InfoUser extends StatefulWidget {
 class _InfoUserState extends State<InfoUser> {
   TextEditingController nameUser =
       new TextEditingController(text: 'Mạc Huy Tú');
+  TextEditingController ageUser = new TextEditingController(text: '18');
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
   int weightValue, heightValue;
@@ -103,6 +104,33 @@ class _InfoUserState extends State<InfoUser> {
                       },
                       decoration: InputDecoration(
                         labelText: 'Họ và tên',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  child: Container(
+                    width: double.infinity,
+                    child: TextFormField(
+                      controller: ageUser,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value.trim().isEmpty) {
+                          return 'Tuổi trống';
+                        } else if (int.parse(value) > 100) {
+                          return 'Tuổi lớn hơn 100';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Tuổi',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ),
@@ -293,6 +321,7 @@ class _InfoUserState extends State<InfoUser> {
                         userService.setValueRegister(
                             user.uid,
                             nameUser.text,
+                            int.parse(ageUser.text),
                             heightValue,
                             heightUnit,
                             weightValue,
