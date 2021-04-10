@@ -158,7 +158,7 @@ class _HomeState extends State<Home> {
                                   cameras: cameras,
                                   maxs: getListMaxCount(
                                     _user.weight,
-                                    325,
+                                    _user.bmrInt,
                                     [...exercises, ...exercises],
                                   ),
                                 ),
