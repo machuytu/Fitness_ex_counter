@@ -8,6 +8,7 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
+import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
@@ -42,6 +43,12 @@ class _HomeState extends State<Home> {
     _user = await user.getUser(_auth);
     userId = _user.uid;
     return _user;
+  }
+
+  List<int> getListMaxCount(int weight, int bmr, List<Exercise> exercises) {
+    var burnKcal = (bmr / exercises.length) * (1 / 3);
+    print(burnKcal);
+    return exercises.map((e) => burnKcal ~/ (e.coefficient * weight)).toList();
   }
 
   showPickerArray(BuildContext context) {
@@ -147,13 +154,13 @@ class _HomeState extends State<Home> {
                             child: InkWell(
                               onTap: () => Get.to(
                                 InferencePage(
-                                  exercises: exercises,
+                                  exercises: [...exercises, ...exercises],
                                   cameras: cameras,
-                                  max: _user.fitnessMode == 1
-                                      ? 10
-                                      : _user.fitnessMode == 2
-                                          ? 15
-                                          : 20,
+                                  maxs: getListMaxCount(
+                                    _user.weight,
+                                    325,
+                                    [...exercises, ...exercises],
+                                  ),
                                 ),
                               ),
                               child: Image(

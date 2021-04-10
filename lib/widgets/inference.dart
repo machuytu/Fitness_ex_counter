@@ -13,9 +13,9 @@ import 'package:get/get.dart';
 class InferencePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   final List<Exercise> exercises;
-  final int max;
+  final List<int> maxs;
 
-  const InferencePage({this.cameras, this.exercises, this.max});
+  const InferencePage({this.cameras, this.exercises, this.maxs});
 
   @override
   _InferencePageState createState() => _InferencePageState();
@@ -29,6 +29,7 @@ class _InferencePageState extends State<InferencePage> {
   Map<String, List<double>> _inputArr;
   List<dynamic> _recognitions;
   List<Exercise> _exercises;
+  List<int> _maxs;
   bool _midCount;
   bool _isCorrectPosture;
   double _lowerRange;
@@ -41,14 +42,13 @@ class _InferencePageState extends State<InferencePage> {
   int _previewH;
   int _previewW;
   int _ind;
-  int _max;
 
   @override
   void initState() {
     loadModel();
     _inputArr = Map<String, List<double>>();
     _exercises = widget.exercises;
-    _max = widget.max;
+    _maxs = widget.maxs;
     _midCount = false;
     _isCorrectPosture = false;
     _screenH = Get.height;
@@ -160,7 +160,7 @@ class _InferencePageState extends State<InferencePage> {
           backgroundColor: getCounterColor(),
           onPressed: () {},
           child: Text(
-            _max == null ? '$_counter' : '$_counter / $_max',
+            _maxs == null ? '$_counter' : '$_counter / ${_maxs[_ind]}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -183,9 +183,8 @@ class _InferencePageState extends State<InferencePage> {
   void incrementCounter() {
     setState(() {
       _counter++;
-      if (_max != null &&
-          _max >= 0 &&
-          _counter >= _max &&
+      if (_maxs != null &&
+          _counter >= _maxs[_ind] &&
           _ind < _exercises.length) {
         _ind++;
       }
