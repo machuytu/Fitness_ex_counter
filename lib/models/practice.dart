@@ -28,12 +28,12 @@ class Practice {
 
   Exercise get exercise => _exercise;
 
-  double get kcal => this.exercise.kcal * this.count;
+  double get kcal => this.exercise.coefficient * this.count;
 
   List<double> get bodyPartKcal {
     return BodyPart.values
         .map((part) => (this.exercise.bodyParts.contains(part))
-            ? this.exercise.kcal * this.count
+            ? this.exercise.coefficient * this.count
             : 0.0)
         .toList();
   }

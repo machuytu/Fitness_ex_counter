@@ -2,15 +2,16 @@ class Exercise {
   static int autoId = 0;
   final int id = autoId;
   final String name;
-  final double kcal;
+  final double coefficient;
   final List<BodyPart> bodyParts;
 
-  Exercise(this.name, this.kcal, this.bodyParts) {
+  Exercise(this.name, this.coefficient, this.bodyParts) {
     autoId++;
   }
 
   @override
-  String toString() => 'Exercise: ${this.id} / ${this.name} / ${this.kcal}';
+  String toString() =>
+      'Exercise: ${this.id} / ${this.name} / ${this.coefficient}';
 }
 
 enum BodyPart {

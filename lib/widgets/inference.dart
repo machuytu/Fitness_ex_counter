@@ -64,9 +64,10 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void dispose() {
-    if (exercises.length > 1) {
+    if (exercises.length > 1) {}
+    if (exercises.length == 1) {
       _practiceService.addPractice(
-        _exercises[_ind].id,
+        _exercises[0].id,
         _counter,
         _startTime,
       );

@@ -2,7 +2,7 @@ import 'package:khoaluan/models/exercise.dart';
 
 final exerciseSquat = Exercise(
   'Squats',
-  0.32,
+  0.004,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -12,7 +12,7 @@ final exerciseSquat = Exercise(
 
 final exercisePushUp = Exercise(
   'Push Ups',
-  0.45,
+  0.0055,
   [
     BodyPart.FOREARM,
     BodyPart.BICEPS,
@@ -24,7 +24,7 @@ final exercisePushUp = Exercise(
 
 final exerciseStationaryLunge = Exercise(
   'Stationary Lunges',
-  0.3,
+  0.0035,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -34,7 +34,7 @@ final exerciseStationaryLunge = Exercise(
 
 final exerciseCrunch = Exercise(
   'Crunches',
-  0.25,
+  0.0035,
   [
     BodyPart.ABS,
     BodyPart.BACK,
