@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -64,13 +65,15 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void dispose() {
-    if (exercises.length > 1) {}
-    if (exercises.length == 1) {
+    if (_exercises.length == 1) {
       _practiceService.addPractice(
         _exercises[0].id,
         _counter,
         _startTime,
       );
+    } else {
+      //List exercises
+
     }
     super.dispose();
   }
@@ -183,14 +186,22 @@ class _InferencePageState extends State<InferencePage> {
   void incrementCounter() {
     setState(() {
       _counter++;
-      if (_maxs != null &&
-          _counter >= _maxs[_ind] &&
-          _ind < _exercises.length) {
-        _ind++;
-      }
     });
 
     _flutterTts.speak(_counter.toString());
+  }
+
+  void handleListExercise() {
+    var length = _exercises.length;
+    if (length > 1 && _counter >= _maxs[_ind]) {
+      if (_ind == length - 1) {
+        //finished
+        Get.back();
+      } else {
+        _ind++;
+        _counter = 0;
+      }
+    }
   }
 
   void setMidCount(bool f) {
@@ -323,6 +334,7 @@ class _InferencePageState extends State<InferencePage> {
       }
       if (_midCount && _postureAccordingToExercise(poses)) {
         incrementCounter();
+        handleListExercise();
         setMidCount(false);
       }
       //check the posture when not in _midCount

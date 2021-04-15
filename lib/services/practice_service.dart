@@ -27,7 +27,7 @@ class PracticeService {
 
     return _ref
         .add(Practice(exerciseid, count, timeStart, DateTime.now()).addJson())
-        .then((value) => {print("Add practice success ${value.id}")})
+        .then((value) => {print("Added practice ${value.id}")})
         .catchError((err) {
       print(err);
     });

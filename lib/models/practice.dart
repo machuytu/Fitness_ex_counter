@@ -24,7 +24,7 @@ class Practice {
 
   @override
   String toString() =>
-      'Practice: ${this.id} / ${this.exercise.name} / ${this.exercise.bodyParts} / ${this.count} / ${this.kcal} ';
+      'Practice(${this.id}): ${this.exercise.name} / ${this.exercise.bodyParts} / ${this.count} / ${this.kcal}';
 
   Exercise get exercise => _exercise;
 
