@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/models/practice.dart';
+import 'package:khoaluan/models/user.dart';
+import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
+import 'package:khoaluan/services/user_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class Analytics extends StatelessWidget {
-  final int kcalBurn = 74;
-  final PracticeService _practiceService = PracticeService();
+  int kcalBurn = 74;
+  PracticeService _practiceService = PracticeService();
   DateTime now = DateTime.now();
+  UserService user = new UserService();
+  AuthService _auth = new AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,38 +70,47 @@ class Analytics extends StatelessWidget {
                         List<Practice> list = snapshot.data;
                         double totalKcal = _practiceService.getTotalKcal(list);
 
-                        return Container(
-                          color: kIndigoColor,
-                          child: CircularStepProgressIndicator(
-                            totalSteps: 100,
-                            currentStep: kcalBurn,
-                            stepSize: 10,
-                            selectedColor: Colors.greenAccent,
-                            unselectedColor: Colors.grey[200],
-                            padding: 0,
-                            width: 250,
-                            height: 250,
-                            selectedStepSize: 15,
-                            roundedCap: (_, __) => true,
-                            child: Center(
-                                child: RichText(
-                              text: TextSpan(
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: totalKcal.toString(),
-                                      style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white)),
-                                  TextSpan(
-                                      text: ' Kcal',
-                                      style: TextStyle(
-                                          fontSize: 25, color: Colors.white)),
-                                ],
-                              ),
-                            )),
-                          ),
-                        );
+                        return FutureBuilder(
+                            future: user.getUser(_auth),
+                            builder: (context, snapshotUser) {
+                              if (snapshotUser.hasData) {
+                                User user = snapshotUser.data;
+                                return Container(
+                                  color: kIndigoColor,
+                                  child: CircularStepProgressIndicator(
+                                    totalSteps: user.bmrInt,
+                                    currentStep: totalKcal.toInt(),
+                                    stepSize: 10,
+                                    selectedColor: Colors.greenAccent,
+                                    unselectedColor: Colors.grey[200],
+                                    padding: 0,
+                                    width: 250,
+                                    height: 250,
+                                    selectedStepSize: 15,
+                                    roundedCap: (_, __) => true,
+                                    child: Center(
+                                        child: RichText(
+                                      text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                              text: totalKcal.toString(),
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white)),
+                                          TextSpan(
+                                              text: ' Kcal',
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.white)),
+                                        ],
+                                      ),
+                                    )),
+                                  ),
+                                );
+                              }
+                              return CircularProgressIndicator();
+                            });
                       }
                       return CircularProgressIndicator();
                     }),

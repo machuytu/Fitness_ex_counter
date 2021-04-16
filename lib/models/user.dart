@@ -9,6 +9,8 @@ class User {
   String name;
   int weight;
   int height;
+  int bmrInt;
+  int age;
 
   User(
       {String uid,
@@ -17,6 +19,8 @@ class User {
       String weightUnit,
       int fitnessMode,
       String name,
+      int age,
+      int bmrInt,
       int weight,
       int height}) {
     this.gender = gender;
@@ -26,6 +30,8 @@ class User {
     this.name = name;
     this.weight = weight;
     this.height = height;
+    this.bmrInt = bmrInt;
+    this.age = age;
   }
 
   factory User.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
@@ -43,6 +49,8 @@ class User {
     name = json['name'];
     weight = json['weight'];
     height = json['height'];
+    bmrInt = json['bmr_int'];
+    age = json['age'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +62,8 @@ class User {
     data['name'] = this.name;
     data['weight'] = this.weight;
     data['height'] = this.height;
+    data['bmr_int'] = this.bmrInt;
+    data['age'] = this.age;
     return data;
   }
 }

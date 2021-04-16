@@ -46,9 +46,11 @@ class _HomeState extends State<Home> {
   }
 
   List<int> getListMaxCount(int weight, int bmr, List<Exercise> exercises) {
-    var burnKcal = (bmr / exercises.length) * (1 / 3);
-    print(burnKcal);
-    return exercises.map((e) => burnKcal ~/ (e.coefficient * weight)).toList();
+    // var burnKcal = ((bmr / exercises.length) * (1 / 3));
+    return exercises
+        .map((e) =>
+            ((bmr / exercises.length) * (1 / 3)) ~/ (e.coefficient * weight))
+        .toList();
   }
 
   showPickerArray(BuildContext context) {
@@ -158,7 +160,7 @@ class _HomeState extends State<Home> {
                                   cameras: cameras,
                                   maxs: getListMaxCount(
                                     _user.weight,
-                                    325,
+                                    _user.bmrInt,
                                     [...exercises, ...exercises],
                                   ),
                                 ),
