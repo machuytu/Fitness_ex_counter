@@ -15,7 +15,7 @@ class WorkoutService {
         .collection('workouts');
   }
 
-  Future<void> addWorkout(
+  Future<void> setWorkout(
     int index,
     int count,
     bool isDone,
@@ -24,40 +24,22 @@ class WorkoutService {
     DateTime start,
   ) {
     if (count == 0) {
-      return null;
+      // return null;
     }
-
+    var now = DateTime.now();
+    var todayStr = now.toString().split(' ')[0];
     return _ref
-        .add(Workout(
+        .doc(todayStr)
+        .set(Workout(
           index,
           count,
           isDone,
           listExerciseId: listExerciseId,
           listMax: listMax,
           start: start,
-          end: DateTime.now(),
+          end: now,
         ).addJson())
-        .then((value) => {print('Added workout ${value.id}')})
-        .catchError((err) {
-      print(err);
-    });
-  }
-
-  Future<void> updateWorkout(
-    String id,
-    int index,
-    int count,
-    bool isDone,
-    DateTime end,
-  ) {
-    if (count == 0) {
-      return null;
-    }
-
-    return _ref
-        .doc(id)
-        .update(Workout(index, count, isDone, end: end).updateJson())
-        .then((value) => {print('Updated workout}')})
+        .then((value) => {print('Added workout')})
         .catchError((err) {
       print(err);
     });
@@ -65,7 +47,7 @@ class WorkoutService {
 
   Future<List<Workout>> getWorkoutByUser() {
     return _ref
-        .orderBy('end', descending: true)
+        // .orderBy('end', descending: true)
         .get()
         .then((querySnapshot) => querySnapshot.docs
             .map((snapshot) => Workout.fromFirestoreSnapshot(snapshot))
@@ -75,18 +57,13 @@ class WorkoutService {
     });
   }
 
-  Future<List<Workout>> getWorkoutByDate(DateTime date) {
-    var today = DateTime(date.year, date.month, date.day);
-    var tomorrow = today.add(Duration(days: 1));
+  Future<Workout> getWorkoutByDate(DateTime date) {
+    var todayStr = date.toString().split(' ')[0];
 
     return _ref
-        .orderBy('end', descending: true)
-        .where('end', isGreaterThanOrEqualTo: today)
-        .where('end', isLessThan: tomorrow)
+        .doc(todayStr)
         .get()
-        .then((querySnapshot) => querySnapshot.docs
-            .map((snapshot) => Workout.fromFirestoreSnapshot(snapshot))
-            .toList())
+        .then((snapshot) => Workout.fromFirestoreSnapshot(snapshot))
         .catchError((err) {
       print(err);
     });

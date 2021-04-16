@@ -1,12 +1,10 @@
-import 'dart:ffi';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:khoaluan/data/exercise_data.dart';
 import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/screens/camera.dart';
-import 'package:khoaluan/models/bndbox.dart';
 import 'package:khoaluan/services/practice_service.dart';
+import 'package:khoaluan/services/workout_service.dart';
 import 'package:tflite/tflite.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
@@ -24,6 +22,7 @@ class InferencePage extends StatefulWidget {
 
 class _InferencePageState extends State<InferencePage> {
   final _practiceService = PracticeService();
+  final _workoutService = WorkoutService();
   final _flutterTts = FlutterTts();
   final _startTime = DateTime.now();
 
@@ -43,6 +42,7 @@ class _InferencePageState extends State<InferencePage> {
   int _previewH;
   int _previewW;
   int _ind;
+  int _listLength;
 
   @override
   void initState() {
@@ -50,6 +50,7 @@ class _InferencePageState extends State<InferencePage> {
     _inputArr = Map<String, List<double>>();
     _exercises = widget.exercises;
     _maxs = widget.maxs;
+    _listLength = _exercises.length;
     _midCount = false;
     _isCorrectPosture = false;
     _screenH = Get.height;
@@ -65,15 +66,23 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void dispose() {
-    if (_exercises.length == 1) {
+    if (_listLength > 1) {
+      //List exercises
+      var listExerciseId = _exercises.map((e) => e.id).toList();
+      _workoutService.setWorkout(
+        _ind,
+        _counter,
+        (_ind == _listLength - 1 && _counter >= _maxs[_ind]),
+        listExerciseId,
+        _maxs,
+        _startTime,
+      );
+    } else {
       _practiceService.addPractice(
         _exercises[0].id,
         _counter,
         _startTime,
       );
-    } else {
-      //List exercises
-
     }
     super.dispose();
   }
@@ -192,9 +201,8 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   void handleListExercise() {
-    var length = _exercises.length;
-    if (length > 1 && _counter >= _maxs[_ind]) {
-      if (_ind == length - 1) {
+    if (_listLength > 1 && _counter >= _maxs[_ind]) {
+      if (_ind == _listLength - 1) {
         //finished
         Get.back();
       } else {
