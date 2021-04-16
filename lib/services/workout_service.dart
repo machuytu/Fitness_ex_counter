@@ -18,12 +18,11 @@ class WorkoutService {
   Future<void> setWorkout(
     int index,
     int count,
-    bool isDone,
     List<int> listExerciseId,
     List<int> listMax,
     DateTime start,
   ) {
-    if (count == 0) {
+    if (count == 0 && index == 0) {
       // return null;
     }
     var now = DateTime.now();
@@ -31,9 +30,8 @@ class WorkoutService {
     return _ref
         .doc(todayStr)
         .set(Workout(
-          index,
-          count,
-          isDone,
+          index: index,
+          count: count,
           listExerciseId: listExerciseId,
           listMax: listMax,
           start: start,

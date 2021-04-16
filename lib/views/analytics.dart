@@ -195,7 +195,7 @@ class Analytics extends StatelessWidget {
                                           padding: const EdgeInsets.only(
                                               right: 10.0),
                                           child: Text(timeago.format(
-                                              listPractice[index].timeEnd,
+                                              listPractice[index].end,
                                               locale: 'en')),
                                         ),
                                       ],

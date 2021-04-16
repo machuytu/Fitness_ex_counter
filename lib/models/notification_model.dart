@@ -27,6 +27,7 @@ class NotificationModel {
 
   factory NotificationModel.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
+    if (data == null) return null;
     data['id'] = snapshot.id;
     return NotificationModel.fromJson(data);
   }

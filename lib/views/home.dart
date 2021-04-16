@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
@@ -10,40 +9,35 @@ import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
 import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/user.dart';
+import 'package:khoaluan/models/workout.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
+import 'package:khoaluan/services/workout_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
-import 'package:khoaluan/widgets/inference.dart';
+import 'package:khoaluan/widgets/inference_workout.dart';
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const Home({
-    this.cameras,
-  });
+  const Home({this.cameras});
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  AuthService _auth = new AuthService();
-  UserService user = new UserService();
-  User _user = new User();
+  final _authService = AuthService();
+  final _userService = UserService();
+  final _practiceService = PracticeService();
+  final _workoutService = WorkoutService();
+  final now = DateTime.now();
   List<double> listMainPart = [];
-  String userId;
-  final PracticeService _practiceService = PracticeService();
-  DateTime now = DateTime.now();
-
-  Future<User> getUser() async {
-    _user = await user.getUser(_auth);
-    userId = _user.uid;
-    return _user;
-  }
+  User _user = new User();
+  Workout _workout;
 
   List<int> getListMaxCount(int weight, int bmr, List<Exercise> exercises) {
     // var burnKcal = ((bmr / exercises.length) * (1 / 3));
@@ -61,14 +55,13 @@ class _HomeState extends State<Home> {
         ),
         hideHeader: false,
         onConfirm: (Picker picker, List value) async {
-          _user = await user.getUser(_auth);
           setState(() {
             if (value.toString() == "[0]") {
-              user.updateUser(_user.uid, 'fitness_mode', 1);
+              _userService.updateUser(_user.uid, 'fitness_mode', 1);
             } else if (value.toString() == "[1]") {
-              user.updateUser(_user.uid, 'fitness_mode', 2);
+              _userService.updateUser(_user.uid, 'fitness_mode', 2);
             } else {
-              user.updateUser(_user.uid, 'fitness_mode', 3);
+              _userService.updateUser(_user.uid, 'fitness_mode', 3);
             }
           });
         }).showModal(context);
@@ -76,7 +69,20 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    getUser();
+    getWorkout();
     super.initState();
+  }
+
+  Future<User> getUser() async {
+    _user = await _userService.getUser(_authService);
+    return _user;
+  }
+
+  void getWorkout() async {
+    _workout = await _workoutService.getWorkoutByDate(now);
+    setState(() {});
+    print(_workout);
   }
 
   @override
@@ -154,21 +160,27 @@ class _HomeState extends State<Home> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
                             child: InkWell(
-                              onTap: () => Get.to(
-                                InferencePage(
-                                  exercises: [...exercises, ...exercises],
-                                  cameras: cameras,
-                                  maxs: getListMaxCount(
-                                    _user.weight,
-                                    _user.bmrInt,
-                                    [...exercises, ...exercises],
-                                  ),
-                                ),
-                              ),
+                              onTap: () async {
+                                if (_workout == null) {
+                                  Get.to(InferenceWorkoutPage(
+                                          cameras,
+                                          Workout(
+                                              listExerciseId: [0, 1],
+                                              listMax: [3, 3],
+                                              start: DateTime.now())))
+                                      .then((value) => getWorkout());
+                                  getWorkout();
+                                } else if (!_workout.isDone) {
+                                  Get.to(InferenceWorkoutPage(
+                                          cameras, _workout))
+                                      .then((value) => getWorkout());
+                                }
+                              },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage(
-                                      "assets/images/start_list.png")),
+                                  image: AssetImage(_workout?.isDone == true
+                                      ? "assets/images/Workout_done.png"
+                                      : "assets/images/Workout.png")),
                             ),
                           ),
                         ),

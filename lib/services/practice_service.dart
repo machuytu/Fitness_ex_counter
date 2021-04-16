@@ -17,16 +17,21 @@ class PracticeService {
   }
 
   Future<void> addPractice(
-    int exerciseid,
+    int exerciseId,
     int count,
-    DateTime timeStart,
+    DateTime start,
   ) {
     if (count == 0) {
       return null;
     }
 
     return _ref
-        .add(Practice(exerciseid, count, timeStart, DateTime.now()).addJson())
+        .add(Practice(
+                exerciseId: exerciseId,
+                count: count,
+                start: start,
+                end: DateTime.now())
+            .addJson())
         .then((value) => {print("Added practice ${value.id}")})
         .catchError((err) {
       print(err);
@@ -35,7 +40,7 @@ class PracticeService {
 
   Future<List<Practice>> getPracticeByUser() {
     return _ref
-        .orderBy('timeEnd', descending: true)
+        .orderBy('end', descending: true)
         .get()
         .then((querySnapshot) => querySnapshot.docs
             .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))
@@ -50,9 +55,9 @@ class PracticeService {
     var tomorrow = today.add(Duration(days: 1));
 
     return _ref
-        .orderBy('timeEnd', descending: true)
-        .where('timeEnd', isGreaterThanOrEqualTo: today)
-        .where('timeEnd', isLessThan: tomorrow)
+        .orderBy('end', descending: true)
+        .where('end', isGreaterThanOrEqualTo: today)
+        .where('end', isLessThan: tomorrow)
         .get()
         .then((querySnapshot) => querySnapshot.docs
             .map((snapshot) => Practice.fromFirestoreSnapshot(snapshot))
@@ -68,7 +73,7 @@ class PracticeService {
       BodyPart.values.map((part) {
         var sum = 0.0;
         practices.forEach((practice) {
-          sum += practice.bodyPartKcal[part.index];
+          sum += practice.bodyPartKcal(part);
         });
         return sum;
       }),

@@ -1,45 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/data/exercise_data.dart';
-
 import 'exercise.dart';
 
 class Practice {
   final String id;
   final String uid;
+  final DateTime start;
+  final DateTime end;
+  final int exerciseId;
   final int count;
-  final DateTime timeStart;
-  final DateTime timeEnd;
-  Exercise _exercise;
 
-  Practice(
-    int exerciseid,
+  Practice({
+    this.exerciseId,
     this.count,
-    this.timeStart,
-    this.timeEnd, {
+    this.start,
+    this.end,
     this.id,
     this.uid,
-  }) {
-    this._exercise = exercises[exerciseid];
-  }
+  });
 
   @override
   String toString() =>
       'Practice(${this.id}): ${this.exercise.name} / ${this.exercise.bodyParts} / ${this.count} / ${this.kcal}';
 
-  Exercise get exercise => _exercise;
+  Exercise get exercise => exercises[this.exerciseId];
 
   double get kcal => this.exercise.coefficient * this.count;
 
-  List<double> get bodyPartKcal {
-    return BodyPart.values
-        .map((part) => (this.exercise.bodyParts.contains(part))
-            ? this.exercise.coefficient * this.count
-            : 0.0)
-        .toList();
-  }
+  double bodyPartKcal(BodyPart part) => this.exercise.kcal(part) * this.count;
 
   factory Practice.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
+    if (data == null) return null;
     data['id'] = snapshot.id;
     data['uid'] = snapshot.reference.parent.parent.id;
     return Practice.fromJson(data);
@@ -48,24 +40,24 @@ class Practice {
   Practice.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         uid = json['uid'],
-        _exercise = exercises[json['exerciseid']],
+        exerciseId = json['exerciseId'],
         count = json['count'],
-        timeStart = json['timeStart'].toDate(),
-        timeEnd = json['timeEnd'].toDate();
+        start = json['start'].toDate(),
+        end = json['end'].toDate();
 
   Map<String, dynamic> toJson() => {
         'id': this.id,
         'uid': this.uid,
-        'exerciseid': this.exercise.id,
+        'exerciseId': this.exerciseId,
         'count': this.count,
-        'timeStart': this.timeStart,
-        'timeEnd': this.timeEnd,
+        'start': this.start,
+        'end': this.end,
       };
 
   Map<String, dynamic> addJson() => {
-        'exerciseid': this.exercise.id,
+        'exerciseId': this.exerciseId,
         'count': this.count,
-        'timeStart': this.timeStart,
-        'timeEnd': this.timeEnd,
+        'start': this.start,
+        'end': this.end,
       };
 }

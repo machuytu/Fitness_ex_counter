@@ -36,6 +36,7 @@ class User {
 
   factory User.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
+    if (data == null) return null;
     data['uid'] = snapshot.id;
     return User.fromJson(data);
   }
