@@ -29,17 +29,17 @@ class Workout {
       'Workout($id): index / $count / $isDone / $listExerciseId / $listMax / $getMainPartKcal';
 
   List<Exercise> get listExercise =>
-      listExerciseId.map((id) => exercises[id]).toList();
+      this.listExerciseId.map((id) => exercises[id]).toList();
 
-  Exercise get exercise => listExercise[index];
+  Exercise get exercise => this.listExercise[index];
 
-  int get length => listExerciseId.length;
+  int get length => this.listExerciseId.length;
 
-  String get name => exercise.name;
+  String get name => this.exercise.name;
 
-  int get exerciseId => exercise.id;
+  int get exerciseId => this.exercise.id;
 
-  int get max => listMax[index];
+  int get max => this.listMax[this.index];
 
   bool get isDone => ((this.index == this.length - 1) &&
       (this.count >= this.listMax[this.index]));
