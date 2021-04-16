@@ -7,7 +7,6 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
-import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/models/workout.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
@@ -39,11 +38,12 @@ class _HomeState extends State<Home> {
   User _user = new User();
   Workout _workout;
 
-  List<int> getListMaxCount(int weight, int bmr, List<Exercise> exercises) {
+  List<int> getListMaxCount(int weight, int bmr, List<int> list) {
     // var burnKcal = ((bmr / exercises.length) * (1 / 3));
-    return exercises
-        .map((e) =>
-            ((bmr / exercises.length) * (1 / 3)) ~/ (e.coefficient * weight))
+    return list
+        .map((i) =>
+            ((bmr / list.length) * (1 / 3)) ~/
+            (exercises[i].coefficient * weight))
         .toList();
   }
 
@@ -81,7 +81,20 @@ class _HomeState extends State<Home> {
 
   void getWorkout() async {
     _workout = await _workoutService.getWorkoutByDate(now);
-    setState(() {});
+    if (_workout == null) {
+      var listId = [0, 1, 2, 3, 0, 1, 2, 3];
+      _workout = Workout(
+        listExerciseId: listId,
+        listMax: getListMaxCount(_user.weight, _user.bmrInt, listId),
+        start: DateTime.now(),
+      );
+      // _workout = Workout(
+      //   listExerciseId: [0, 1],
+      //   listMax: [3, 3],
+      //   start: DateTime.now(),
+      // );
+    }
+
     print(_workout);
   }
 
@@ -160,25 +173,15 @@ class _HomeState extends State<Home> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
                             child: InkWell(
-                              onTap: () async {
-                                if (_workout == null) {
-                                  Get.to(InferenceWorkoutPage(
-                                          cameras,
-                                          Workout(
-                                              listExerciseId: [0, 1],
-                                              listMax: [3, 3],
-                                              start: DateTime.now())))
-                                      .then((value) => getWorkout());
-                                  getWorkout();
-                                } else if (!_workout.isDone) {
-                                  Get.to(InferenceWorkoutPage(
-                                          cameras, _workout))
-                                      .then((value) => getWorkout());
+                              onTap: () {
+                                if (!_workout.isDone) {
+                                  Get.to(
+                                      InferenceWorkoutPage(cameras, _workout));
                                 }
                               },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage(_workout?.isDone == true
+                                  image: AssetImage(_workout.isDone == true
                                       ? "assets/images/Workout_done.png"
                                       : "assets/images/Workout.png")),
                             ),

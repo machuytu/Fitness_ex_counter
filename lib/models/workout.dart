@@ -26,7 +26,7 @@ class Workout {
 
   @override
   String toString() =>
-      'Workout($id): index / $count / $isDone / $listExerciseId / $listMax / $getMainPartKcal';
+      'Workout($id): $index / $count / $isDone / $listExerciseId / $listMax / $getMainPartKcal';
 
   List<Exercise> get listExercise =>
       this.listExerciseId.map((id) => exercises[id]).toList();
