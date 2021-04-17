@@ -36,6 +36,8 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   int _previewW;
   Workout _workout;
 
+  int get _exerciseId => _workout.exerciseId;
+
   @override
   void initState() {
     loadModel();
@@ -52,27 +54,14 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
     super.initState();
   }
 
-  int get _index => _workout.index;
-  int get _count => _workout.count;
-  int get _max => _workout.max;
-  int get _exerciseId => _workout.exerciseId;
-  DateTime get _start => _workout.start;
-  String get _name => _workout.name;
-  bool get _isDone => _workout.isDone;
-  List<int> get _listExerciseId => _workout.listExerciseId;
-  List<int> get _listMax => _workout.listMax;
-
-  set _count(int value) => _workout.count = value;
-  set _index(int value) => _workout.index = value;
-
   @override
   void dispose() {
     _workoutService.setWorkout(
-      _index,
-      _count,
-      _listExerciseId,
-      _listMax,
-      _start,
+      _workout.index,
+      _workout.count,
+      _workout.listExerciseId,
+      _workout.listMax,
+      _workout.start,
     );
 
     super.dispose();
@@ -84,7 +73,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text(_name),
+        title: Text(_workout.exerciseName),
       ),
       body: Stack(
         children: [
@@ -117,7 +106,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
           backgroundColor: getCounterColor(),
           onPressed: () {},
           child: Text(
-            '$_count / $_max',
+            '${_workout.count} / ${_workout.max}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -138,20 +127,14 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   }
 
   void incrementCounter() {
-    _count++;
-    _flutterTts.speak(_count.toString());
-    if (_isDone) {
-      Get.back();
-    } else if (_count >= _max) {
-      _index++;
-      _count = 0;
-      setRangeBasedOnModel();
-    }
+    _workout.increaseCount(
+      fnCount: (value) => _flutterTts.speak(value.toString()),
+      fnMax: () => setRangeBasedOnModel(),
+      fnDone: () => Get.back(),
+    );
 
     setState(() {});
   }
-
-  // void handleListExercise() {}
 
   void setMidCount(bool f) {
     //when _midCount is activated
@@ -292,9 +275,14 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
         setMidCount(true);
       }
       if (_midCount && _postureAccordingToExercise(poses)) {
-        print('exerciseId: $_exerciseId');
-        incrementCounter();
-        // handleListExercise();
+        setState(() {
+          _workout.increaseCount(
+            fnCount: (value) => _flutterTts.speak(value.toString()),
+            fnMax: () => setRangeBasedOnModel(),
+            fnDone: () => Get.back(),
+          );
+        });
+
         setMidCount(false);
       }
       //check the posture when not in _midCount

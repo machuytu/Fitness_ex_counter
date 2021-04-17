@@ -38,8 +38,7 @@ class _InferenceExercisePageState extends State<InferenceExercisePage> {
   int _previewW;
 
   Exercise _exercise;
-  int get _id => _exercise.id;
-  String get _name => _exercise.name;
+  int get _exerciseId => _exercise.id;
 
   @override
   void initState() {
@@ -75,7 +74,7 @@ class _InferenceExercisePageState extends State<InferenceExercisePage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text(_name),
+        title: Text(_exercise.name),
       ),
       body: Stack(
         children: [
@@ -121,8 +120,9 @@ class _InferenceExercisePageState extends State<InferenceExercisePage> {
   }
 
   String _assetName() {
-    String name =
-        (_id == 3) ? 'lie_pose' : ((_id == 1) ? 'push_up_pose' : 'stand_pose');
+    String name = (_exerciseId == 3)
+        ? 'lie_pose'
+        : ((_exerciseId == 1) ? 'push_up_pose' : 'stand_pose');
 
     return 'assets/poses/$name.png';
   }
@@ -197,38 +197,38 @@ class _InferenceExercisePageState extends State<InferenceExercisePage> {
 
   //region Core
   bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-    if (_id == 0) {
+    if (_exerciseId == 0) {
       return poses['leftShoulder'][1] < _upperRange &&
           poses['rightShoulder'][1] < _upperRange &&
           poses['leftHip'][1] < _lowerRange &&
           poses['rightHip'][1] < _lowerRange;
     }
-    if (_id == 1) {
+    if (_exerciseId == 1) {
       return poses['leftShoulder'][1] > _upperRange &&
           poses['rightShoulder'][1] > _upperRange &&
           poses['leftShoulder'][1] < _lowerRange &&
           poses['rightShoulder'][1] < _lowerRange;
     }
-    if (_id == 2) {
+    if (_exerciseId == 2) {
       return poses['leftShoulder'][1] < _upperRange &&
           poses['rightShoulder'][1] < _upperRange;
     }
-    if (_id == 3) {
+    if (_exerciseId == 3) {
       return poses['rightShoulder'][0] > _upperRange &&
           poses['rightShoulder'][0] < _lowerRange;
     }
   }
 
   bool _midPostureExercise(Map<String, List<double>> poses) {
-    if (_id == 0) {
+    if (_exerciseId == 0) {
       return poses['leftShoulder'][1] > _upperRange &&
           poses['rightShoulder'][1] > _upperRange;
     }
-    if (_id == 1) {
+    if (_exerciseId == 1) {
       return poses['leftShoulder'][1] > _lowerRange &&
           poses['rightShoulder'][1] > _lowerRange;
     }
-    if (_id == 2) {
+    if (_exerciseId == 2) {
       return poses['leftShoulder'][1] > _upperRange &&
           poses['rightShoulder'][1] > _upperRange &&
           (poses['leftKnee'][1] > _lowerRange ||
@@ -236,7 +236,7 @@ class _InferenceExercisePageState extends State<InferenceExercisePage> {
           (poses['leftKnee'][1] < _lowerRange ||
               poses['rightKnee'][1] < _lowerRange);
     }
-    if (_id == 3) {
+    if (_exerciseId == 3) {
       return poses['rightShoulder'][0] < _upperRange;
     }
   }

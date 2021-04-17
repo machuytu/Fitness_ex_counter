@@ -70,33 +70,30 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getUser();
-    getWorkout();
     super.initState();
   }
 
   Future<User> getUser() async {
     _user = await _userService.getUser(_authService);
-    return _user;
-  }
-
-  void getWorkout() async {
     _workout = await _workoutService.getWorkoutByDate(now);
     if (_workout == null) {
       var listId = [0, 1, 2, 3, 0, 1, 2, 3];
-      _workout = Workout(
-        listExerciseId: listId,
-        listMax: getListMaxCount(_user.weight, _user.bmrInt, listId),
-        start: DateTime.now(),
-      );
       // _workout = Workout(
-      //   listExerciseId: [0, 1],
-      //   listMax: [3, 3],
+      //   listExerciseId: listId,
+      //   listMax: getListMaxCount(_user.weight, _user.bmrInt, listId),
       //   start: DateTime.now(),
       // );
+      _workout = Workout(
+        listExerciseId: [0, 1],
+        listMax: [3, 3],
+        start: DateTime.now(),
+      );
     }
-
     print(_workout);
+    return _user;
   }
+
+  // void getWorkout() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +178,7 @@ class _HomeState extends State<Home> {
                               },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage(_workout.isDone == true
+                                  image: AssetImage(_workout?.isDone == true
                                       ? "assets/images/Workout_done.png"
                                       : "assets/images/Workout.png")),
                             ),

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/data/exercise_data.dart';
-
 import 'exercise.dart';
 
 class Workout {
@@ -33,28 +32,44 @@ class Workout {
 
   Exercise get exercise => this.listExercise[index];
 
+  int get max => this.listMax[this.index];
+
   int get length => this.listExerciseId.length;
 
-  String get name => this.exercise.name;
+  String get exerciseName => this.exercise.name;
 
   int get exerciseId => this.exercise.id;
 
-  int get max => this.listMax[this.index];
+  bool get isMax => this.count >= this.max;
 
-  bool get isDone => ((this.index == this.length - 1) &&
-      (this.count >= this.listMax[this.index]));
+  bool get isLast => this.index == this.length - 1;
+
+  bool get isDone => this.isMax && this.isLast;
+
+  void increaseCount({
+    void Function(int) fnCount,
+    void Function() fnMax,
+    void Function() fnDone,
+  }) {
+    if (!this.isDone) {
+      this.count++;
+      fnCount(this.count);
+      if (this.isDone) {
+        fnDone();
+      } else if (this.isMax) {
+        this.index++;
+        this.count = 0;
+        fnMax();
+      }
+    }
+  }
 
   Map<BodyPart, double> get getBodyPartKcal {
     return Map.fromIterables(
       BodyPart.values,
       BodyPart.values.map((part) {
         var sum = 0.0;
-        if (this.isDone) {
-          sum += this.listMax[this.index] *
-              this.listExercise[this.index].kcal(part);
-        } else {
-          sum += this.count * this.listExercise[this.index].kcal(part);
-        }
+        sum += this.count * this.exercise.kcal(part);
         for (int i = 0; i < this.index; i++) {
           sum += this.listMax[i] * this.listExercise[i].kcal(part);
         }
