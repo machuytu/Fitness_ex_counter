@@ -13,15 +13,27 @@ class Workout {
   List<int> listMax;
 
   Workout({
-    this.id = '',
-    this.uid = '',
-    this.start,
-    this.end,
-    this.index = 0,
-    this.count = 0,
-    this.listExerciseId = const [0, 1, 2, 3, 0, 1, 2, 3],
-    this.listMax = const [1, 1, 1, 1, 1, 1, 1, 1],
-  });
+    int weight,
+    int bmr,
+  }) {
+    this.id = '';
+    this.uid = '';
+    this.index = 0;
+    this.count = 0;
+    this.start = DateTime.now();
+    this.end = DateTime.now();
+    if (weight != null && bmr != null) {
+      this.listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
+      this.listMax = this
+          .listExercise
+          .map((e) =>
+              ((bmr / this.length) * (1 / 3)) ~/ (e.coefficient * weight))
+          .toList();
+    } else {
+      this.listExerciseId = [0, 1];
+      this.listMax = [3, 3];
+    }
+  }
 
   @override
   String toString() =>
@@ -54,12 +66,14 @@ class Workout {
     if (!this.isDone) {
       this.count++;
       fnCount(this.count);
-      if (this.isDone) {
-        fnDone();
-      } else if (this.isMax) {
-        this.index++;
-        this.count = 0;
-        fnMax();
+      if (this.isMax) {
+        if (this.isLast) {
+          fnDone();
+        } else {
+          this.index++;
+          this.count = 0;
+          fnMax();
+        }
       }
     }
   }
@@ -113,7 +127,7 @@ class Workout {
         start = json['start'].toDate(),
         end = json['end'].toDate();
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> get toJson => {
         'id': this.id,
         'uid': this.uid,
         'index': this.index,
@@ -124,7 +138,7 @@ class Workout {
         'end': this.end,
       };
 
-  Map<String, dynamic> addJson() => {
+  Map<String, dynamic> get setJson => {
         'index': this.index,
         'count': this.count,
         'listExerciseId': this.listExerciseId,

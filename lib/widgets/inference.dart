@@ -1,24 +1,28 @@
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/workout.dart';
 import 'package:khoaluan/screens/camera.dart';
+import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/workout_service.dart';
 import 'package:tflite/tflite.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 
-class InferenceWorkoutPage extends StatefulWidget {
+class InferencePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   final Workout workout;
+  final Exercise exercise;
 
-  const InferenceWorkoutPage(this.cameras, this.workout);
+  const InferencePage(this.cameras, {this.workout, this.exercise});
 
   @override
-  _InferenceWorkoutPageState createState() => _InferenceWorkoutPageState();
+  _InferencePageState createState() => _InferencePageState();
 }
 
-class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
+class _InferencePageState extends State<InferencePage> {
+  final _practiceService = PracticeService();
   final _workoutService = WorkoutService();
   final _flutterTts = FlutterTts();
 
@@ -34,14 +38,16 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   int _imageWidth;
   int _previewH;
   int _previewW;
-  Workout _workout;
+  int _count;
 
-  int get _exerciseId => _workout.exerciseId;
+  Exercise _exercise;
+  Workout _workout;
 
   @override
   void initState() {
     loadModel();
     _workout = widget.workout;
+    _exercise = _workout?.exercise ?? widget.exercise;
     _inputArr = Map<String, List<double>>();
     _midCount = false;
     _isCorrectPosture = false;
@@ -49,6 +55,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
     _screenW = Get.width;
     _imageHeight = 0;
     _imageWidth = 0;
+    _count = 0;
     _flutterTts.speak("Your Workout Has Started");
     setRangeBasedOnModel();
     super.initState();
@@ -56,14 +63,15 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
 
   @override
   void dispose() {
-    _workoutService.setWorkout(
-      _workout.index,
-      _workout.count,
-      _workout.listExerciseId,
-      _workout.listMax,
-      _workout.start,
-    );
-
+    if (_workout != null) {
+      _workoutService.setWorkout(_workout);
+    } else {
+      _practiceService.addPractice(
+        _exercise.id,
+        _count,
+        DateTime.now(),
+      );
+    }
     super.dispose();
   }
 
@@ -73,7 +81,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text(_workout.exerciseName),
+        title: Text(_exercise.name),
       ),
       body: Stack(
         children: [
@@ -106,7 +114,9 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
           backgroundColor: getCounterColor(),
           onPressed: () {},
           child: Text(
-            '${_workout.count} / ${_workout.max}',
+            _workout != null
+                ? '${_workout.count} / ${_workout.max}'
+                : '$_count',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -119,21 +129,36 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   }
 
   String _assetName() {
-    String name = (_exerciseId == 3)
+    String name = (_exercise.id == 3)
         ? 'lie_pose'
-        : ((_exerciseId == 1) ? 'push_up_pose' : 'stand_pose');
+        : ((_exercise.id == 1) ? 'push_up_pose' : 'stand_pose');
 
     return 'assets/poses/$name.png';
   }
 
-  void incrementCounter() {
-    _workout.increaseCount(
-      fnCount: (value) => _flutterTts.speak(value.toString()),
-      fnMax: () => setRangeBasedOnModel(),
-      fnDone: () => Get.back(),
-    );
-
-    setState(() {});
+  void _increaseCount() {
+    if (_workout != null) {
+      _workout.increaseCount(
+        fnCount: (value) {
+          _flutterTts.speak(value.toString());
+          setState(() {});
+        },
+        fnMax: () {
+          _flutterTts.speak("Change exercise!");
+          setRangeBasedOnModel();
+          setState(() {});
+        },
+        fnDone: () {
+          _flutterTts.speak("Your workout done!");
+          Get.back();
+        },
+      );
+    } else {
+      setState(() {
+        _count++;
+      });
+      _flutterTts.speak(_count.toString());
+    }
   }
 
   void setMidCount(bool f) {
@@ -168,7 +193,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
 
   List<Widget> _renderHelperBlobs() {
     List<Widget> listToReturn = <Widget>[];
-    if (_exerciseId != 3) {
+    if (_exercise.id != 3) {
       listToReturn.add(_createPositionedBlobs(5, 40, 0, _upperRange));
       listToReturn.add(_createPositionedBlobs(5, 40, 0, _lowerRange));
     } else {
@@ -181,16 +206,16 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   void setRangeBasedOnModel() {
     double h = _screenH * 0.8;
     double w = _screenW * 0.8;
-    if (_exerciseId == 0) {
+    if (_exercise.id == 0) {
       _upperRange = h * 0.30; // pixel get on screen
       _lowerRange = h * 0.60;
-    } else if (_exerciseId == 1) {
+    } else if (_exercise.id == 1) {
       _upperRange = h * 0.45;
       _lowerRange = h * 0.65;
-    } else if (_exerciseId == 2) {
+    } else if (_exercise.id == 2) {
       _upperRange = h * 0.30;
       _lowerRange = h * 0.85;
-    } else if (_exerciseId == 3) {
+    } else if (_exercise.id == 3) {
       _upperRange = w * 0.50;
       _lowerRange = w * 1.00;
     }
@@ -198,7 +223,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
 
   //region Core
   bool _postureAccordingToExercise(Map<String, List<double>> poses) {
-    switch (_exerciseId) {
+    switch (_exercise.id) {
       case 0:
         return poses['leftShoulder'][1] < _upperRange &&
             poses['rightShoulder'][1] < _upperRange &&
@@ -226,7 +251,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
   }
 
   bool _midPostureExercise(Map<String, List<double>> poses) {
-    switch (_exerciseId) {
+    switch (_exercise.id) {
       case 0:
         return poses['leftShoulder'][1] > _upperRange &&
             poses['rightShoulder'][1] > _upperRange;
@@ -275,14 +300,7 @@ class _InferenceWorkoutPageState extends State<InferenceWorkoutPage> {
         setMidCount(true);
       }
       if (_midCount && _postureAccordingToExercise(poses)) {
-        setState(() {
-          _workout.increaseCount(
-            fnCount: (value) => _flutterTts.speak(value.toString()),
-            fnMax: () => setRangeBasedOnModel(),
-            fnDone: () => Get.back(),
-          );
-        });
-
+        _increaseCount();
         setMidCount(false);
       }
       //check the posture when not in _midCount

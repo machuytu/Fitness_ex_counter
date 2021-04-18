@@ -15,29 +15,18 @@ class WorkoutService {
         .collection('workouts');
   }
 
-  Future<void> setWorkout(
-    int index,
-    int count,
-    List<int> listExerciseId,
-    List<int> listMax,
-    DateTime start,
-  ) {
-    if (count == 0 && index == 0) {
+  Future<void> setWorkout(Workout workout) {
+    if (workout.count == 0 && workout.index == 0) {
       // return null;
     }
-    var now = DateTime.now();
-    var todayStr = now.toString().split(' ')[0];
+
+    workout.end = DateTime.now();
+    final todayStr = workout.end.toString().split(' ')[0];
+
     return _ref
         .doc(todayStr)
-        .set(Workout(
-          index: index,
-          count: count,
-          listExerciseId: listExerciseId,
-          listMax: listMax,
-          start: start,
-          end: now,
-        ).addJson())
-        .then((value) => {print('Added workout')})
+        .set(workout.setJson)
+        .then((value) => {print('Setted workout')})
         .catchError((err) {
       print(err);
     });
@@ -45,7 +34,6 @@ class WorkoutService {
 
   Future<List<Workout>> getWorkoutByUser() {
     return _ref
-        // .orderBy('end', descending: true)
         .get()
         .then((querySnapshot) => querySnapshot.docs
             .map((snapshot) => Workout.fromFirestoreSnapshot(snapshot))
@@ -56,7 +44,7 @@ class WorkoutService {
   }
 
   Future<Workout> getWorkoutByDate(DateTime date) {
-    var todayStr = date.toString().split(' ')[0];
+    final todayStr = date.toString().split(' ')[0];
 
     return _ref
         .doc(todayStr)

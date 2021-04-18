@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,7 +19,7 @@ import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:camera/camera.dart';
-import 'package:khoaluan/widgets/inference_workout.dart';
+import 'package:khoaluan/widgets/inference.dart';
 
 class Home extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -37,15 +38,6 @@ class _HomeState extends State<Home> {
   List<double> listMainPart = [];
   User _user = new User();
   Workout _workout;
-
-  List<int> getListMaxCount(int weight, int bmr, List<int> list) {
-    // var burnKcal = ((bmr / exercises.length) * (1 / 3));
-    return list
-        .map((i) =>
-            ((bmr / list.length) * (1 / 3)) ~/
-            (exercises[i].coefficient * weight))
-        .toList();
-  }
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -67,28 +59,16 @@ class _HomeState extends State<Home> {
         }).showModal(context);
   }
 
-  @override
-  void initState() {
-    getUser();
-    super.initState();
-  }
-
   Future<User> getUser() async {
     _user = await _userService.getUser(_authService);
-    _workout = await _workoutService.getWorkoutByDate(now);
-    if (_workout == null) {
-      var listId = [0, 1, 2, 3, 0, 1, 2, 3];
-      // _workout = Workout(
-      //   listExerciseId: listId,
-      //   listMax: getListMaxCount(_user.weight, _user.bmrInt, listId),
-      //   start: DateTime.now(),
-      // );
-      _workout = Workout(
-        listExerciseId: [0, 1],
-        listMax: [3, 3],
-        start: DateTime.now(),
-      );
-    }
+
+    // // for test
+    _workout = (await _workoutService.getWorkoutByDate(now)) ?? Workout();
+
+    // for release
+    // _workout = (await _workoutService.getWorkoutByDate(now)) ??
+    //     Workout(weight: _user.weight, bmr: _user.bmrInt);
+
     print(_workout);
     return _user;
   }
@@ -170,15 +150,19 @@ class _HomeState extends State<Home> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
                             child: InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 if (!_workout.isDone) {
-                                  Get.to(
-                                      InferenceWorkoutPage(cameras, _workout));
+                                  await Get.to(InferencePage(
+                                    cameras,
+                                    workout: _workout,
+                                  ));
+
+                                  setState(() {});
                                 }
                               },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage(_workout?.isDone == true
+                                  image: AssetImage(_workout.isDone
                                       ? "assets/images/Workout_done.png"
                                       : "assets/images/Workout.png")),
                             ),

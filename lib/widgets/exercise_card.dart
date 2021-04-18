@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/models/exercise.dart';
-import 'package:khoaluan/widgets/inference_exercise.dart';
+import 'package:khoaluan/widgets/inference.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
@@ -16,9 +16,10 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(
-        InferenceExercisePage(cameras: cameras, exercise: exercise),
-      ),
+      onTap: () => Get.to(InferencePage(
+        cameras,
+        exercise: exercise,
+      )),
       child: Container(
         width: 140.0,
         margin: EdgeInsets.only(right: 18.0),
