@@ -40,14 +40,13 @@ class _InferencePageState extends State<InferencePage> {
   int _previewW;
   int _count;
 
-  Exercise _exercise;
+  Exercise get _exercise => _workout?.exercise ?? widget.exercise;
   Workout _workout;
 
   @override
   void initState() {
     loadModel();
     _workout = widget.workout;
-    _exercise = _workout?.exercise ?? widget.exercise;
     _inputArr = Map<String, List<double>>();
     _midCount = false;
     _isCorrectPosture = false;
