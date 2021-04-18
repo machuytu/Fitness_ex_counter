@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
   final _userService = UserService();
   final _practiceService = PracticeService();
   final _workoutService = WorkoutService();
-  final now = DateTime.now();
+  final _now = DateTime.now();
   List<double> listMainPart = [];
   User _user = new User();
   Workout _workout;
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
           isArray: true,
         ),
         hideHeader: false,
-        onConfirm: (Picker picker, List value) async {
+        onConfirm: (Picker picker, List value) {
           setState(() {
             if (value.toString() == "[0]") {
               _userService.updateUser(_user.uid, 'fitness_mode', 1);
@@ -63,17 +63,15 @@ class _HomeState extends State<Home> {
     _user = await _userService.getUser(_authService);
 
     // // for test
-    _workout = (await _workoutService.getWorkoutByDate(now)) ?? Workout();
+    _workout = (await _workoutService.getWorkoutByDate(_now)) ?? Workout();
 
     // for release
-    // _workout = (await _workoutService.getWorkoutByDate(now)) ??
+    // _workout = (await _workoutService.getWorkoutByDate(_now)) ??
     //     Workout(weight: _user.weight, bmr: _user.bmrInt);
 
     print(_workout);
     return _user;
   }
-
-  // void getWorkout() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -152,11 +150,15 @@ class _HomeState extends State<Home> {
                             child: InkWell(
                               onTap: () async {
                                 if (!_workout.isDone) {
+                                  _workout.start = DateTime.now();
+                                  var r = InferencePage(
+                                    cameras,
+                                    workout: _workout,
+                                  );
                                   await Get.to(InferencePage(
                                     cameras,
                                     workout: _workout,
                                   ));
-
                                   setState(() {});
                                 }
                               },
@@ -239,8 +241,8 @@ class _HomeState extends State<Home> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: FutureBuilder(
-                                    future:
-                                        _practiceService.getPracticeByDate(now),
+                                    future: _practiceService
+                                        .getPracticeByDate(_now),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         listMainPart = _practiceService

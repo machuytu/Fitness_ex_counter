@@ -25,6 +25,7 @@ class _InferencePageState extends State<InferencePage> {
   final _practiceService = PracticeService();
   final _workoutService = WorkoutService();
   final _flutterTts = FlutterTts();
+  final _now = DateTime.now();
 
   Map<String, List<double>> _inputArr;
   List<dynamic> _recognitions;
@@ -45,7 +46,7 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void initState() {
-    loadModel();
+    _loadModel();
     _workout = widget.workout;
     _inputArr = Map<String, List<double>>();
     _midCount = false;
@@ -56,7 +57,7 @@ class _InferencePageState extends State<InferencePage> {
     _imageWidth = 0;
     _count = 0;
     _flutterTts.speak("Your Workout Has Started");
-    setRangeBasedOnModel();
+    _setRangeBasedOnModel();
     super.initState();
   }
 
@@ -68,7 +69,7 @@ class _InferencePageState extends State<InferencePage> {
       _practiceService.addPractice(
         _exercise.id,
         _count,
-        DateTime.now(),
+        _now,
       );
     }
     super.dispose();
@@ -83,26 +84,20 @@ class _InferencePageState extends State<InferencePage> {
         title: Text(_exercise.name),
       ),
       body: Stack(
-        children: [
-          Stack(
-            children: <Widget>[
-              Camera(
-                cameras: widget.cameras,
-                setRecognitions: _setRecognitions,
-              ),
-              _isCorrectPosture == false
-                  ? Center(
-                      child: Image(
-                        image: AssetImage(_assetName()),
-                        color: Colors.black.withOpacity(0.5),
-                        colorBlendMode: BlendMode.dstIn,
-                      ),
-                    )
-                  : Container(),
-              Stack(children: _renderHelperBlobs()),
-              Stack(children: _renderKeypoints()),
-            ],
+        children: <Widget>[
+          Camera(
+            cameras: widget.cameras,
+            setRecognitions: _setRecognitions,
           ),
+          Center(
+            child: Image(
+              image: AssetImage(_assetName()),
+              color: Colors.black.withOpacity(_isCorrectPosture ? 0.0 : 0.5),
+              colorBlendMode: BlendMode.dstIn,
+            ),
+          ),
+          Stack(children: _renderHelperBlobs()),
+          Stack(children: _renderKeypoints()),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -144,7 +139,7 @@ class _InferencePageState extends State<InferencePage> {
         },
         fnMax: () {
           _flutterTts.speak("Change exercise!");
-          setRangeBasedOnModel();
+          _setRangeBasedOnModel();
           setState(() {});
         },
         fnDone: () {
@@ -160,7 +155,7 @@ class _InferencePageState extends State<InferencePage> {
     }
   }
 
-  void setMidCount(bool f) {
+  void _setMidCount(bool f) {
     //when _midCount is activated
     if (f && !_midCount) {
       _flutterTts.speak("Perfect!");
@@ -202,7 +197,7 @@ class _InferencePageState extends State<InferencePage> {
     return listToReturn;
   }
 
-  void setRangeBasedOnModel() {
+  void _setRangeBasedOnModel() {
     double h = _screenH * 0.8;
     double w = _screenW * 0.8;
     if (_exercise.id == 0) {
@@ -292,15 +287,15 @@ class _InferencePageState extends State<InferencePage> {
     }
   }
 
-  Future<void> _countingLogic(Map<String, List<double>> poses) async {
+  void _countingLogic(Map<String, List<double>> poses) {
     if (poses != null) {
       //check posture before beginning count
       if (_isCorrectPosture && _midPostureExercise(poses)) {
-        setMidCount(true);
+        _setMidCount(true);
       }
       if (_midCount && _postureAccordingToExercise(poses)) {
         _increaseCount();
-        setMidCount(false);
+        _setMidCount(false);
       }
       //check the posture when not in _midCount
       if (!_midCount) {
@@ -377,7 +372,7 @@ class _InferencePageState extends State<InferencePage> {
     });
   }
 
-  void loadModel() async {
+  void _loadModel() async {
     await Tflite.loadModel(
       model: 'assets/models/posenet_mv1_075_float_from_checkpoints.tflite',
       numThreads: 5, // defaults to 1

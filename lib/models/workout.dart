@@ -3,60 +3,76 @@ import 'package:khoaluan/data/exercise_data.dart';
 import 'exercise.dart';
 
 class Workout {
-  String id;
-  String uid;
-  int count;
-  DateTime start;
-  DateTime end;
-  int index;
-  List<int> listExerciseId;
-  List<int> listMax;
+  String _id;
+  String _uid;
+  int _index;
+  int _count;
+  DateTime _start;
+  DateTime _end;
+  List<int> _listExerciseId;
+  List<int> _listMax;
 
   Workout({
     int weight,
     int bmr,
+    DateTime start,
+    DateTime end,
   }) {
-    this.id = '';
-    this.uid = '';
-    this.index = 0;
-    this.count = 0;
-    this.start = DateTime.now();
-    this.end = DateTime.now();
+    this._id = '';
+    this._uid = '';
+    this._index = 0;
+    this._count = 0;
+    this._start = start ?? DateTime.now();
+    this._end = end ?? DateTime.now();
     if (weight != null && bmr != null) {
-      this.listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
-      this.listMax = this
+      this._listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
+      this._listMax = this
           .listExercise
           .map((e) =>
               ((bmr / this.length) * (1 / 3)) ~/ (e.coefficient * weight))
           .toList();
     } else {
-      this.listExerciseId = [0, 1];
-      this.listMax = [3, 3];
+      this._listExerciseId = [0, 1];
+      this._listMax = [3, 3];
     }
   }
 
   @override
   String toString() =>
-      'Workout($id): $index / $count / $isDone / $listExerciseId / $listMax / $getMainPartKcal';
+      'Workout($_id): $_index / $_count / $isDone / $_listExerciseId / $_listMax / $getMainPartKcal';
 
   List<Exercise> get listExercise =>
-      this.listExerciseId.map((id) => exercises[id]).toList();
+      this._listExerciseId.map((id) => exercises[id]).toList();
 
-  Exercise get exercise => this.listExercise[index];
+  Exercise get exercise => this.listExercise[_index];
 
-  int get max => this.listMax[this.index];
+  int get length => this._listExerciseId.length;
 
-  int get length => this.listExerciseId.length;
+  int get max => this._listMax[this.index];
 
-  String get exerciseName => this.exercise.name;
+  int get count => this._count;
 
-  int get exerciseId => this.exercise.id;
+  int get index => this._index;
 
   bool get isMax => this.count >= this.max;
+
+  bool get isInit => this.index == 0 && this.count == 0;
 
   bool get isLast => this.index == this.length - 1;
 
   bool get isDone => this.isMax && this.isLast;
+
+  String get id => this._id;
+
+  String get uid => this._uid;
+
+  DateTime get start => this._start;
+
+  DateTime get end => this._end;
+
+  set start(DateTime value) => this._start = value;
+
+  set end(DateTime value) => this._end = value;
 
   void increaseCount({
     void Function(int) fnCount,
@@ -64,14 +80,14 @@ class Workout {
     void Function() fnDone,
   }) {
     if (!this.isDone) {
-      this.count++;
+      this._count++;
       fnCount(this.count);
       if (this.isMax) {
         if (this.isLast) {
           fnDone();
         } else {
-          this.index++;
-          this.count = 0;
+          this._index++;
+          this._count = 0;
           fnMax();
         }
       }
@@ -83,9 +99,9 @@ class Workout {
       BodyPart.values,
       BodyPart.values.map((part) {
         var sum = 0.0;
-        sum += this.count * this.exercise.kcal(part);
-        for (int i = 0; i < this.index; i++) {
-          sum += this.listMax[i] * this.listExercise[i].kcal(part);
+        sum += this._count * this.exercise.kcal(part);
+        for (int i = 0; i < this._index; i++) {
+          sum += this._listMax[i] * this.listExercise[i].kcal(part);
         }
         return sum;
       }),
@@ -95,18 +111,15 @@ class Workout {
   List<double> get getMainPartKcal {
     final map = this.getBodyPartKcal;
 
-    final topPart = map[BodyPart.TRAPS] +
-        map[BodyPart.CHEST] +
-        map[BodyPart.SHOULDERS] +
-        map[BodyPart.BICEPS] +
-        map[BodyPart.FOREARM];
-
-    final middlePart = map[BodyPart.ABS] + map[BodyPart.BACK];
-
-    final bottomPart =
-        map[BodyPart.GLUTES] + map[BodyPart.QUADS] + map[BodyPart.CALVES];
-
-    return <double>[topPart, middlePart, bottomPart];
+    return <double>[
+      map[BodyPart.TRAPS] +
+          map[BodyPart.CHEST] +
+          map[BodyPart.SHOULDERS] +
+          map[BodyPart.BICEPS] +
+          map[BodyPart.FOREARM],
+      map[BodyPart.ABS] + map[BodyPart.BACK],
+      map[BodyPart.GLUTES] + map[BodyPart.QUADS] + map[BodyPart.CALVES],
+    ];
   }
 
   factory Workout.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
@@ -118,32 +131,32 @@ class Workout {
   }
 
   Workout.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        uid = json['uid'],
-        index = json['index'],
-        count = json['count'],
-        listExerciseId = List<int>.from(json['listExerciseId']),
-        listMax = List<int>.from(json['listMax']),
-        start = json['start'].toDate(),
-        end = json['end'].toDate();
+      : _id = json['id'],
+        _uid = json['uid'],
+        _index = json['index'],
+        _count = json['count'],
+        _listExerciseId = List<int>.from(json['listExerciseId']),
+        _listMax = List<int>.from(json['listMax']),
+        _start = json['start'].toDate(),
+        _end = json['end'].toDate();
 
   Map<String, dynamic> get toJson => {
-        'id': this.id,
-        'uid': this.uid,
-        'index': this.index,
-        'count': this.count,
-        'listExerciseId': this.listExerciseId,
-        'listMax': this.listMax,
-        'start': this.start,
-        'end': this.end,
+        'id': this._id,
+        'uid': this._uid,
+        'index': this._index,
+        'count': this._count,
+        'listExerciseId': this._listExerciseId,
+        'listMax': this._listMax,
+        'start': this._start,
+        'end': this._end,
       };
 
   Map<String, dynamic> get setJson => {
-        'index': this.index,
-        'count': this.count,
-        'listExerciseId': this.listExerciseId,
-        'listMax': this.listMax,
-        'start': this.start,
-        'end': this.end,
+        'index': this._index,
+        'count': this._count,
+        'listExerciseId': this._listExerciseId,
+        'listMax': this._listMax,
+        'start': this._start,
+        'end': this._end,
       };
 }
