@@ -1,10 +1,14 @@
-# khoaluan
+# Fitness app
 
-A new Flutter application.
+A Flutter application use TensorFlow Framework and Firebase.
 
 ## Getting Started
 
 This project is a starting point for a Flutter application.
+
+- Install Flutter: https://flutter.dev/docs/get-started/install
+- Set up and connect your Android device
+- Run app with command line: flutter run
 
 A few resources to get you started if this is your first Flutter project:
 

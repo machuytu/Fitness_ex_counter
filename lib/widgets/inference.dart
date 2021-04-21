@@ -42,7 +42,8 @@ class _InferencePageState extends State<InferencePage> {
   int _count;
   Workout _workout;
 
-  Exercise get _exercise => _workout?.exercise ?? widget.exercise;
+  Exercise get _exercise =>
+      (_workout == null) ? widget.exercise : _workout.exercise;
 
   Color get _getCounterColor => (_isCorrectPosture) ? Colors.green : Colors.red;
 
@@ -50,7 +51,7 @@ class _InferencePageState extends State<InferencePage> {
       (_isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
 
   String get _countStr =>
-      (_workout != null) ? '${_workout.count} / ${_workout.max}' : '$_count';
+      (_workout == null) ? '$_count' : '${_workout.count} / ${_workout.max}';
 
   String get _assetName {
     String name;
@@ -87,55 +88,57 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void dispose() {
-    if (_workout != null) {
-      _workoutService.setWorkout(_workout);
-    } else {
-      _practiceService.addPractice(
-        _exercise.id,
-        _count,
-        _now,
-      );
-    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        centerTitle: true,
-        title: Text(_exercise.name),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Camera(
-            cameras: widget.cameras,
-            setRecognitions: _setRecognitions,
-          ),
-          Center(
-            child: Image.asset(
-              _assetName,
-              color: _getImageColor,
+    return WillPopScope(
+      onWillPop: () async {
+        if (_workout == null) {
+          _practiceService.addPractice(_exercise.id, _count, _now);
+        } else {
+          _workoutService.setWorkout(_workout);
+          Get.back<Workout>(result: _workout);
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: Text(_exercise.name),
+        ),
+        body: Stack(
+          children: <Widget>[
+            Camera(
+              cameras: widget.cameras,
+              setRecognitions: _setRecognitions,
             ),
-          ),
-          Stack(children: _renderHelperBlobs()),
-          Stack(children: _renderKeypoints()),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 85,
-        width: 85,
-        child: FloatingActionButton(
-          backgroundColor: _getCounterColor,
-          onPressed: () {},
-          child: Text(
-            _countStr,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 22,
+            Center(
+              child: Image.asset(
+                _assetName,
+                color: _getImageColor,
+              ),
+            ),
+            Stack(children: _renderHelperBlobs()),
+            Stack(children: _renderKeypoints()),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Container(
+          height: 85,
+          width: 85,
+          child: FloatingActionButton(
+            backgroundColor: _getCounterColor,
+            onPressed: () {},
+            child: Text(
+              _countStr,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 22,
+              ),
             ),
           ),
         ),
@@ -241,28 +244,26 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   void _increaseCount() {
-    if (_workout != null) {
-      _workout.increaseCount(
-        fnCount: (value) {
-          _flutterTts.speak(value.toString());
-          setState(() {});
-        },
-        fnMax: () {
-          _flutterTts.speak("Change exercise!");
-          _setRangeBasedOnModel();
-          setState(() {});
-        },
-        fnDone: () {
-          _flutterTts.speak("Your workout done!");
-          Get.back();
-        },
-      );
-    } else {
-      setState(() {
+    setState(() {
+      if (_workout == null) {
         _count++;
-      });
-      _flutterTts.speak(_count.toString());
-    }
+        _flutterTts.speak(_count.toString());
+      } else {
+        _workout.increaseCount(
+          onCount: (value) {
+            _flutterTts.speak(value.toString());
+          },
+          onMax: () {
+            _flutterTts.speak("Change exercise!");
+            _setRangeBasedOnModel();
+          },
+          onDone: () {
+            _flutterTts.speak("Your workout done!");
+            Get.back<Workout>(result: _workout);
+          },
+        );
+      }
+    });
   }
 
   void _setMidCount(bool f) {

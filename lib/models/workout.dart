@@ -75,20 +75,20 @@ class Workout {
   set end(DateTime value) => this._end = value;
 
   void increaseCount({
-    void Function(int) fnCount,
-    void Function() fnMax,
-    void Function() fnDone,
+    void Function(int) onCount,
+    void Function() onMax,
+    void Function() onDone,
   }) {
     if (!this.isDone) {
       this._count++;
-      fnCount(this.count);
+      if (onCount != null) onCount(this.count);
       if (this.isMax) {
         if (this.isLast) {
-          fnDone();
+          if (onDone != null) onDone();
         } else {
           this._index++;
           this._count = 0;
-          fnMax();
+          if (onMax != null) onMax();
         }
       }
     }
