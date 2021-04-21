@@ -16,8 +16,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  CameraController controller;
-  bool isDetecting = false;
+  CameraController _controller;
+  bool _isDetecting = false;
 
   @override
   void initState() {
@@ -26,41 +26,33 @@ class _CameraState extends State<Camera> {
     if (widget.cameras == null || widget.cameras.length < 1) {
       print('No camera is found');
     } else {
-      controller = new CameraController(
+      _controller = CameraController(
         widget.cameras[1],
         ResolutionPreset.high,
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
-      controller.initialize().then((_) {
+      _controller.initialize().then((_) {
         if (!mounted) {
           return;
         }
         setState(() {});
 
-        controller.startImageStream((CameraImage img) {
-          if (!isDetecting) {
-            // isDetecting = true;
-
-            // int startTime = new DateTime.now().millisecondsSinceEpoch;
-
-            Tflite.runPoseNetOnFrame(
-              bytesList: img.planes.map((plane) {
-                return plane.bytes;
-              }).toList(),
+        _controller.startImageStream((CameraImage img) async {
+          if (!_isDetecting) {
+            _isDetecting = true;
+            final recognitions = await Tflite.runPoseNetOnFrame(
+              bytesList: img.planes.map((plane) => plane.bytes).toList(),
               imageHeight: img.height,
               imageWidth: img.width,
               imageMean: 0,
-              imageStd: 257,
+              imageStd: 255,
               numResults: 1,
               rotation: -90,
               threshold: 0.1,
-            ).then((recognitions) {
-              // int endTime = new DateTime.now().millisecondsSinceEpoch;
-
-              widget.setRecognitions(recognitions, img.height, img.width);
-
-              // isDetecting = false;
-            });
+            );
+            widget.setRecognitions(recognitions, img.height, img.width);
+            _isDetecting = false;
           }
         });
       });
@@ -69,24 +61,20 @@ class _CameraState extends State<Camera> {
 
   @override
   void dispose() {
-    controller?.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller.value.isInitialized) {
+    if (_controller == null || !_controller.value.isInitialized) {
       return Container();
     }
 
     var tmp = MediaQuery.of(context).size;
     var screenH = math.max(tmp.height, tmp.width);
     var screenW = math.min(tmp.height, tmp.width);
-    print('screenH ${tmp.height}');
-    print('screenW ${tmp.width}');
-    tmp = controller.value.previewSize;
-    print('previewH ${tmp.height}');
-    print('previewW ${tmp.width}');
+    tmp = _controller.value.previewSize;
     var previewH = math.max(tmp.height, tmp.width);
     var previewW = math.min(tmp.height, tmp.width);
     var screenRatio = screenH / screenW;
@@ -97,7 +85,7 @@ class _CameraState extends State<Camera> {
           screenRatio > previewRatio ? screenH : screenW / previewW * previewH,
       maxWidth:
           screenRatio > previewRatio ? screenH / previewH * previewW : screenW,
-      child: CameraPreview(controller),
+      child: CameraPreview(_controller),
     );
   }
 }

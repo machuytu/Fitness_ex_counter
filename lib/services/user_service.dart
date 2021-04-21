@@ -1,12 +1,9 @@
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/services/auth_service.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserService {
-  final databaseReference = FirebaseDatabase.instance.reference();
-
-  CollectionReference _ref = FirebaseFirestore.instance.collection('users');
+  final _ref = FirebaseFirestore.instance.collection('users');
 
   Future<User> getUser(AuthService auth) {
     String userId = auth.getUser().uid;
@@ -28,7 +25,7 @@ class UserService {
     });
   }
 
-  void setValueRegister(
+  Future<void> setValueRegister(
       String userId,
       String nameUser,
       int age,
@@ -62,21 +59,21 @@ class UserService {
     }
     int bmrInt = bmr.toInt();
 
-    _ref
-        .doc(userId)
-        .set({
-          'name': nameUser,
-          'age': age,
-          'height': heightValue,
-          'height_unit': heightUnit,
-          'weight': weightValue,
-          'weight_unit': weightUnit,
-          'bmr_int': bmrInt,
-          'fitness_mode': fitnessMode,
-          'gender': isMale
-        })
-        .then((value) async => {print("add user $userId")})
-        .catchError((err) => {print(err)});
+    var r = _ref.doc(userId).set({
+      'name': nameUser,
+      'age': age,
+      'height': heightValue,
+      'height_unit': heightUnit,
+      'weight': weightValue,
+      'weight_unit': weightUnit,
+      'bmr_int': bmrInt,
+      'fitness_mode': fitnessMode,
+      'gender': isMale
+    }).then((value) {
+      print("add user $userId");
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   void updateValueRegister(
@@ -113,20 +110,20 @@ class UserService {
     }
     int bmrInt = bmr.toInt();
 
-    _ref
-        .doc(userId)
-        .set({
-          'name': nameUser,
-          'age': age,
-          'height': heightValue,
-          'height_unit': heightUnit,
-          'weight': weightValue,
-          'weight_unit': weightUnit,
-          'bmr_int': bmrInt,
-          'fitness_mode': fitnessMode,
-          'gender': isMale
-        })
-        .then((value) async => {print("update user $userId")})
-        .catchError((err) => {print(err)});
+    return _ref.doc(userId).set({
+      'name': nameUser,
+      'age': age,
+      'height': heightValue,
+      'height_unit': heightUnit,
+      'weight': weightValue,
+      'weight_unit': weightUnit,
+      'bmr_int': bmrInt,
+      'fitness_mode': fitnessMode,
+      'gender': isMale
+    }).then((value) {
+      print("update user $userId");
+    }).catchError((err) {
+      print(err);
+    });
   }
 }

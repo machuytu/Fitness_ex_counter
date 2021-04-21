@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/models/workout.dart';
 import 'auth_service.dart';
@@ -16,18 +15,16 @@ class WorkoutService {
   }
 
   Future<void> setWorkout(Workout workout) {
-    if (workout.count == 0 && workout.index == 0) {
+    if (workout.isInit) {
       // return null;
     }
 
     workout.end = DateTime.now();
     final todayStr = workout.end.toString().split(' ')[0];
 
-    return _ref
-        .doc(todayStr)
-        .set(workout.setJson)
-        .then((value) => {print('Setted workout')})
-        .catchError((err) {
+    return _ref.doc(todayStr).set(workout.setJson).then((value) {
+      print('Setted workout');
+    }).catchError((err) {
       print(err);
     });
   }
