@@ -1,6 +1,6 @@
-# khoaluan
+# Fitness app
 
-A new Flutter application.
+A Flutter application use TensorFlow Framework and Firebase.
 
 ## Getting Started
 
