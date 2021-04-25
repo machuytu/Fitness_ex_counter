@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/models/user.dart';
-import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -14,7 +13,6 @@ class Analytics extends StatelessWidget {
   PracticeService _practiceService = PracticeService();
   DateTime now = DateTime.now();
   UserService user = new UserService();
-  AuthService _auth = new AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +69,7 @@ class Analytics extends StatelessWidget {
                         double totalKcal = _practiceService.getTotalKcal(list);
 
                         return FutureBuilder(
-                            future: user.getUser(_auth),
+                            future: user.getUser(),
                             builder: (context, snapshotUser) {
                               if (snapshotUser.hasData) {
                                 User user = snapshotUser.data;

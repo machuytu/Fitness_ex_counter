@@ -10,7 +10,6 @@ import 'package:khoaluan/main.dart';
 import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/models/daily_exercise.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
-import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 import 'package:khoaluan/services/daily_exercise_service.dart';
@@ -29,14 +28,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _authService = AuthService();
   final _userService = UserService();
   final _practiceService = PracticeService();
-  final _workoutService = DailyExerciseService();
+  final _dailyExerciseService = DailyExerciseService();
   final _now = DateTime.now();
+  var _user = User();
+  var _dailyExercise = DailyExercise();
   List<double> listMainPart = [];
-  User _user = User();
-  DailyExercise _workout = DailyExercise();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -47,40 +45,34 @@ class _HomeState extends State<Home> {
         hideHeader: false,
         onConfirm: (Picker picker, List<int> value) {
           setState(() {
-            _userService.updateUser(_user.uid, 'fitnessMode', value[0]);
-            // if (value.toString() == "[0]") {
-            //   _userService.updateUser(_user.uid, 'fitnessMode', 1);
-            // } else if (value.toString() == "[1]") {
-            //   _userService.updateUser(_user.uid, 'fitnessMode', 2);
-            // } else {
-            //   _userService.updateUser(_user.uid, 'fitnessMode', 3);
-            // }
+            _userService.updateUser('fitnessMode', value[0] + 1);
           });
         }).showModal(context);
   }
 
   Future<User> getUser() async {
-    _user = await _userService.getUser(_authService);
+    _user = await _userService.getUser();
     return _user;
   }
 
   Future<void> getDailyExercise(
       {@required int weight, @required int bmr}) async {
     // // for test
-    _workout =
-        (await _workoutService.getDailyExerciseByDate(_now)) ?? DailyExercise();
+    _dailyExercise =
+        (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
+            DailyExercise();
 
     // for release
-    // _workout = (await _workoutService.getDailyExerciseByDate(_now)) ??
+    // _dailyExercise = (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
     //     DailyExercise(weight: weight, bmr:  bmr);
 
-    print(_workout);
+    print(_dailyExercise);
   }
 
   @override
   void initState() {
     getUser().then(
-        (value) => getDailyExercise(weight: value.weight, bmr: value.bmr));
+        (value) => getDailyExercise(weight: value?.weight, bmr: value?.bmr));
     super.initState();
   }
 
@@ -160,15 +152,15 @@ class _HomeState extends State<Home> {
                             borderRadius: BorderRadius.circular(15.0),
                             child: InkWell(
                               onTap: () {
-                                if (_workout.isDone) {
-                                  _workout.start = DateTime.now();
+                                if (_dailyExercise.isDone) {
+                                  _dailyExercise.start = DateTime.now();
                                   Get.to<DailyExercise>(InferencePage(
                                     cameras,
-                                    dailyExercise: _workout,
+                                    dailyExercise: _dailyExercise,
                                   )).then((value) {
                                     print('inference value $value');
                                     setState(() {
-                                      _workout = value;
+                                      _dailyExercise = value;
                                     });
                                   }).catchError((err) {
                                     print('inference err $err');
@@ -177,7 +169,7 @@ class _HomeState extends State<Home> {
                               },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage((_workout.isDone)
+                                  image: AssetImage((_dailyExercise.isDone)
                                       ? "assets/images/DailyExercise_done.png"
                                       : "assets/images/DailyExercise.png")),
                             ),
@@ -356,7 +348,7 @@ class _HomeState extends State<Home> {
 
   // TextSpan textSpanWidget(int mainPartIndex) {
   //   final mainPartValue =
-  //       listMainPart[mainPartIndex] + _workout.getMainPartKcal[mainPartIndex];
+  //       listMainPart[mainPartIndex] + _dailyExercise.getMainPartKcal[mainPartIndex];
   //   if (0 < mainPartValue && mainPartValue <= 50) {
   //     return TextSpan(
   //       text: 'Good',

@@ -28,8 +28,9 @@ class DailyExercise {
       this._listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
       this._listMax = this
           .listExercise
-          .map((e) => (((bmr / this.length) * (1 / 3)) /
-              (e.coefficient * weight)) as int)
+          .map((e) =>
+              (((bmr / this.length) * (1 / 3)) / (e.coefficient * weight))
+                  .round())
           .toList();
     } else {
       this._listExerciseId = [0, 1];

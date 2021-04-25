@@ -23,7 +23,7 @@ class InferencePage extends StatefulWidget {
 
 class _InferencePageState extends State<InferencePage> {
   final _practiceService = PracticeService();
-  final _workoutService = DailyExerciseService();
+  final _dailyExerciseService = DailyExerciseService();
   final _flutterTts = FlutterTts();
   final _now = DateTime.now();
 
@@ -40,18 +40,19 @@ class _InferencePageState extends State<InferencePage> {
   int _previewH;
   int _previewW;
   int _count;
-  DailyExercise _workout;
+  DailyExercise _dailyExercise;
 
   Exercise get _exercise =>
-      (_workout == null) ? widget.exercise : _workout.exercise;
+      (_dailyExercise == null) ? widget.exercise : _dailyExercise.exercise;
 
   Color get _getCounterColor => (_isCorrectPosture) ? Colors.green : Colors.red;
 
   Color get _getImageColor =>
       (_isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
 
-  String get _countStr =>
-      (_workout == null) ? '$_count' : '${_workout.count} / ${_workout.max}';
+  String get _countStr => (_dailyExercise == null)
+      ? '$_count'
+      : '${_dailyExercise.count} / ${_dailyExercise.max}';
 
   String get _assetName {
     String name;
@@ -72,7 +73,7 @@ class _InferencePageState extends State<InferencePage> {
   @override
   void initState() {
     _loadModel();
-    _workout = widget.dailyExercise;
+    _dailyExercise = widget.dailyExercise;
     _inputArr = Map<String, List<double>>();
     _midCount = false;
     _isCorrectPosture = false;
@@ -81,7 +82,11 @@ class _InferencePageState extends State<InferencePage> {
     _imageHeight = 0;
     _imageWidth = 0;
     _count = 0;
-    _flutterTts.speak("Your DailyExercise Has Started");
+    if (_dailyExercise == null) {
+      _flutterTts.speak("Your exercise has started");
+    } else {
+      _flutterTts.speak("Your daily exercise has started");
+    }
     _setRangeBasedOnModel();
     super.initState();
   }
@@ -95,11 +100,11 @@ class _InferencePageState extends State<InferencePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_workout == null) {
+        if (_dailyExercise == null) {
           _practiceService.addPractice(_exercise.id, _count, _now);
         } else {
-          _workoutService.setDailyExercise(_workout);
-          Get.back<DailyExercise>(result: _workout);
+          _dailyExerciseService.setDailyExercise(_dailyExercise);
+          Get.back<DailyExercise>(result: _dailyExercise);
         }
         return true;
       },
@@ -245,21 +250,21 @@ class _InferencePageState extends State<InferencePage> {
 
   void _increaseCount() {
     setState(() {
-      if (_workout == null) {
+      if (_dailyExercise == null) {
         _count++;
         _flutterTts.speak(_count.toString());
       } else {
-        _workout.increaseCount(
+        _dailyExercise.increaseCount(
           onCount: (value) {
             _flutterTts.speak(value.toString());
           },
           onMax: () {
-            _flutterTts.speak("Change exercise!");
+            _flutterTts.speak("Change exercise");
             _setRangeBasedOnModel();
           },
           onDone: () {
-            _flutterTts.speak("Your dailyExercise done!");
-            Get.back<DailyExercise>(result: _workout);
+            _flutterTts.speak("Your daily exercise done");
+            Get.back<DailyExercise>(result: _dailyExercise);
           },
         );
       }
@@ -269,7 +274,7 @@ class _InferencePageState extends State<InferencePage> {
   void _setMidCount(bool f) {
     //when _midCount is activated
     if (f && !_midCount) {
-      _flutterTts.speak("Perfect!");
+      _flutterTts.speak("Perfect");
     }
     setState(() {
       _midCount = f;

@@ -6,10 +6,13 @@ import 'auth_service.dart';
 
 class PracticeService {
   CollectionReference _ref;
-  String _uid;
+  String _uid = ' ';
 
   PracticeService() {
-    _uid = AuthService().getUser().uid;
+    var user = AuthService().getUser();
+    if (user != null) {
+      _uid = user.uid;
+    }
     _ref = FirebaseFirestore.instance
         .collection('Users')
         .doc(_uid)

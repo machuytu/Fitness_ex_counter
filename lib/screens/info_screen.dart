@@ -29,7 +29,7 @@ class _InfoScreenState extends State<InfoScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: userService.getUser(_auth),
+        future: userService.getUser(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             User user = snapshot.data;

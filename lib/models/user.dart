@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  String uid;
+  String id;
   bool gender;
   String heightUnit;
   String weightUnit;
@@ -13,7 +13,6 @@ class User {
   int age;
 
   User({
-    String uid,
     bool gender,
     String heightUnit,
     String weightUnit,
@@ -37,14 +36,16 @@ class User {
 
   factory User.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
-    if (data == null) return null;
-    data['uid'] = snapshot.id;
+    if (data == null) {
+      print('get user null');
+      return null;
+    }
+    data['id'] = snapshot.id;
     return User.fromJson(data);
   }
 
   User.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
-    uid = json['uid'];
     heightUnit = json['heightUnit'];
     weightUnit = json['weightUnit'];
     fitnessMode = json['fitnessMode'];
@@ -57,6 +58,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['gender'] = this.gender;
     data['heightUnit'] = this.heightUnit;
     data['weightUnit'] = this.weightUnit;
