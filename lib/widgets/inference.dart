@@ -2,20 +2,20 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:khoaluan/models/exercise.dart';
-import 'package:khoaluan/models/workout.dart';
+import 'package:khoaluan/models/daily_exercise.dart';
 import 'package:khoaluan/screens/camera.dart';
 import 'package:khoaluan/services/practice_service.dart';
-import 'package:khoaluan/services/workout_service.dart';
+import 'package:khoaluan/services/daily_exercise_service.dart';
 import 'package:tflite/tflite.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 
 class InferencePage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  final Workout workout;
+  final DailyExercise dailyExercise;
   final Exercise exercise;
 
-  const InferencePage(this.cameras, {this.workout, this.exercise});
+  const InferencePage(this.cameras, {this.dailyExercise, this.exercise});
 
   @override
   _InferencePageState createState() => _InferencePageState();
@@ -23,7 +23,7 @@ class InferencePage extends StatefulWidget {
 
 class _InferencePageState extends State<InferencePage> {
   final _practiceService = PracticeService();
-  final _workoutService = WorkoutService();
+  final _workoutService = DailyExerciseService();
   final _flutterTts = FlutterTts();
   final _now = DateTime.now();
 
@@ -40,7 +40,7 @@ class _InferencePageState extends State<InferencePage> {
   int _previewH;
   int _previewW;
   int _count;
-  Workout _workout;
+  DailyExercise _workout;
 
   Exercise get _exercise =>
       (_workout == null) ? widget.exercise : _workout.exercise;
@@ -72,7 +72,7 @@ class _InferencePageState extends State<InferencePage> {
   @override
   void initState() {
     _loadModel();
-    _workout = widget.workout;
+    _workout = widget.dailyExercise;
     _inputArr = Map<String, List<double>>();
     _midCount = false;
     _isCorrectPosture = false;
@@ -81,7 +81,7 @@ class _InferencePageState extends State<InferencePage> {
     _imageHeight = 0;
     _imageWidth = 0;
     _count = 0;
-    _flutterTts.speak("Your Workout Has Started");
+    _flutterTts.speak("Your DailyExercise Has Started");
     _setRangeBasedOnModel();
     super.initState();
   }
@@ -98,8 +98,8 @@ class _InferencePageState extends State<InferencePage> {
         if (_workout == null) {
           _practiceService.addPractice(_exercise.id, _count, _now);
         } else {
-          _workoutService.setWorkout(_workout);
-          Get.back<Workout>(result: _workout);
+          _workoutService.setDailyExercise(_workout);
+          Get.back<DailyExercise>(result: _workout);
         }
         return true;
       },
@@ -258,8 +258,8 @@ class _InferencePageState extends State<InferencePage> {
             _setRangeBasedOnModel();
           },
           onDone: () {
-            _flutterTts.speak("Your workout done!");
-            Get.back<Workout>(result: _workout);
+            _flutterTts.speak("Your dailyExercise done!");
+            Get.back<DailyExercise>(result: _workout);
           },
         );
       }

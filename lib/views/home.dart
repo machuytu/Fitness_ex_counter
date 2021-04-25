@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,12 +8,12 @@ import 'package:khoaluan/data/exercise_data.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
 import 'package:khoaluan/models/user.dart';
-import 'package:khoaluan/models/workout.dart';
+import 'package:khoaluan/models/daily_exercise.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
-import 'package:khoaluan/services/workout_service.dart';
+import 'package:khoaluan/services/daily_exercise_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -33,11 +32,11 @@ class _HomeState extends State<Home> {
   final _authService = AuthService();
   final _userService = UserService();
   final _practiceService = PracticeService();
-  final _workoutService = WorkoutService();
+  final _workoutService = DailyExerciseService();
   final _now = DateTime.now();
   List<double> listMainPart = [];
   User _user = User();
-  Workout _workout = Workout();
+  DailyExercise _workout = DailyExercise();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -46,15 +45,16 @@ class _HomeState extends State<Home> {
           isArray: true,
         ),
         hideHeader: false,
-        onConfirm: (Picker picker, List value) {
+        onConfirm: (Picker picker, List<int> value) {
           setState(() {
-            if (value.toString() == "[0]") {
-              _userService.updateUser(_user.uid, 'fitness_mode', 1);
-            } else if (value.toString() == "[1]") {
-              _userService.updateUser(_user.uid, 'fitness_mode', 2);
-            } else {
-              _userService.updateUser(_user.uid, 'fitness_mode', 3);
-            }
+            _userService.updateUser(_user.uid, 'fitnessMode', value[0]);
+            // if (value.toString() == "[0]") {
+            //   _userService.updateUser(_user.uid, 'fitnessMode', 1);
+            // } else if (value.toString() == "[1]") {
+            //   _userService.updateUser(_user.uid, 'fitnessMode', 2);
+            // } else {
+            //   _userService.updateUser(_user.uid, 'fitnessMode', 3);
+            // }
           });
         }).showModal(context);
   }
@@ -64,21 +64,23 @@ class _HomeState extends State<Home> {
     return _user;
   }
 
-  Future<void> getWorkout({@required int weight, @required int bmr}) async {
+  Future<void> getDailyExercise(
+      {@required int weight, @required int bmr}) async {
     // // for test
-    _workout = (await _workoutService.getWorkoutByDate(_now)) ?? Workout();
+    _workout =
+        (await _workoutService.getDailyExerciseByDate(_now)) ?? DailyExercise();
 
     // for release
-    // _workout = (await _workoutService.getWorkoutByDate(_now)) ??
-    //     Workout(weight: weight, bmr:  bmr);
+    // _workout = (await _workoutService.getDailyExerciseByDate(_now)) ??
+    //     DailyExercise(weight: weight, bmr:  bmr);
 
     print(_workout);
   }
 
   @override
   void initState() {
-    getUser()
-        .then((value) => getWorkout(weight: value.weight, bmr: value.bmrInt));
+    getUser().then(
+        (value) => getDailyExercise(weight: value.weight, bmr: value.bmr));
     super.initState();
   }
 
@@ -124,7 +126,7 @@ class _HomeState extends State<Home> {
                                         _user.fitnessMode == 1
                                             ? "Get Fit"
                                             : _user.fitnessMode == 2
-                                                ? "Workout"
+                                                ? "DailyExercise"
                                                 : "Gain Muscle",
                                         style: kTitleStyle),
                                     Transform(
@@ -160,9 +162,9 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 if (_workout.isDone) {
                                   _workout.start = DateTime.now();
-                                  Get.to<Workout>(InferencePage(
+                                  Get.to<DailyExercise>(InferencePage(
                                     cameras,
-                                    workout: _workout,
+                                    dailyExercise: _workout,
                                   )).then((value) {
                                     print('inference value $value');
                                     setState(() {
@@ -176,8 +178,8 @@ class _HomeState extends State<Home> {
                               child: Image(
                                   fit: BoxFit.cover,
                                   image: AssetImage((_workout.isDone)
-                                      ? "assets/images/Workout_done.png"
-                                      : "assets/images/Workout.png")),
+                                      ? "assets/images/DailyExercise_done.png"
+                                      : "assets/images/DailyExercise.png")),
                             ),
                           ),
                         ),

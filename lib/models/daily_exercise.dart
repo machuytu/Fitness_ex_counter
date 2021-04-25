@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 import 'exercise.dart';
 
-class Workout {
+class DailyExercise {
   String _id;
   String _uid;
   int _index;
@@ -12,7 +12,7 @@ class Workout {
   List<int> _listExerciseId;
   List<int> _listMax;
 
-  Workout({
+  DailyExercise({
     int weight,
     int bmr,
     DateTime start,
@@ -28,8 +28,8 @@ class Workout {
       this._listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
       this._listMax = this
           .listExercise
-          .map((e) =>
-              ((bmr / this.length) * (1 / 3)) ~/ (e.coefficient * weight))
+          .map((e) => (((bmr / this.length) * (1 / 3)) /
+              (e.coefficient * weight)) as int)
           .toList();
     } else {
       this._listExerciseId = [0, 1];
@@ -39,7 +39,7 @@ class Workout {
 
   @override
   String toString() =>
-      'Workout($_id): $_index / $_count / $isDone / $_listExerciseId / $_listMax / $getMainPartKcal';
+      'DailyExercise($_id): $_index / $_count / $isDone / $_listExerciseId / $_listMax / $getMainPartKcal';
 
   List<Exercise> get listExercise =>
       this._listExerciseId.map((id) => exercises[id]).toList();
@@ -122,15 +122,15 @@ class Workout {
     ];
   }
 
-  factory Workout.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
+  factory DailyExercise.fromFirestoreSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
     if (data == null) return null;
     data['id'] = snapshot.id;
     data['uid'] = snapshot.reference.parent.parent.id;
-    return Workout.fromJson(data);
+    return DailyExercise.fromJson(data);
   }
 
-  Workout.fromJson(Map<String, dynamic> json)
+  DailyExercise.fromJson(Map<String, dynamic> json)
       : _id = json['id'],
         _uid = json['uid'],
         _index = json['index'],

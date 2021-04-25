@@ -78,7 +78,7 @@ class Analytics extends StatelessWidget {
                                 return Container(
                                   color: kIndigoColor,
                                   child: CircularStepProgressIndicator(
-                                    totalSteps: user.bmrInt,
+                                    totalSteps: user.bmr,
                                     currentStep: totalKcal.toInt(),
                                     stepSize: 10,
                                     selectedColor: Colors.greenAccent,

@@ -13,9 +13,9 @@ class NotificationService {
   NotificationService() {
     _uid = _auth.getUser().uid;
     _ref = FirebaseFirestore.instance
-        .collection('users')
+        .collection('Users')
         .doc(_uid)
-        .collection('notifications');
+        .collection('Notifications');
   }
 
   Future<String> addNotification(

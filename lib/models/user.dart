@@ -9,20 +9,21 @@ class User {
   String name;
   int weight;
   int height;
-  int bmrInt;
+  int bmr;
   int age;
 
-  User(
-      {String uid,
-      bool gender,
-      String heightUnit,
-      String weightUnit,
-      int fitnessMode,
-      String name,
-      int age,
-      int bmrInt,
-      int weight,
-      int height}) {
+  User({
+    String uid,
+    bool gender,
+    String heightUnit,
+    String weightUnit,
+    int fitnessMode,
+    String name,
+    int age,
+    int bmr,
+    int weight,
+    int height,
+  }) {
     this.gender = gender;
     this.heightUnit = heightUnit;
     this.weightUnit = weightUnit;
@@ -30,7 +31,7 @@ class User {
     this.name = name;
     this.weight = weight;
     this.height = height;
-    this.bmrInt = bmrInt;
+    this.bmr = bmr;
     this.age = age;
   }
 
@@ -44,26 +45,26 @@ class User {
   User.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
     uid = json['uid'];
-    heightUnit = json['height_unit'];
-    weightUnit = json['weight_unit'];
-    fitnessMode = json['fitness_mode'];
+    heightUnit = json['heightUnit'];
+    weightUnit = json['weightUnit'];
+    fitnessMode = json['fitnessMode'];
     name = json['name'];
     weight = json['weight'];
     height = json['height'];
-    bmrInt = json['bmr_int'];
+    bmr = json['bmr'];
     age = json['age'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['gender'] = this.gender;
-    data['heightunit'] = this.heightUnit;
-    data['weightunit'] = this.weightUnit;
-    data['fitnessmode'] = this.fitnessMode;
+    data['heightUnit'] = this.heightUnit;
+    data['weightUnit'] = this.weightUnit;
+    data['fitnessMode'] = this.fitnessMode;
     data['name'] = this.name;
     data['weight'] = this.weight;
     data['height'] = this.height;
-    data['bmr_int'] = this.bmrInt;
+    data['bmr'] = this.bmr;
     data['age'] = this.age;
     return data;
   }

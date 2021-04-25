@@ -11,9 +11,9 @@ class PracticeService {
   PracticeService() {
     _uid = AuthService().getUser().uid;
     _ref = FirebaseFirestore.instance
-        .collection('users')
+        .collection('Users')
         .doc(_uid)
-        .collection('practices');
+        .collection('Practices');
   }
 
   Future<void> addPractice(
