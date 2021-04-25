@@ -10,10 +10,8 @@ class ResigterScreen extends StatefulWidget {
 }
 
 class _ResigterScreenState extends State<ResigterScreen> {
-  TextEditingController emailValid =
-      new TextEditingController(text: 'machuytu@gmail.com');
-  TextEditingController passwordValid =
-      new TextEditingController(text: '123456');
+  TextEditingController emailValid = new TextEditingController(text: 'machuytu@gmail.com');
+  TextEditingController passwordValid = new TextEditingController(text: '123456');
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -57,9 +55,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
                       child: TextFormField(
                         controller: emailValid,
                         validator: (value) {
-                          bool emailValid = RegExp(
-                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                              .hasMatch(value);
+                          bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                           if (value.trim().isEmpty) {
                             return 'Email trống';
                           } else if (emailValid == false) {
@@ -104,8 +100,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
                       child: GestureDetector(
                         onTap: () async {
                           AuthService _auth = new AuthService();
-                          _auth.registerUser(
-                              emailValid.text, passwordValid.text, context);
+                          _auth.registerUser(emailValid.text, passwordValid.text, context);
                         },
                         child: Container(
                           width: 150,
@@ -133,17 +128,14 @@ class _ResigterScreenState extends State<ResigterScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, "/login", (Route<dynamic> route) => false);
+                        Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
                       },
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(color: Colors.black, fontSize: 15),
                           children: <TextSpan>[
                             TextSpan(text: 'Đã có tài khoản'),
-                            TextSpan(
-                                text: ' Đăng nhập!',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' Đăng nhập!', style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -156,8 +148,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
     );
   }
 
-  Future buildShowDialog(BuildContext context, String title, String description,
-      {bool returnScreen, String route}) {
+  Future buildShowDialog(BuildContext context, String title, String description, {bool returnScreen, String route}) {
     return showDialog(
       context: context,
       barrierDismissible: false,

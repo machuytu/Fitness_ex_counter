@@ -6,11 +6,14 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="khoaluan"
         android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -19,6 +22,7 @@
             android:hardwareAccelerated="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
+            
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user

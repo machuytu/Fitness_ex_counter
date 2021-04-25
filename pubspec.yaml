@@ -47,6 +47,8 @@ dependencies:
   timeago: ^3.0.2
   dependencies:
   device_info: ^2.0.0
+  firebase_storage: ^7.0.0
+  firebase_analytics: ^7.0.1
 
 dev_dependencies:
   flutter_test:
