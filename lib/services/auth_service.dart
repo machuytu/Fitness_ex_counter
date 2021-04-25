@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService with ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get auth => _auth;
   User getUser() {
     return _auth.currentUser;
   }
@@ -17,12 +17,10 @@ class AuthService with ChangeNotifier {
     return result;
   }
 
-  Future<void> loginUser(
-      String email, String password, BuildContext context) async {
+  Future<void> loginUser(String email, String password, BuildContext context) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushNamedAndRemoveUntil(
-          context, "/", (Route<dynamic> route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, "/", (Route<dynamic> route) => false);
     } catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
@@ -40,19 +38,16 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  Future<void> registerUser(
-      String email, String password, BuildContext context) async {
+  Future<void> registerUser(String email, String password, BuildContext context) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
       Fluttertoast.showToast(
         msg: "Đăng ký thành công",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
 
-      Navigator.pushNamedAndRemoveUntil(
-          context, "/info_user", (Route<dynamic> route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, "/info_user", (Route<dynamic> route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(

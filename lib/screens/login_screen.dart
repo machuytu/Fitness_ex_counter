@@ -10,10 +10,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailValid =
-      new TextEditingController(text: 'machuytu@gmail.com');
-  TextEditingController passwordVaild =
-      new TextEditingController(text: '123456');
+  TextEditingController emailValid = new TextEditingController(text: 'phuc@gmail.com');
+  TextEditingController passwordVaild = new TextEditingController(text: '123456');
   AuthService _auth = new AuthService();
   @override
   Widget build(BuildContext context) {
@@ -85,8 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () async {
-                          _auth.loginUser(
-                              emailValid.text, passwordVaild.text, context);
+                          _auth.loginUser(emailValid.text, passwordVaild.text, context);
                         },
                         child: Container(
                           width: 150,
@@ -114,17 +111,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(context, "/register",
-                            (Route<dynamic> route) => false);
+                        Navigator.pushNamedAndRemoveUntil(context, "/register", (Route<dynamic> route) => false);
                       },
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(color: Colors.black, fontSize: 15),
                           children: <TextSpan>[
                             TextSpan(text: 'Chưa có tài khoản? '),
-                            TextSpan(
-                                text: 'Đăng ký!',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: 'Đăng ký!', style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -219,8 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (returnScreen == true) {
                   Navigator.of(context).pop();
                 } else {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, route, (Route<dynamic> route) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, route, (Route<dynamic> route) => false);
                 }
               },
             ),
