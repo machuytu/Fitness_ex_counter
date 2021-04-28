@@ -11,6 +11,6 @@ class ImageService {
 
   Future pickImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    return pickedFile;
+    return File(pickedFile.path);
   }
 }

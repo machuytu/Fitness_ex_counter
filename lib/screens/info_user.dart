@@ -7,6 +7,7 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/firebase_service.dart';
 import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 
@@ -28,6 +29,7 @@ class _InfoUserState extends State<InfoUser> {
   int fitnessMode = 1;
   String heightUnit, weightUnit;
   ImageService imageService = new ImageService();
+  FireStorageService fireStorageService = new FireStorageService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,15 +83,16 @@ class _InfoUserState extends State<InfoUser> {
                   height: 20.0,
                 ),
                 imageService.imageFile != null
-                    ? Image.file(
-                        imageService.imageFile,
-                        cacheHeight: 50,
+                    ? Center(
+                        child: Image.file(
+                          imageService.imageFile,
+                          cacheHeight: 200,
+                        ),
                       )
                     : TextButton(
-                        onPressed: () {
-                          setState(() {
-                            imageService.pickImage();
-                          });
+                        onPressed: () async {
+                          imageService.imageFile = await imageService.pickImage();
+                          setState(() {});
                         },
                         child: Text("Chọn ảnh"),
                       ),
@@ -304,6 +307,7 @@ class _InfoUserState extends State<InfoUser> {
                         FirebaseAuth auth = FirebaseAuth.instance;
                         User user = auth.currentUser;
                         UserService userService = new UserService();
+                        fireStorageService.uploadImageToFirebase(context, imageService.imageFile);
                         userService.setValueRegister(user.uid, nameUser.text, int.parse(ageUser.text), heightValue, heightUnit, weightValue, weightUnit, fitnessMode, isMale);
                         Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
                         Fluttertoast.showToast(
