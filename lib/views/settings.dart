@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/services/auth_service.dart';
 
 class Setting extends StatelessWidget {
+  final _auth = new AuthService();
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -31,14 +32,7 @@ class Setting extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("machuytu@gmail.com"),
-                        SizedBox(height: 5.0),
-                        Text("Mạc Huy Tú"),
-                      ],
-                    ),
+                    Text(_auth.getUser().email),
                   ],
                 ),
               ),
@@ -122,7 +116,6 @@ class Setting extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              AuthService _auth = new AuthService();
                               _auth.logout();
                               Navigator.pushNamedAndRemoveUntil(context,
                                   "/login", (Route<dynamic> route) => false);

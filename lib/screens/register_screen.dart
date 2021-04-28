@@ -10,10 +10,17 @@ class ResigterScreen extends StatefulWidget {
 }
 
 class _ResigterScreenState extends State<ResigterScreen> {
-  TextEditingController emailValid =
-      new TextEditingController(text: 'machuytu@gmail.com');
-  TextEditingController passwordValid =
-      new TextEditingController(text: '123456');
+  final _auth = new AuthService();
+  final emailValid = new TextEditingController(text: 'phuc@gmail.com');
+  final passwordValid = new TextEditingController(text: '123456');
+
+  @override
+  void dispose() {
+    emailValid?.dispose();
+    passwordValid?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -21,7 +28,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
       body: Stack(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
+            width: size.width,
             child: Image(
               fit: BoxFit.fill,
               color: Color.fromRGBO(255, 255, 255, 0.5),
@@ -103,8 +110,7 @@ class _ResigterScreenState extends State<ResigterScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () async {
-                          AuthService _auth = new AuthService();
-                          _auth.registerUser(
+                          await _auth.registerUser(
                               emailValid.text, passwordValid.text, context);
                         },
                         child: Container(
