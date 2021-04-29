@@ -3,8 +3,21 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 
-class Setting extends StatelessWidget {
+class Setting extends StatefulWidget {
+  @override
+  _SettingState createState() => _SettingState();
+}
+
+class _SettingState extends State<Setting> {
+  ImageService imageService = new ImageService();
+  @override
+  void initState() {
+    super.initState();
+    imageService.getImage();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -17,8 +30,7 @@ class Setting extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
+                padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
                 child: Row(
                   children: [
                     ClipRRect(
@@ -55,8 +67,7 @@ class Setting extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: kGreenColor,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(40.0)),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(40.0)),
                         ),
                       ),
                     ),
@@ -68,8 +79,7 @@ class Setting extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: kIndigoColor,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(40.0)),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(40.0)),
                         ),
                       ),
                     ),
@@ -93,8 +103,7 @@ class Setting extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     "Thông tin cá nhân",
-                                    style: TextStyle(
-                                        color: kGreyColor, fontSize: 20),
+                                    style: TextStyle(color: kGreyColor, fontSize: 20),
                                   ),
                                 ),
                               ),
@@ -113,8 +122,7 @@ class Setting extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     "Thông báo",
-                                    style: TextStyle(
-                                        color: kGreyColor, fontSize: 20),
+                                    style: TextStyle(color: kGreyColor, fontSize: 20),
                                   ),
                                 ),
                               ),
@@ -124,8 +132,7 @@ class Setting extends StatelessWidget {
                             onTap: () {
                               AuthService _auth = new AuthService();
                               _auth.logout();
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  "/login", (Route<dynamic> route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -138,8 +145,7 @@ class Setting extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     "Đăng xuất",
-                                    style: TextStyle(
-                                        color: kGreyColor, fontSize: 20),
+                                    style: TextStyle(color: kGreyColor, fontSize: 20),
                                   ),
                                 ),
                               ),

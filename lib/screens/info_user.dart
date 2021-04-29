@@ -7,6 +7,8 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/firebase_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 
 class InfoUser extends StatefulWidget {
@@ -17,8 +19,7 @@ class InfoUser extends StatefulWidget {
 }
 
 class _InfoUserState extends State<InfoUser> {
-  TextEditingController nameUser =
-      new TextEditingController(text: 'Mạc Huy Tú');
+  TextEditingController nameUser = new TextEditingController(text: 'Mạc Huy Tú');
   TextEditingController ageUser = new TextEditingController(text: '18');
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
@@ -27,6 +28,8 @@ class _InfoUserState extends State<InfoUser> {
   bool isMale = true;
   int fitnessMode = 1;
   String heightUnit, weightUnit;
+  ImageService imageService = new ImageService();
+  FireStorageService fireStorageService = new FireStorageService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +44,7 @@ class _InfoUserState extends State<InfoUser> {
                 SizedBox(height: 20),
                 Text(
                   "Đăng ký thông tin cá nhân",
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: kIndigoColor),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: kIndigoColor),
                 ),
                 SizedBox(height: 30),
                 Row(
@@ -58,11 +58,7 @@ class _InfoUserState extends State<InfoUser> {
                       },
                       elevation: 2.0,
                       fillColor: isMale ? Colors.white : Colors.grey[200],
-                      child: isMale
-                          ? SvgPicture.asset("assets/images/masculine.svg",
-                              width: 55)
-                          : SvgPicture.asset("assets/images/masculine.svg",
-                              color: Colors.white, width: 55),
+                      child: isMale ? SvgPicture.asset("assets/images/masculine.svg", width: 55) : SvgPicture.asset("assets/images/masculine.svg", color: Colors.white, width: 55),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
@@ -77,16 +73,29 @@ class _InfoUserState extends State<InfoUser> {
                       },
                       elevation: 2.0,
                       fillColor: !isMale ? Colors.white : Colors.grey[200],
-                      child: !isMale
-                          ? SvgPicture.asset("assets/images/femenine.svg",
-                              width: 60)
-                          : SvgPicture.asset("assets/images/femenine.svg",
-                              color: Colors.white, width: 60),
+                      child: !isMale ? SvgPicture.asset("assets/images/femenine.svg", width: 60) : SvgPicture.asset("assets/images/femenine.svg", color: Colors.white, width: 60),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                imageService.imageFile != null
+                    ? Center(
+                        child: Image.file(
+                          imageService.imageFile,
+                          cacheHeight: 200,
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          imageService.imageFile = await imageService.pickImage();
+                          setState(() {});
+                        },
+                        child: Text("Chọn ảnh"),
+                      ),
                 SizedBox(
                   height: 20.0,
                 ),
@@ -151,8 +160,7 @@ class _InfoUserState extends State<InfoUser> {
                           child: TextFormField(
                             controller: weightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerWeight, weightUser, 'weight');
+                              showPickerArray(context, pickerWeight, weightUser, 'weight');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -179,8 +187,7 @@ class _InfoUserState extends State<InfoUser> {
                           child: TextFormField(
                             controller: heightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerHeight, heightUser, 'height');
+                              showPickerArray(context, pickerHeight, heightUser, 'height');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -220,18 +227,12 @@ class _InfoUserState extends State<InfoUser> {
                             setState(() => fitnessMode = 1);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 1
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 1 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 1
-                              ? SvgPicture.asset(
-                                  "assets/images/skipping_rope.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/skipping_rope.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/skipping_rope.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/skipping_rope.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -251,17 +252,12 @@ class _InfoUserState extends State<InfoUser> {
                             setState(() => fitnessMode = 2);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 2
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 2 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 2
-                              ? SvgPicture.asset("assets/images/dumbbell.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/dumbbell.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/dumbbell.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/dumbbell.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -281,17 +277,12 @@ class _InfoUserState extends State<InfoUser> {
                             setState(() => fitnessMode = 3);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 3
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 3 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 3
-                              ? SvgPicture.asset("assets/images/barbell.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/barbell.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/barbell.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/barbell.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -310,26 +301,15 @@ class _InfoUserState extends State<InfoUser> {
                     width: 200,
                     height: 50,
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(color: deepBlueColor)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
                       onPressed: () {
                         FirebaseAuth auth = FirebaseAuth.instance;
                         User user = auth.currentUser;
                         UserService userService = new UserService();
-                        userService.setValueRegister(
-                            user.uid,
-                            nameUser.text,
-                            int.parse(ageUser.text),
-                            heightValue,
-                            heightUnit,
-                            weightValue,
-                            weightUnit,
-                            fitnessMode,
-                            isMale);
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, "/login", (Route<dynamic> route) => false);
+                        fireStorageService.uploadImageToFirebase(context, imageService.imageFile);
+                        userService.setValueRegister(user.uid, nameUser.text, int.parse(ageUser.text), heightValue, heightUnit, weightValue, weightUnit, fitnessMode, isMale);
+                        Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
                         Fluttertoast.showToast(
                           msg: "Nhập thông tin thành công",
                           toastLength: Toast.LENGTH_SHORT,
@@ -351,8 +331,7 @@ class _InfoUserState extends State<InfoUser> {
     );
   }
 
-  showPickerArray(BuildContext context, String pickerData,
-      TextEditingController editTextValue, String kindValue) {
+  showPickerArray(BuildContext context, String pickerData, TextEditingController editTextValue, String kindValue) {
     new Picker(
         adapter: PickerDataAdapter<String>(
           pickerdata: new JsonDecoder().convert(pickerData),
