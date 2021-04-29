@@ -69,6 +69,29 @@ class _HomeState extends State<Home> {
     print(_dailyExercise);
   }
 
+  String get getDailyExerciseImg => (_dailyExercise.isDone)
+      ? 'assets/images/DailyExercise_done.png'
+      : 'assets/images/DailyExercise.png';
+
+  String get getfitnessStr {
+    if (_user.fitnessMode == 1) {
+      return 'Get Fit';
+    }
+    if (_user.fitnessMode == 2) {
+      return 'Daily Exercise';
+    }
+    return 'Gain Muscle';
+  }
+
+  Color get getfitnessColor {
+    if (_user.fitnessMode == 1) {
+      return kGreenColor;
+    } else if (_user.fitnessMode == 2) {
+      return Colors.yellow;
+    }
+    return Colors.red;
+  }
+
   @override
   void initState() {
     getUser().then(
@@ -102,7 +125,7 @@ class _HomeState extends State<Home> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image:
-                                        AssetImage("assets/images/photo.jpeg"),
+                                        AssetImage('assets/images/photo.jpeg'),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -114,24 +137,14 @@ class _HomeState extends State<Home> {
                                 },
                                 child: Row(
                                   children: [
-                                    Text(
-                                        _user.fitnessMode == 1
-                                            ? "Get Fit"
-                                            : _user.fitnessMode == 2
-                                                ? "DailyExercise"
-                                                : "Gain Muscle",
-                                        style: kTitleStyle),
+                                    Text(getfitnessStr, style: kTitleStyle),
                                     Transform(
                                       alignment: Alignment.center,
                                       transform: Matrix4.rotationY(math.pi),
                                       child: SvgPicture.asset(
-                                        "assets/images/muscle.svg",
+                                        'assets/images/muscle.svg',
                                         width: 35,
-                                        color: _user.fitnessMode == 1
-                                            ? kGreenColor
-                                            : _user.fitnessMode == 2
-                                                ? Colors.yellow
-                                                : Colors.red,
+                                        color: getfitnessColor,
                                       ),
                                     ),
                                   ],
@@ -148,39 +161,39 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 10.0),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ClipRRect(
+                          child: InkWell(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: InkWell(
-                              onTap: () {
-                                if (_dailyExercise.isDone) {
-                                  _dailyExercise.start = DateTime.now();
-                                  Get.to<DailyExercise>(InferencePage(
-                                    cameras,
-                                    dailyExercise: _dailyExercise,
-                                  )).then((value) {
-                                    print('inference value $value');
-                                    setState(() {
-                                      _dailyExercise = value;
-                                    });
-                                  }).catchError((err) {
-                                    print('inference err $err');
+                            onTap: () {
+                              if (!_dailyExercise.isDone) {
+                                _dailyExercise.start = DateTime.now();
+                                Get.to<DailyExercise>(InferencePage(
+                                  cameras,
+                                  dailyExercise: _dailyExercise,
+                                )).then((value) {
+                                  print('inference value $value');
+                                  setState(() {
+                                    _dailyExercise = value;
                                   });
-                                }
-                              },
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage((_dailyExercise.isDone)
-                                      ? "assets/images/DailyExercise_done.png"
-                                      : "assets/images/DailyExercise.png")),
+                                }).catchError((err) {
+                                  print('inference err $err');
+                                });
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image.asset(
+                                getDailyExerciseImg,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10.0),
                         CustomListTile(
                           title:
-                              Text("Các bài tập cho bạn", style: kTitleStyle),
+                              Text('Các bài tập cho bạn', style: kTitleStyle),
                           trailing: SvgPicture.asset(
-                            "assets/images/fire.svg",
+                            'assets/images/fire.svg',
                             width: 35,
                           ),
                         ),
@@ -216,7 +229,8 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               color: kGreenColor,
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(40.0)),
+                                topLeft: Radius.circular(40.0),
+                              ),
                             ),
                           ),
                           Container(
@@ -236,11 +250,13 @@ class _HomeState extends State<Home> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 25),
-                                  child: Text("Cường độ tập luyện",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    'Cường độ tập luyện',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Padding(
@@ -307,15 +323,17 @@ class _HomeState extends State<Home> {
   }
 
   Widget mainPartWidget(int mainPartIndex) {
-    Color color;
-    String text;
+    Color color = kGreenColor;
+    String text = 'Need more';
+    String mainPartStr = 'Bottom: ';
 
     final mainPartValue = listMainPart[mainPartIndex];
 
-    if (0 <= mainPartValue && mainPartValue <= 50) {
-      text = 'Need more';
-      color = kGreenColor;
-    } else if (50 < mainPartValue && mainPartValue <= 100) {
+    // if (0 <= mainPartValue && mainPartValue <= 50) {
+    //   text = 'Need more';
+    //   color = kGreenColor;
+    // }
+    if (50 < mainPartValue && mainPartValue <= 100) {
       text = 'Good';
       color = Colors.yellow;
     } else if (mainPartValue > 100) {
@@ -323,15 +341,17 @@ class _HomeState extends State<Home> {
       color = Colors.red;
     }
 
+    if (mainPartIndex == 0) {
+      mainPartStr = 'Top: ';
+    } else if (mainPartIndex == 1) {
+      mainPartStr = 'Middle: ';
+    }
+
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: (mainPartIndex == 0)
-                ? 'Top: '
-                : (mainPartIndex == 1)
-                    ? 'Middle: '
-                    : 'Bottom: ',
+            text: mainPartStr,
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           TextSpan(
@@ -345,34 +365,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
-  // TextSpan textSpanWidget(int mainPartIndex) {
-  //   final mainPartValue =
-  //       listMainPart[mainPartIndex] + _dailyExercise.getMainPartKcal[mainPartIndex];
-  //   if (0 < mainPartValue && mainPartValue <= 50) {
-  //     return TextSpan(
-  //       text: 'Good',
-  //       style: TextStyle(
-  //         fontSize: 20,
-  //         color: Colors.yellow,
-  //       ),
-  //     );
-  //   } else if (50 < mainPartValue && mainPartValue <= 100) {
-  //     return TextSpan(
-  //       text: 'Need relax',
-  //       style: TextStyle(
-  //         fontSize: 20,
-  //         color: Colors.red,
-  //       ),
-  //     );
-  //   } else {
-  //     return TextSpan(
-  //       text: 'Need more',
-  //       style: TextStyle(
-  //         fontSize: 20,
-  //         color: kGreenColor,
-  //       ),
-  //     );
-  //   }
-  // }
 }
