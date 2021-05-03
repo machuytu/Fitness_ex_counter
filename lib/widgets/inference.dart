@@ -22,42 +22,42 @@ class InferencePage extends StatefulWidget {
 }
 
 class _InferencePageState extends State<InferencePage> {
-  final _practiceService = PracticeService();
-  final _dailyExerciseService = DailyExerciseService();
-  final _flutterTts = FlutterTts();
-  final _now = DateTime.now();
+  final practiceService = PracticeService();
+  final dailyExerciseService = DailyExerciseService();
+  final flutterTts = FlutterTts();
+  final now = DateTime.now();
 
-  Map<String, List<double>> _inputArr;
-  List<dynamic> _recognitions;
-  bool _midCount;
-  bool _isCorrectPosture;
-  double _screenH;
-  double _screenW;
-  int _imageHeight;
-  int _imageWidth;
-  int _previewH;
-  int _previewW;
-  int _count;
-  DailyExercise _dailyExercise;
+  Map<String, List<double>> inputArr;
+  List<dynamic> recognitions;
+  bool midCount;
+  bool isCorrectPosture;
+  double screenH;
+  double screenW;
+  int imageHeight;
+  int imageWidth;
+  int previewH;
+  int previewW;
+  int count;
+  DailyExercise dailyExercise;
 
-  Exercise get _exercise =>
-      (_dailyExercise == null) ? widget.exercise : _dailyExercise.exercise;
+  Exercise get exercise =>
+      (dailyExercise == null) ? widget.exercise : dailyExercise.exercise;
 
-  Color get _getCounterColor => (_isCorrectPosture) ? Colors.green : Colors.red;
+  Color get getCounterColor => (isCorrectPosture) ? Colors.green : Colors.red;
 
-  Color get _getImageColor =>
-      (_isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
+  Color get getImageColor =>
+      (isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
 
-  String get _countStr => (_dailyExercise == null)
-      ? '$_count'
-      : '${_dailyExercise.count} / ${_dailyExercise.max}';
+  String get countStr => (dailyExercise == null)
+      ? '$count'
+      : '${dailyExercise.count} / ${dailyExercise.max}';
 
-  String get _assetName {
+  String get assetName {
     String name;
 
-    if (_exercise.id == 3)
+    if (exercise.id == 3 || exercise.id == 4)
       name = 'lie_pose';
-    else if (_exercise.id == 1)
+    else if (exercise.id == 1)
       name = 'push_up_pose';
     else
       name = 'stand_pose';
@@ -67,20 +67,20 @@ class _InferencePageState extends State<InferencePage> {
 
   @override
   void initState() {
-    _loadModel();
-    _dailyExercise = widget.dailyExercise;
-    _inputArr = Map<String, List<double>>();
-    _midCount = false;
-    _isCorrectPosture = false;
-    _screenH = Get.height;
-    _screenW = Get.width;
-    _imageHeight = 0;
-    _imageWidth = 0;
-    _count = 0;
-    if (_dailyExercise == null) {
-      _flutterTts.speak("Your exercise has started");
+    loadModel();
+    dailyExercise = widget.dailyExercise;
+    inputArr = Map<String, List<double>>();
+    midCount = false;
+    isCorrectPosture = false;
+    screenH = Get.height;
+    screenW = Get.width;
+    imageHeight = 0;
+    imageWidth = 0;
+    count = 0;
+    if (dailyExercise == null) {
+      flutterTts.speak("Your exercise has started");
     } else {
-      _flutterTts.speak("Your daily exercise has started");
+      flutterTts.speak("Your daily exercise has started");
     }
     // _setRangeBasedOnModel();
     super.initState();
@@ -92,11 +92,11 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   Future<bool> onWillPop() {
-    if (_dailyExercise == null) {
-      _practiceService.addPractice(_exercise.id, _count, _now);
+    if (dailyExercise == null) {
+      practiceService.addPractice(exercise.id, count, now);
     } else {
-      _dailyExerciseService.setDailyExercise(_dailyExercise);
-      Get.back<DailyExercise>(result: _dailyExercise);
+      dailyExerciseService.setDailyExercise(dailyExercise);
+      Get.back<DailyExercise>(result: dailyExercise);
     }
     return Future.value(true);
   }
@@ -110,22 +110,22 @@ class _InferencePageState extends State<InferencePage> {
           appBar: AppBar(
             backgroundColor: Colors.black,
             centerTitle: true,
-            title: Text(_exercise.name),
+            title: Text(exercise.name),
           ),
           body: Stack(
             children: <Widget>[
               Camera(
                 cameras: widget.cameras,
-                setRecognitions: _setRecognitions,
+                setRecognitions: setRecognitions,
               ),
               Center(
                 child: Image.asset(
-                  _assetName,
-                  color: _getImageColor,
+                  assetName,
+                  color: getImageColor,
                 ),
               ),
-              Stack(children: _renderHelperBlobs()),
-              Stack(children: _renderKeypoints()),
+              Stack(children: renderHelperBlobs()),
+              Stack(children: renderKeypoints()),
             ],
           ),
           floatingActionButtonLocation:
@@ -134,10 +134,10 @@ class _InferencePageState extends State<InferencePage> {
             height: 100,
             width: 100,
             child: FloatingActionButton(
-              backgroundColor: _getCounterColor,
+              backgroundColor: getCounterColor,
               onPressed: () {},
               child: Text(
-                _countStr,
+                countStr,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -151,51 +151,51 @@ class _InferencePageState extends State<InferencePage> {
     );
   }
 
-  Positioned _createPositionedBlobs(double h, double w, double x, double y) {
+  Positioned createPositionedBlobs(double h, double w, double x, double y) {
     return Positioned(
       height: h,
       width: w,
       left: x,
       top: y,
-      child: Container(color: _getCounterColor),
+      child: Container(color: getCounterColor),
     );
   }
 
-  List<Widget> _renderHelperBlobs() {
+  List<Widget> renderHelperBlobs() {
     List<Widget> listToReturn = <Widget>[];
-    if (_exercise.id != 3) {
-      listToReturn.add(_createPositionedBlobs(5, 40, 0, _exercise.upperRange));
-      listToReturn.add(_createPositionedBlobs(5, 40, 0, _exercise.lowerRange));
+    if (exercise.id != 3 && exercise.id != 4) {
+      listToReturn.add(createPositionedBlobs(5, 40, 0, exercise.upperRange));
+      listToReturn.add(createPositionedBlobs(5, 40, 0, exercise.lowerRange));
     } else {
-      listToReturn.add(_createPositionedBlobs(40, 5, _exercise.upperRange, 0));
-      listToReturn.add(_createPositionedBlobs(40, 5, _exercise.lowerRange, 0));
+      listToReturn.add(createPositionedBlobs(40, 5, exercise.upperRange, 0));
+      listToReturn.add(createPositionedBlobs(40, 5, exercise.lowerRange, 0));
     }
     return listToReturn;
   }
 
-  List<Widget> _renderKeypoints() {
+  List<Widget> renderKeypoints() {
     var lists = <Widget>[];
-    _recognitions?.forEach((re) {
+    recognitions?.forEach((re) {
       var list = re["keypoints"].values.map<Widget>((k) {
         var _x = k["x"];
         var _y = k["y"];
         var scaleW, scaleH, x, y;
 
-        if (_screenH / _screenW > _previewH / _previewW) {
-          scaleW = _screenH / _previewH * _previewW;
-          scaleH = _screenH;
-          var difW = (scaleW - _screenW) / scaleW;
+        if (screenH / screenW > previewH / previewW) {
+          scaleW = screenH / previewH * previewW;
+          scaleH = screenH;
+          var difW = (scaleW - screenW) / scaleW;
           x = (_x - difW / 2) * scaleW;
           y = _y * scaleH;
         } else {
-          scaleH = _screenW / _previewW * _previewH;
-          scaleW = _screenW;
-          var difH = (scaleH - _screenH) / scaleH;
+          scaleH = screenW / previewW * previewH;
+          scaleW = screenW;
+          var difH = (scaleH - screenH) / scaleH;
           x = _x * scaleW;
           y = (_y - difH / 2) * scaleH;
         }
 
-        _inputArr[k['part']] = [x, y];
+        inputArr[k['part']] = [x, y];
 
         // To solve mirror problem on front camera
         if (x > 320) {
@@ -218,15 +218,15 @@ class _InferencePageState extends State<InferencePage> {
             ));
       }).toList();
 
-      _countingLogic(_inputArr);
+      countingLogic(inputArr);
 
-      _inputArr.clear();
+      inputArr.clear();
       lists..addAll(list);
     });
     return lists;
   }
 
-  void _loadModel() async {
+  void loadModel() async {
     await Tflite.loadModel(
       model: 'assets/models/posenet_mv1_075_float_from_checkpoints.tflite',
       numThreads: 5, // defaults to 1
@@ -235,74 +235,138 @@ class _InferencePageState extends State<InferencePage> {
     );
   }
 
-  void _setRecognitions(recognitions, imageHeight, imageWidth) {
+  void setRecognitions(
+    List<dynamic> recognitions,
+    int imageHeight,
+    int imageWidth,
+  ) {
     if (!mounted) {
       return;
     }
     setState(() {
-      _recognitions = recognitions;
-      _imageHeight = imageHeight;
-      _imageWidth = imageWidth;
-      _previewH = max(_imageHeight, _imageWidth);
-      _previewW = min(_imageHeight, _imageWidth);
+      this.recognitions = recognitions;
+      this.imageHeight = imageHeight;
+      this.imageWidth = imageWidth;
+      this.previewH = max(this.imageHeight, this.imageWidth);
+      this.previewW = min(this.imageHeight, this.imageWidth);
     });
   }
 
-  void _increaseCount() {
-    if (_dailyExercise == null) {
+  void increaseCount() {
+    if (dailyExercise == null) {
       setState(() {
-        _count++;
+        count++;
       });
-      _flutterTts.speak(_count.toString());
+      flutterTts.speak(count.toString());
     } else {
-      _dailyExercise.increaseCount(
+      dailyExercise.increaseCount(
         onCount: (value) {
-          _flutterTts.speak(value.toString());
+          flutterTts.speak(value.toString());
           setState(() {});
         },
         onMax: () {
-          _flutterTts.speak("Change exercise");
+          flutterTts.speak("Change exercise");
           // _setRangeBasedOnModel();
           setState(() {});
         },
         onDone: () {
-          _flutterTts.speak("Your daily exercise done");
-          Get.back<DailyExercise>(result: _dailyExercise);
+          flutterTts.speak("Your daily exercise done");
+          Get.back<DailyExercise>(result: dailyExercise);
         },
       );
     }
   }
 
-  void _setMidCount(bool f) {
-    //when _midCount is activated
-    if (f && !_midCount) {
-      _flutterTts.speak("Perfect");
+  void setMidCount(bool f) {
+    //when midCount is activated
+    if (f && !midCount) {
+      flutterTts.speak("Perfect");
     }
     setState(() {
-      _midCount = f;
+      midCount = f;
     });
   }
 
-  void _countingLogic(Map<String, List<double>> poses) {
+  bool posture(Map<String, List<double>> poses) {
+    var upper = exercise.upperRange;
+    var lower = exercise.lowerRange;
+    var result = false;
+
+    if (exercise.id == 0) {
+      result = poses['leftShoulder'][1] < upper &&
+          poses['rightShoulder'][1] < upper &&
+          poses['leftHip'][1] < lower &&
+          poses['rightHip'][1] < lower;
+    } else if (exercise.id == 1) {
+      result = poses['leftShoulder'][1] > upper &&
+          poses['rightShoulder'][1] > upper &&
+          poses['leftShoulder'][1] < lower &&
+          poses['rightShoulder'][1] < lower;
+    } else if (exercise.id == 2) {
+      result =
+          poses['leftShoulder'][1] < upper && poses['rightShoulder'][1] < upper;
+    } else if (exercise.id == 3) {
+      result = poses['rightShoulder'][0] > upper &&
+          poses['rightShoulder'][0] < lower;
+    } else if (exercise.id == 4) {
+      result = poses['rightShoulder'][0] > upper &&
+          poses['rightShoulder'][0] < lower;
+    }
+    return result;
+  }
+
+  bool midPosture(Map<String, List<double>> poses) {
+    var upper = exercise.upperRange;
+    var lower = exercise.lowerRange;
+    var result = false;
+
+    if (exercise.id == 0) {
+      result =
+          poses['leftShoulder'][1] > upper && poses['rightShoulder'][1] > upper;
+    } else if (exercise.id == 1) {
+      result =
+          poses['leftShoulder'][1] > lower && poses['rightShoulder'][1] > lower;
+    } else if (exercise.id == 2) {
+      result = poses['leftShoulder'][1] > upper &&
+          poses['rightShoulder'][1] > upper &&
+          (poses['leftKnee'][1] > lower || poses['rightKnee'][1] > lower) &&
+          (poses['leftKnee'][1] < lower || poses['rightKnee'][1] < lower);
+    } else if (exercise.id == 3) {
+      result = poses['rightShoulder'][0] < upper;
+    } else if (exercise.id == 4) {
+      result = poses['rightHip'][0] > lower;
+    }
+    return result;
+  }
+
+  void checkCorrectPosture(Map<String, List<double>> poses) {
+    if (posture(poses)) {
+      if (!isCorrectPosture) {
+        setState(() {
+          isCorrectPosture = true;
+        });
+      }
+    } else {
+      if (isCorrectPosture) {
+        setState(() {
+          isCorrectPosture = false;
+        });
+      }
+    }
+  }
+
+  void countingLogic(Map<String, List<double>> poses) {
     if (poses != null) {
-      var posture = _exercise.posture(poses);
-      var midPosture = _exercise.midPosture(poses);
-      //check posture before beginning count
-      if (_isCorrectPosture && midPosture) {
-        _setMidCount(true);
+      if (isCorrectPosture && midPosture(poses)) {
+        setMidCount(true);
       }
-      if (_midCount && posture) {
-        _increaseCount();
-        _setMidCount(false);
+      if (midCount && posture(poses)) {
+        increaseCount();
+        setMidCount(false);
       }
-      //check the posture when not in _midCount
-      if (!_midCount) {
-        if (_isCorrectPosture != posture) {
-          setState(() {
-            _isCorrectPosture = posture;
-          });
-        }
-        // _checkCorrectPosture(poses);
+      //check the posture when not in midCount
+      if (!midCount) {
+        checkCorrectPosture(poses);
       }
     }
   }

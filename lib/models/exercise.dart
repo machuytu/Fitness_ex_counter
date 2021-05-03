@@ -3,24 +3,17 @@ class Exercise {
   final int id = autoId;
   final String name;
   final double coefficient;
-
   final double upperRange;
   final double lowerRange;
-
   final List<BodyPart> bodyParts;
-
-  bool Function(Map<String, List<double>> poses) posture;
-  bool Function(Map<String, List<double>> poses) midPosture;
 
   Exercise(
     this.name,
     this.coefficient,
     this.upperRange,
     this.lowerRange,
-    this.bodyParts, {
-    this.posture,
-    this.midPosture,
-  }) {
+    this.bodyParts,
+  ) {
     autoId++;
   }
 

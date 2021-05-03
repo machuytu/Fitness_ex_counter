@@ -14,21 +14,6 @@ final squat = Exercise(
     BodyPart.CALVES,
     BodyPart.GLUTES,
   ],
-  posture: (poses) {
-    final upper = squat.upperRange;
-    final lower = squat.lowerRange;
-
-    return poses['leftShoulder'][1] < upper &&
-        poses['rightShoulder'][1] < upper &&
-        poses['leftHip'][1] < lower &&
-        poses['rightHip'][1] < lower;
-  },
-  midPosture: (poses) {
-    final upper = squat.upperRange;
-
-    return poses['leftShoulder'][1] > upper &&
-        poses['rightShoulder'][1] > upper;
-  },
 );
 
 final pushup = Exercise(
@@ -43,21 +28,6 @@ final pushup = Exercise(
     BodyPart.SHOULDERS,
     BodyPart.TRAPS,
   ],
-  posture: (poses) {
-    final upper = pushup.upperRange;
-    final lower = pushup.lowerRange;
-
-    return poses['leftShoulder'][1] > upper &&
-        poses['rightShoulder'][1] > upper &&
-        poses['leftShoulder'][1] < lower &&
-        poses['rightShoulder'][1] < lower;
-  },
-  midPosture: (poses) {
-    final lower = pushup.lowerRange;
-
-    return poses['leftShoulder'][1] > lower &&
-        poses['rightShoulder'][1] > lower;
-  },
 );
 
 final lunge = Exercise(
@@ -70,44 +40,29 @@ final lunge = Exercise(
     BodyPart.CALVES,
     BodyPart.GLUTES,
   ],
-  posture: (poses) {
-    final upper = lunge.upperRange;
-
-    return poses['leftShoulder'][1] < upper &&
-        poses['rightShoulder'][1] < upper;
-  },
-  midPosture: (poses) {
-    final upper = lunge.upperRange;
-    final lower = lunge.lowerRange;
-
-    return poses['leftShoulder'][1] > upper &&
-        poses['rightShoulder'][1] > upper &&
-        (poses['leftKnee'][1] > lower || poses['rightKnee'][1] > lower) &&
-        (poses['leftKnee'][1] < lower || poses['rightKnee'][1] < lower);
-  },
 );
 
 final crunch = Exercise(
   'Crunches',
   0.0035,
-  w * 0.30,
-  w * 0.70,
+  w * 0.45,
+  w * 0.80,
   [
     BodyPart.ABS,
     BodyPart.BACK,
   ],
-  posture: (poses) {
-    final upper = crunch.upperRange;
-    final lower = crunch.lowerRange;
-
-    return poses['rightShoulder'][0] > upper &&
-        poses['rightShoulder'][0] < lower;
-  },
-  midPosture: (poses) {
-    final upper = lunge.upperRange;
-
-    return poses['rightShoulder'][0] < upper;
-  },
 );
+
+// final bridge = Exercise(
+//   'Bridges',
+//   0.007,
+//   w * 0.45,
+//   w * 0.80,
+//   [
+//     BodyPart.ABS,
+//     BodyPart.BACK,
+//     BodyPart.QUADS,
+//   ],
+// );
 
 final exercises = <Exercise>[squat, pushup, lunge, crunch];
