@@ -9,10 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class Analytics extends StatelessWidget {
-  int kcalBurn = 74;
-  PracticeService _practiceService = PracticeService();
-  DateTime now = DateTime.now();
-  UserService user = new UserService();
+  final _userService = UserService();
+  final _practiceService = PracticeService();
+  final now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,7 @@ class Analytics extends StatelessWidget {
                         double totalKcal = _practiceService.getTotalKcal(list);
 
                         return FutureBuilder(
-                            future: user.getUser(),
+                            future: _userService.getUser(),
                             builder: (context, snapshotUser) {
                               if (snapshotUser.hasData) {
                                 User user = snapshotUser.data;
@@ -134,13 +133,6 @@ class Analytics extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<Practice> listPractice = snapshot.data;
-                      var result =
-                          _practiceService.getBodyPartKcal(listPractice);
-                      print('Body Part Kcal: $result');
-                      // print('SHOULDERS Kcal ${result[BodyPart.SHOULDERS]}');
-                      listPractice.forEach((element) {
-                        print(element);
-                      });
                       return listPractice != null
                           ? ListView.builder(
                               shrinkWrap: true,
