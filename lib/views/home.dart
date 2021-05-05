@@ -7,12 +7,14 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:khoaluan/data/exercise_data.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
-import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/models/daily_exercise.dart';
+import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
+import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/daily_exercise_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
-import 'package:khoaluan/services/daily_exercise_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -28,13 +30,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _authService = AuthService();
   final _userService = UserService();
   final _practiceService = PracticeService();
   final _dailyExerciseService = DailyExerciseService();
   final _now = DateTime.now();
-  var _user = User();
-  var _dailyExercise = DailyExercise();
   List<double> listMainPart = [];
+  User _user = User();
+  DailyExercise _dailyExercise = DailyExercise();
+
+  ImageService imageService = ImageService();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -118,18 +123,29 @@ class _HomeState extends State<Home> {
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Row(
                             children: [
-                              Container(
-                                width: 50.0,
-                                height: 50.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/photo.jpeg'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
+                              FutureBuilder(
+                                  future: imageService.getImage(
+                                      context, _authService.getUser().uid),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return ClipOval(
+                                        child: Image.network(
+                                          snapshot.data,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    }
+
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting)
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  }),
                               Spacer(),
                               GestureDetector(
                                 onTap: () {
@@ -142,7 +158,7 @@ class _HomeState extends State<Home> {
                                       alignment: Alignment.center,
                                       transform: Matrix4.rotationY(math.pi),
                                       child: SvgPicture.asset(
-                                        'assets/images/muscle.svg',
+                                        "assets/images/muscle.svg",
                                         width: 35,
                                         color: getfitnessColor,
                                       ),
@@ -161,39 +177,39 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 10.0),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
+                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.0),
-                            onTap: () {
-                              if (!_dailyExercise.isDone) {
-                                _dailyExercise.start = DateTime.now();
-                                Get.to<DailyExercise>(InferencePage(
-                                  cameras,
-                                  dailyExercise: _dailyExercise,
-                                )).then((value) {
-                                  print('inference value $value');
-                                  setState(() {
-                                    _dailyExercise = value;
+                            child: InkWell(
+                              onTap: () {
+                                if (!_dailyExercise.isDone) {
+                                  _dailyExercise.start = DateTime.now();
+                                  Get.to<DailyExercise>(InferencePage(
+                                    cameras,
+                                    dailyExercise: _dailyExercise,
+                                  )).then((value) {
+                                    print('inference value $value');
+                                    setState(() {
+                                      _dailyExercise = value;
+                                    });
+                                  }).catchError((err) {
+                                    print('inference err $err');
                                   });
-                                }).catchError((err) {
-                                  print('inference err $err');
-                                });
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: Image.asset(
-                                getDailyExerciseImg,
-                                fit: BoxFit.cover,
-                              ),
+                                }
+                              },
+                              child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage((_dailyExercise.isDone)
+                                      ? "assets/images/Workout_done.png"
+                                      : "assets/images/DailyExercise.png")),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10.0),
                         CustomListTile(
                           title:
-                              Text('Các bài tập cho bạn', style: kTitleStyle),
+                              Text("Các bài tập cho bạn", style: kTitleStyle),
                           trailing: SvgPicture.asset(
-                            'assets/images/fire.svg',
+                            "assets/images/fire.svg",
                             width: 35,
                           ),
                         ),
@@ -229,8 +245,7 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               color: kGreenColor,
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40.0),
-                              ),
+                                  topLeft: Radius.circular(40.0)),
                             ),
                           ),
                           Container(
@@ -250,13 +265,11 @@ class _HomeState extends State<Home> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 25),
-                                  child: Text(
-                                    'Cường độ tập luyện',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  child: Text("Cường độ tập luyện",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Padding(
@@ -323,17 +336,15 @@ class _HomeState extends State<Home> {
   }
 
   Widget mainPartWidget(int mainPartIndex) {
-    Color color = kGreenColor;
-    String text = 'Need more';
-    String mainPartStr = 'Bottom: ';
+    Color color;
+    String text;
 
     final mainPartValue = listMainPart[mainPartIndex];
 
-    // if (0 <= mainPartValue && mainPartValue <= 50) {
-    //   text = 'Need more';
-    //   color = kGreenColor;
-    // }
-    if (50 < mainPartValue && mainPartValue <= 100) {
+    if (0 <= mainPartValue && mainPartValue <= 50) {
+      text = 'Need more';
+      color = kGreenColor;
+    } else if (50 < mainPartValue && mainPartValue <= 100) {
       text = 'Good';
       color = Colors.yellow;
     } else if (mainPartValue > 100) {
@@ -341,17 +352,15 @@ class _HomeState extends State<Home> {
       color = Colors.red;
     }
 
-    if (mainPartIndex == 0) {
-      mainPartStr = 'Top: ';
-    } else if (mainPartIndex == 1) {
-      mainPartStr = 'Middle: ';
-    }
-
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: mainPartStr,
+            text: (mainPartIndex == 0)
+                ? 'Top: '
+                : (mainPartIndex == 1)
+                    ? 'Middle: '
+                    : 'Bottom: ',
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           TextSpan(

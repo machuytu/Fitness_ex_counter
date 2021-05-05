@@ -8,7 +8,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:khoaluan/models/arguments_model.dart';
+import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/firebase_service.dart';
 import 'package:khoaluan/services/user_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 import 'package:get/get.dart';
 
 import 'info_screen.dart';
@@ -22,6 +25,7 @@ class UpdateAccount extends StatefulWidget {
 
 class _UpdateAccountState extends State<UpdateAccount> {
   ArgumentModel argument = Get.arguments;
+  AuthService _auth = new AuthService();
   TextEditingController nameUser = new TextEditingController();
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
@@ -31,16 +35,16 @@ class _UpdateAccountState extends State<UpdateAccount> {
   bool isMale = true;
   int fitnessMode = 1;
   String heightUnit, weightUnit;
+  FireStorageService fireStorageService = new FireStorageService();
+  ImageService imageService = new ImageService();
 
   @override
   void initState() {
     super.initState();
     nameUser.text = argument.user.name;
     ageUser.text = argument.user.age.toString();
-    weightUser.text =
-        argument.user.weight.toString() + " " + argument.user.weightUnit;
-    heightUser.text =
-        argument.user.height.toString() + " " + argument.user.heightUnit;
+    weightUser.text = argument.user.weight.toString() + " " + argument.user.weightUnit;
+    heightUser.text = argument.user.height.toString() + " " + argument.user.heightUnit;
     weightValue = argument.user.weight;
     heightValue = argument.user.height;
     isMale = argument.user.gender;
@@ -63,10 +67,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                 SizedBox(height: 20),
                 Text(
                   "Thay đổi thông tin cá nhân",
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: kIndigoColor),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: kIndigoColor),
                 ),
                 SizedBox(height: 30),
                 Row(
@@ -80,11 +81,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                       },
                       elevation: 2.0,
                       fillColor: isMale ? Colors.white : Colors.grey[200],
-                      child: isMale
-                          ? SvgPicture.asset("assets/images/masculine.svg",
-                              width: 55)
-                          : SvgPicture.asset("assets/images/masculine.svg",
-                              color: Colors.white, width: 55),
+                      child: isMale ? SvgPicture.asset("assets/images/masculine.svg", width: 55) : SvgPicture.asset("assets/images/masculine.svg", color: Colors.white, width: 55),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
@@ -99,16 +96,48 @@ class _UpdateAccountState extends State<UpdateAccount> {
                       },
                       elevation: 2.0,
                       fillColor: !isMale ? Colors.white : Colors.grey[200],
-                      child: !isMale
-                          ? SvgPicture.asset("assets/images/femenine.svg",
-                              width: 60)
-                          : SvgPicture.asset("assets/images/femenine.svg",
-                              color: Colors.white, width: 60),
+                      child: !isMale ? SvgPicture.asset("assets/images/femenine.svg", width: 60) : SvgPicture.asset("assets/images/femenine.svg", color: Colors.white, width: 60),
                       padding: EdgeInsets.all(15.0),
                       shape: CircleBorder(),
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                if (argument.imageUrl != null)
+                  Row(
+                    children: [
+                      Center(
+                        child: imageService.imageFile == null
+                            ? Image.network(
+                                argument.imageUrl,
+                                cacheHeight: 200,
+                              )
+                            : Image.file(
+                                imageService.imageFile,
+                                cacheHeight: 200,
+                              ),
+                      ),
+                      SizedBox(width: 10.0),
+                      TextButton(
+                        onPressed: () async {
+                          imageService.imageFile = await imageService.pickImage();
+
+                          setState(() {});
+                        },
+                        child: Text("Chọn lại ảnh"),
+                      )
+                    ],
+                  )
+                else
+                  TextButton(
+                    onPressed: () async {
+                      imageService.imageFile = await imageService.pickImage();
+                      setState(() {});
+                    },
+                    child: Text("Chọn ảnh"),
+                  ),
                 SizedBox(
                   height: 20.0,
                 ),
@@ -173,8 +202,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                           child: TextFormField(
                             controller: weightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerWeight, weightUser, 'weight');
+                              showPickerArray(context, pickerWeight, weightUser, 'weight');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -201,8 +229,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                           child: TextFormField(
                             controller: heightUser,
                             onTap: () {
-                              showPickerArray(
-                                  context, pickerHeight, heightUser, 'height');
+                              showPickerArray(context, pickerHeight, heightUser, 'height');
                             },
                             showCursor: true,
                             readOnly: true,
@@ -242,18 +269,12 @@ class _UpdateAccountState extends State<UpdateAccount> {
                             setState(() => fitnessMode = 1);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 1
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 1 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 1
-                              ? SvgPicture.asset(
-                                  "assets/images/skipping_rope.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/skipping_rope.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/skipping_rope.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/skipping_rope.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -273,17 +294,12 @@ class _UpdateAccountState extends State<UpdateAccount> {
                             setState(() => fitnessMode = 2);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 2
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 2 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 2
-                              ? SvgPicture.asset("assets/images/dumbbell.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/dumbbell.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/dumbbell.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/dumbbell.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -303,17 +319,12 @@ class _UpdateAccountState extends State<UpdateAccount> {
                             setState(() => fitnessMode = 3);
                           },
                           elevation: 2.0,
-                          fillColor: fitnessMode == 3
-                              ? Colors.white
-                              : Colors.grey[200],
+                          fillColor: fitnessMode == 3 ? Colors.white : Colors.grey[200],
                           child: fitnessMode == 3
-                              ? SvgPicture.asset("assets/images/barbell.svg",
-                                  width: 50)
+                              ? SvgPicture.asset("assets/images/barbell.svg", width: 50)
                               : Opacity(
                                   opacity: 0.6,
-                                  child: SvgPicture.asset(
-                                      "assets/images/barbell.svg",
-                                      width: 50),
+                                  child: SvgPicture.asset("assets/images/barbell.svg", width: 50),
                                 ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
@@ -332,26 +343,15 @@ class _UpdateAccountState extends State<UpdateAccount> {
                     width: 200,
                     height: 50,
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: BorderSide(color: deepBlueColor)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
-                      onPressed: () {
+                      onPressed: () async {
                         FirebaseAuth auth = FirebaseAuth.instance;
                         User user = auth.currentUser;
                         UserService userService = new UserService();
-                        userService.updateValueRegister(
-                            user.uid,
-                            nameUser.text,
-                            int.parse(ageUser.text),
-                            heightValue,
-                            heightUnit,
-                            weightValue,
-                            weightUnit,
-                            fitnessMode,
-                            isMale);
-                        argument.callback(InfoScreen());
-                        Get.back();
+                        await fireStorageService.updateImageToFirebase(context, imageService.imageFile, _auth.getUser().uid, argument.imageUrl);
+                        userService.updateValueRegister(user.uid, nameUser.text, int.parse(ageUser.text), heightValue, heightUnit, weightValue, weightUnit, fitnessMode, isMale);
+                        Get.offAndToNamed("/splash");
                         Fluttertoast.showToast(
                           msg: "Cập nhật thông tin thành công",
                           toastLength: Toast.LENGTH_SHORT,
@@ -373,8 +373,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
     );
   }
 
-  showPickerArray(BuildContext context, String pickerData,
-      TextEditingController editTextValue, String kindValue) {
+  showPickerArray(BuildContext context, String pickerData, TextEditingController editTextValue, String kindValue) {
     new Picker(
         adapter: PickerDataAdapter<String>(
           pickerdata: new JsonDecoder().convert(pickerData),

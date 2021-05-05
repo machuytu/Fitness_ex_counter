@@ -6,6 +6,10 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/firebase_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 
 class InfoUser extends StatefulWidget {
@@ -21,12 +25,15 @@ class _InfoUserState extends State<InfoUser> {
   TextEditingController ageUser = new TextEditingController(text: '18');
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
+  AuthService _auth = new AuthService();
   int weightValue, heightValue;
   String kindValue;
   bool isMale = true;
   int fitnessMode = 1;
   String heightUnit, weightUnit;
   UserService userService = UserService();
+  ImageService imageService = new ImageService();
+  FireStorageService fireStorageService = new FireStorageService();
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +95,24 @@ class _InfoUserState extends State<InfoUser> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                imageService.imageFile != null
+                    ? Center(
+                        child: Image.file(
+                          imageService.imageFile,
+                          cacheHeight: 200,
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          imageService.imageFile =
+                              await imageService.pickImage();
+                          setState(() {});
+                        },
+                        child: Text("Chọn ảnh"),
+                      ),
                 SizedBox(
                   height: 20.0,
                 ),
@@ -316,25 +341,28 @@ class _InfoUserState extends State<InfoUser> {
                           side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
                       onPressed: () {
-                        userService
-                            .setValueRegister(
-                                nameUser.text,
-                                int.parse(ageUser.text),
-                                heightValue,
-                                heightUnit,
-                                weightValue,
-                                weightUnit,
-                                fitnessMode,
-                                isMale)
-                            .then((value) {
-                          Navigator.pushNamedAndRemoveUntil(context, "/login",
-                              (Route<dynamic> route) => false);
-                          Fluttertoast.showToast(
-                            msg: "Nhập thông tin thành công",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                          );
-                        });
+                        FirebaseAuth auth = FirebaseAuth.instance;
+                        User user = auth.currentUser;
+                        UserService userService = new UserService();
+                        fireStorageService.uploadImageToFirebase(context,
+                            imageService.imageFile, _auth.getUser().uid);
+                        userService.setValueRegister(
+                          nameUser.text,
+                          int.parse(ageUser.text),
+                          heightValue,
+                          heightUnit,
+                          weightValue,
+                          weightUnit,
+                          fitnessMode,
+                          isMale,
+                        );
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/login", (Route<dynamic> route) => false);
+                        Fluttertoast.showToast(
+                          msg: "Nhập thông tin thành công",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                        );
                       },
                       child: Text(
                         "Xác nhận",

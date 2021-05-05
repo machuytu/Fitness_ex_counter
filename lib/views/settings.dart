@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 
-class Setting extends StatelessWidget {
-  final _auth = new AuthService();
+class Setting extends StatefulWidget {
+  @override
+  _SettingState createState() => _SettingState();
+}
 
+class _SettingState extends State<Setting> {
+  ImageService imageService = new ImageService();
+  AuthService _auth = new AuthService();
+  String imageUrl;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -22,15 +29,29 @@ class Setting extends StatelessWidget {
                     const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
                 child: Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(100.0),
-                      child: Image.asset(
-                        "assets/images/photo.jpeg",
-                        width: 70.0,
-                        height: 70.0,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    FutureBuilder(
+                        future:
+                            imageService.getImage(context, _auth.getUser().uid),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            imageUrl = snapshot.data;
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(100.0),
+                              child: Image.network(
+                                snapshot.data,
+                                width: 70.0,
+                                height: 70.0,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting)
+                            return Center(child: CircularProgressIndicator());
+                          return Center(child: CircularProgressIndicator());
+                        }),
                     SizedBox(width: 8.0),
                     Text(_auth.getUser().email),
                   ],
@@ -77,7 +98,8 @@ class Setting extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
-                              onTap: () => Get.toNamed("/info_screen"),
+                              onTap: () => Get.toNamed("/info_screen",
+                                  arguments: imageUrl),
                               child: Container(
                                 height: 50,
                                 decoration: BoxDecoration(
