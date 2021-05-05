@@ -288,6 +288,7 @@ class _InferencePageState extends State<InferencePage> {
       result = poses['rightShoulder'][0] > upper &&
           poses['rightShoulder'][0] < lower;
     }
+
     return result;
   }
 
@@ -308,8 +309,9 @@ class _InferencePageState extends State<InferencePage> {
     } else if (exercise.id == 3) {
       result = poses['rightShoulder'][0] < upper;
     } else if (exercise.id == 4) {
-      result = poses['rightHip'][0] > lower;
+      result = poses['rightShoulder'][0] < upper;
     }
+
     return result;
   }
 

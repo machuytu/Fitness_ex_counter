@@ -41,14 +41,14 @@ final crunch = Exercise(
   ],
 );
 
-final bridge = Exercise(
-  'Bridges',
-  0.007,
-  [
-    BodyPart.ABS,
-    BodyPart.BACK,
-    BodyPart.QUADS,
-  ],
-);
+// final bridge = Exercise(
+//   'Bridges',
+//   0.007,
+//   [
+//     BodyPart.ABS,
+//     BodyPart.BACK,
+//     BodyPart.QUADS,
+//   ],
+// );
 
-final exercises = <Exercise>[squat, pushup, lunge, crunch, bridge];
+final exercises = <Exercise>[squat, pushup, lunge, crunch];
