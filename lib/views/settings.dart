@@ -12,12 +12,8 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   ImageService imageService = new ImageService();
-  @override
-  void initState() {
-    super.initState();
-    imageService.getImage();
-  }
-
+  AuthService _auth = new AuthService();
+  String imageUrl;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -33,15 +29,25 @@ class _SettingState extends State<Setting> {
                 padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
                 child: Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(100.0),
-                      child: Image.asset(
-                        "assets/images/photo.jpeg",
-                        width: 70.0,
-                        height: 70.0,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: imageService.getImage(context, _auth.getUser().uid),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            imageUrl = snapshot.data;
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(100.0),
+                              child: Image.network(
+                                snapshot.data,
+                                width: 70.0,
+                                height: 70.0,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          }
+
+                          if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
+                          return Center(child: CircularProgressIndicator());
+                        }),
                     SizedBox(width: 8.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +99,7 @@ class _SettingState extends State<Setting> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
-                              onTap: () => Get.toNamed("/info_screen"),
+                              onTap: () => Get.toNamed("/info_screen", arguments: imageUrl),
                               child: Container(
                                 height: 50,
                                 decoration: BoxDecoration(

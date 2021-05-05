@@ -12,6 +12,7 @@ import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/models/workout.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
 import 'package:khoaluan/services/auth_service.dart';
+import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 import 'package:khoaluan/services/workout_service.dart';
@@ -38,6 +39,8 @@ class _HomeState extends State<Home> {
   List<double> listMainPart = [];
   User _user = User();
   Workout _workout = Workout();
+
+  ImageService imageService = ImageService();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -77,8 +80,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    getUser()
-        .then((value) => getWorkout(weight: value.weight, bmr: value.bmrInt));
+    getUser().then((value) => getWorkout(weight: value.weight, bmr: value.bmrInt));
     super.initState();
   }
 
@@ -101,18 +103,23 @@ class _HomeState extends State<Home> {
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Row(
                             children: [
-                              Container(
-                                width: 50.0,
-                                height: 50.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/images/photo.jpeg"),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
+                              FutureBuilder(
+                                  future: imageService.getImage(context, _authService.getUser().uid),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.done) {
+                                      return ClipOval(
+                                        child: Image.network(
+                                          snapshot.data,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    }
+
+                                    if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
+                                    return Center(child: CircularProgressIndicator());
+                                  }),
                               Spacer(),
                               GestureDetector(
                                 onTap: () {
@@ -173,18 +180,13 @@ class _HomeState extends State<Home> {
                                   });
                                 }
                               },
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage((_workout.isDone)
-                                      ? "assets/images/Workout_done.png"
-                                      : "assets/images/Workout.png")),
+                              child: Image(fit: BoxFit.cover, image: AssetImage((_workout.isDone) ? "assets/images/Workout_done.png" : "assets/images/Workout.png")),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10.0),
                         CustomListTile(
-                          title:
-                              Text("Các bài tập cho bạn", style: kTitleStyle),
+                          title: Text("Các bài tập cho bạn", style: kTitleStyle),
                           trailing: SvgPicture.asset(
                             "assets/images/fire.svg",
                             width: 35,
@@ -221,8 +223,7 @@ class _HomeState extends State<Home> {
                           Container(
                             decoration: BoxDecoration(
                               color: kGreenColor,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(40.0)),
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
                             ),
                           ),
                           Container(
@@ -242,42 +243,30 @@ class _HomeState extends State<Home> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 25),
-                                  child: Text("Cường độ tập luyện",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text("Cường độ tập luyện", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: FutureBuilder(
-                                    future: _practiceService
-                                        .getPracticeByDate(_now),
+                                    future: _practiceService.getPracticeByDate(_now),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        listMainPart = _practiceService
-                                            .getBodyMainPartKcal(snapshot.data);
+                                        listMainPart = _practiceService.getBodyMainPartKcal(snapshot.data);
                                         return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Container(
                                               height: 300,
                                               width: 200,
                                               child: BodyPartWidget(
-                                                getBodyPartKcal:
-                                                    _practiceService
-                                                        .getBodyPartKcal(
-                                                            snapshot.data),
+                                                getBodyPartKcal: _practiceService.getBodyPartKcal(snapshot.data),
                                               ),
                                             ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   mainPartWidget(0),
                                                   const SizedBox(height: 20.0),
@@ -290,8 +279,7 @@ class _HomeState extends State<Home> {
                                           ],
                                         );
                                       }
-                                      return Center(
-                                          child: CircularProgressIndicator());
+                                      return Center(child: CircularProgressIndicator());
                                     },
                                   ),
                                 ),

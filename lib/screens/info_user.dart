@@ -7,6 +7,7 @@ import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/firebase_service.dart';
 import 'package:khoaluan/services/image_service.dart';
 import 'package:khoaluan/services/user_service.dart';
@@ -23,6 +24,7 @@ class _InfoUserState extends State<InfoUser> {
   TextEditingController ageUser = new TextEditingController(text: '18');
   TextEditingController weightUser = new TextEditingController();
   TextEditingController heightUser = new TextEditingController();
+  AuthService _auth = new AuthService();
   int weightValue, heightValue;
   String kindValue;
   bool isMale = true;
@@ -30,6 +32,7 @@ class _InfoUserState extends State<InfoUser> {
   String heightUnit, weightUnit;
   ImageService imageService = new ImageService();
   FireStorageService fireStorageService = new FireStorageService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -307,7 +310,7 @@ class _InfoUserState extends State<InfoUser> {
                         FirebaseAuth auth = FirebaseAuth.instance;
                         User user = auth.currentUser;
                         UserService userService = new UserService();
-                        fireStorageService.uploadImageToFirebase(context, imageService.imageFile);
+                        fireStorageService.uploadImageToFirebase(context, imageService.imageFile, _auth.getUser().uid);
                         userService.setValueRegister(user.uid, nameUser.text, int.parse(ageUser.text), heightValue, heightUnit, weightValue, weightUnit, fitnessMode, isMale);
                         Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
                         Fluttertoast.showToast(
