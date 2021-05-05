@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,12 +8,11 @@ import 'package:khoaluan/data/exercise_data.dart';
 import 'package:get/get.dart';
 import 'package:khoaluan/main.dart';
 import 'package:khoaluan/models/user.dart';
-import 'package:khoaluan/models/workout.dart';
+import 'package:khoaluan/models/daily_exercise.dart';
 import 'package:khoaluan/screens/body_part_widget.dart';
-import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
-import 'package:khoaluan/services/workout_service.dart';
+import 'package:khoaluan/services/daily_exercise_service.dart';
 import 'package:khoaluan/widgets/custom_list_tile.dart';
 import 'package:khoaluan/widgets/exercise_card.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -30,14 +28,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _authService = AuthService();
   final _userService = UserService();
   final _practiceService = PracticeService();
-  final _workoutService = WorkoutService();
+  final _dailyExerciseService = DailyExerciseService();
   final _now = DateTime.now();
+  var _user = User();
+  var _dailyExercise = DailyExercise();
   List<double> listMainPart = [];
-  User _user = User();
-  Workout _workout = Workout();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -46,33 +43,60 @@ class _HomeState extends State<Home> {
           isArray: true,
         ),
         hideHeader: false,
-        onConfirm: (Picker picker, List value) {
+        onConfirm: (Picker picker, List<int> value) {
           setState(() {
-            if (value.toString() == "[0]") {
-              _userService.updateUser(_user.uid, 'fitness_mode', 1);
-            } else if (value.toString() == "[1]") {
-              _userService.updateUser(_user.uid, 'fitness_mode', 2);
-            } else {
-              _userService.updateUser(_user.uid, 'fitness_mode', 3);
-            }
+            _userService.updateUser('fitnessMode', value[0] + 1);
           });
         }).showModal(context);
   }
 
   Future<User> getUser() async {
-    _user = await _userService.getUser(_authService);
+    _user = await _userService.getUser();
     return _user;
   }
 
-  Future<void> getWorkout({@required int weight, @required int bmr}) async {
+  Future<void> getDailyExercise(
+      {@required int weight, @required int bmr}) async {
     // // for test
-    _workout = (await _workoutService.getWorkoutByDate(_now)) ?? Workout();
+    _dailyExercise =
+        (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
+            DailyExercise();
 
     // for release
-    // _workout = (await _workoutService.getWorkoutByDate(_now)) ??
-    //     Workout(weight: weight, bmr:  bmr);
+    // _dailyExercise = (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
+    //     DailyExercise(weight: weight, bmr:  bmr);
 
-    print(_workout);
+    print(_dailyExercise);
+  }
+
+  String get getDailyExerciseImg => (_dailyExercise.isDone)
+      ? 'assets/images/DailyExercise_done.png'
+      : 'assets/images/DailyExercise.png';
+
+  String get getfitnessStr {
+    if (_user.fitnessMode == 1) {
+      return 'Get Fit';
+    }
+    if (_user.fitnessMode == 2) {
+      return 'Daily Exercise';
+    }
+    return 'Gain Muscle';
+  }
+
+  Color get getfitnessColor {
+    if (_user.fitnessMode == 1) {
+      return kGreenColor;
+    } else if (_user.fitnessMode == 2) {
+      return Colors.yellow;
+    }
+    return Colors.red;
+  }
+
+  @override
+  void initState() {
+    getUser().then(
+        (value) => getDailyExercise(weight: value?.weight, bmr: value?.bmr));
+    super.initState();
   }
 
   @override
@@ -100,7 +124,8 @@ class _HomeState extends State<Home> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                    image: AssetImage("assets/images/photo.jpeg"),
+                                    image:
+                                        AssetImage('assets/images/photo.jpeg'),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -112,24 +137,14 @@ class _HomeState extends State<Home> {
                                 },
                                 child: Row(
                                   children: [
-                                    Text(
-                                        _user.fitnessMode == 1
-                                            ? "Get Fit"
-                                            : _user.fitnessMode == 2
-                                                ? "Workout"
-                                                : "Gain Muscle",
-                                        style: kTitleStyle),
+                                    Text(getfitnessStr, style: kTitleStyle),
                                     Transform(
                                       alignment: Alignment.center,
                                       transform: Matrix4.rotationY(math.pi),
                                       child: SvgPicture.asset(
-                                        "assets/images/muscle.svg",
+                                        'assets/images/muscle.svg',
                                         width: 35,
-                                        color: _user.fitnessMode == 1
-                                            ? kGreenColor
-                                            : _user.fitnessMode == 2
-                                                ? Colors.yellow
-                                                : Colors.red,
+                                        color: getfitnessColor,
                                       ),
                                     ),
                                   ],
@@ -146,34 +161,39 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 10.0),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ClipRRect(
+                          child: InkWell(
                             borderRadius: BorderRadius.circular(15.0),
-                            child: InkWell(
-                              onTap: () {
-                                if (_workout.isDone) {
-                                  _workout.start = DateTime.now();
-                                  Get.to<Workout>(InferencePage(
-                                    cameras,
-                                    workout: _workout,
-                                  )).then((value) {
-                                    print('inference value $value');
-                                    setState(() {
-                                      _workout = value;
-                                    });
-                                  }).catchError((err) {
-                                    print('inference err $err');
+                            onTap: () {
+                              if (!_dailyExercise.isDone) {
+                                _dailyExercise.start = DateTime.now();
+                                Get.to<DailyExercise>(InferencePage(
+                                  cameras,
+                                  dailyExercise: _dailyExercise,
+                                )).then((value) {
+                                  print('inference value $value');
+                                  setState(() {
+                                    _dailyExercise = value;
                                   });
-                                }
-                              },
-                              child: Image(fit: BoxFit.cover, image: AssetImage((_workout.isDone) ? "assets/images/Workout_done.png" : "assets/images/Workout.png")),
+                                }).catchError((err) {
+                                  print('inference err $err');
+                                });
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image.asset(
+                                getDailyExerciseImg,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10.0),
                         CustomListTile(
-                          title: Text("Các bài tập cho bạn", style: kTitleStyle),
+                          title:
+                              Text('Các bài tập cho bạn', style: kTitleStyle),
                           trailing: SvgPicture.asset(
-                            "assets/images/fire.svg",
+                            'assets/images/fire.svg',
                             width: 35,
                           ),
                         ),
@@ -208,7 +228,9 @@ class _HomeState extends State<Home> {
                           Container(
                             decoration: BoxDecoration(
                               color: kGreenColor,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(40.0),
+                              ),
                             ),
                           ),
                           Container(
@@ -228,30 +250,44 @@ class _HomeState extends State<Home> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 25),
-                                  child: Text("Cường độ tập luyện", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    'Cường độ tập luyện',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: FutureBuilder(
-                                    future: _practiceService.getPracticeByDate(_now),
+                                    future: _practiceService
+                                        .getPracticeByDate(_now),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        listMainPart = _practiceService.getBodyMainPartKcal(snapshot.data);
+                                        listMainPart = _practiceService
+                                            .getBodyMainPartKcal(snapshot.data);
                                         return Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Container(
                                               height: 300,
                                               width: 200,
                                               child: BodyPartWidget(
-                                                getBodyPartKcal: _practiceService.getBodyPartKcal(snapshot.data),
+                                                getBodyPartKcal:
+                                                    _practiceService
+                                                        .getBodyPartKcal(
+                                                            snapshot.data),
                                               ),
                                             ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   mainPartWidget(0),
                                                   const SizedBox(height: 20.0),
@@ -264,7 +300,8 @@ class _HomeState extends State<Home> {
                                           ],
                                         );
                                       }
-                                      return Center(child: CircularProgressIndicator());
+                                      return Center(
+                                          child: CircularProgressIndicator());
                                     },
                                   ),
                                 ),
@@ -286,15 +323,17 @@ class _HomeState extends State<Home> {
   }
 
   Widget mainPartWidget(int mainPartIndex) {
-    Color color;
-    String text;
+    Color color = kGreenColor;
+    String text = 'Need more';
+    String mainPartStr = 'Bottom: ';
 
     final mainPartValue = listMainPart[mainPartIndex];
 
-    if (0 <= mainPartValue && mainPartValue <= 50) {
-      text = 'Need more';
-      color = kGreenColor;
-    } else if (50 < mainPartValue && mainPartValue <= 100) {
+    // if (0 <= mainPartValue && mainPartValue <= 50) {
+    //   text = 'Need more';
+    //   color = kGreenColor;
+    // }
+    if (50 < mainPartValue && mainPartValue <= 100) {
       text = 'Good';
       color = Colors.yellow;
     } else if (mainPartValue > 100) {
@@ -302,15 +341,17 @@ class _HomeState extends State<Home> {
       color = Colors.red;
     }
 
+    if (mainPartIndex == 0) {
+      mainPartStr = 'Top: ';
+    } else if (mainPartIndex == 1) {
+      mainPartStr = 'Middle: ';
+    }
+
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: (mainPartIndex == 0)
-                ? 'Top: '
-                : (mainPartIndex == 1)
-                    ? 'Middle: '
-                    : 'Bottom: ',
+            text: mainPartStr,
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           TextSpan(

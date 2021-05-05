@@ -1,21 +1,20 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:khoaluan/models/notification_model.dart';
-
 import 'auth_service.dart';
 
 class NotificationService {
   CollectionReference _ref;
-  String _uid;
-  AuthService _auth = new AuthService();
+  String _uid = ' ';
 
   NotificationService() {
-    _uid = _auth.getUser().uid;
+    var user = AuthService().getUser();
+    if (user != null) {
+      _uid = user.uid;
+    }
     _ref = FirebaseFirestore.instance
-        .collection('users')
+        .collection('Users')
         .doc(_uid)
-        .collection('notifications');
+        .collection('Notifications');
   }
 
   Future<String> addNotification(
@@ -27,17 +26,15 @@ class NotificationService {
     List<int> listDaily,
   ) {
     return _ref
-        .add(
-      NotificationModel(
-        idNotification: idNotification,
-        title: title,
-        message: message,
-        hour: hour,
-        minute: minute,
-        listDaily: listDaily,
-        isOn: true,
-      ).addJson(),
-    )
+        .add(NotificationModel(
+      idNotification: idNotification,
+      title: title,
+      message: message,
+      hour: hour,
+      minute: minute,
+      listDaily: listDaily,
+      isOn: true,
+    ).addJson())
         .then((value) {
       print("Add Notification success ${value.id}");
       return value.id;
@@ -58,16 +55,14 @@ class NotificationService {
   ) {
     return _ref
         .doc(id)
-        .set(
-          NotificationModel(
-            title: title,
-            message: message,
-            hour: hour,
-            minute: minute,
-            listDaily: listDaily,
-            isOn: isOn,
-          ).updateJson(),
-        )
+        .set(NotificationModel(
+          title: title,
+          message: message,
+          hour: hour,
+          minute: minute,
+          listDaily: listDaily,
+          isOn: isOn,
+        ).updateJson())
         .then((value) => print("Notification Updated"))
         .catchError((err) {
       print(err);

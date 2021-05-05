@@ -6,7 +6,6 @@ import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:khoaluan/services/user_service.dart';
 
 class InfoUser extends StatefulWidget {
@@ -27,6 +26,8 @@ class _InfoUserState extends State<InfoUser> {
   bool isMale = true;
   int fitnessMode = 1;
   String heightUnit, weightUnit;
+  UserService userService = UserService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,26 +316,25 @@ class _InfoUserState extends State<InfoUser> {
                           side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
                       onPressed: () {
-                        FirebaseAuth auth = FirebaseAuth.instance;
-                        User user = auth.currentUser;
-                        UserService userService = new UserService();
-                        userService.setValueRegister(
-                            user.uid,
-                            nameUser.text,
-                            int.parse(ageUser.text),
-                            heightValue,
-                            heightUnit,
-                            weightValue,
-                            weightUnit,
-                            fitnessMode,
-                            isMale);
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, "/login", (Route<dynamic> route) => false);
-                        Fluttertoast.showToast(
-                          msg: "Nhập thông tin thành công",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                        );
+                        userService
+                            .setValueRegister(
+                                nameUser.text,
+                                int.parse(ageUser.text),
+                                heightValue,
+                                heightUnit,
+                                weightValue,
+                                weightUnit,
+                                fitnessMode,
+                                isMale)
+                            .then((value) {
+                          Navigator.pushNamedAndRemoveUntil(context, "/login",
+                              (Route<dynamic> route) => false);
+                          Fluttertoast.showToast(
+                            msg: "Nhập thông tin thành công",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                          );
+                        });
                       },
                       child: Text(
                         "Xác nhận",

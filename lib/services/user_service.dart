@@ -3,13 +3,20 @@ import 'package:khoaluan/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserService {
-  final _ref = FirebaseFirestore.instance.collection('users');
+  CollectionReference _ref;
+  String _uid = ' ';
 
-  Future<User> getUser(AuthService auth) {
-    String userId = auth.getUser().uid;
+  UserService() {
+    var user = AuthService().getUser();
+    if (user != null) {
+      _uid = user.uid;
+    }
+    _ref = FirebaseFirestore.instance.collection('Users');
+  }
 
+  Future<User> getUser() {
     return _ref
-        .doc(userId)
+        .doc(_uid)
         .get()
         .then((value) => User.fromFirestoreSnapshot(value))
         .catchError((onError) {
@@ -17,17 +24,16 @@ class UserService {
     });
   }
 
-  Future<void> updateUser(String userId, String key, var valueUpdate) async {
-    return _ref.doc(userId).update({key: valueUpdate}).then((value) {
-      print("thanh cong");
+  Future<void> updateUser(String key, var valueUpdate) async {
+    return _ref.doc(_uid).update({key: valueUpdate}).then((value) {
+      print("Updated user");
     }).catchError((e) {
       print(e);
     });
   }
 
   Future<void> setValueRegister(
-      String userId,
-      String nameUser,
+      String name,
       int age,
       int heightValue,
       String heightUnit,
@@ -35,7 +41,7 @@ class UserService {
       String weightUnit,
       int fitnessMode,
       bool isMale) async {
-    double bmr;
+    int bmr;
     double activeLevel;
     if (fitnessMode == 0) {
       activeLevel = 1.37;
@@ -45,40 +51,41 @@ class UserService {
       activeLevel = 1.725;
     }
     if (isMale) {
-      bmr = (66 +
-              (6.2 * weightValue) +
-              (12.7 * heightValue) -
-              (6.76 * age) * activeLevel) /
-          7;
+      bmr = ((66 +
+                  (6.2 * weightValue) +
+                  (12.7 * heightValue) -
+                  (6.76 * age) * activeLevel) /
+              7)
+          .round();
     } else {
-      bmr = (655.1 +
-              (4.35 * weightValue) +
-              (4.7 * heightValue) -
-              (4.7 * age) * activeLevel) /
-          7;
+      bmr = ((655.1 +
+                  (4.35 * weightValue) +
+                  (4.7 * heightValue) -
+                  (4.7 * age) * activeLevel) /
+              7)
+          .round();
     }
-    int bmrInt = bmr.toInt();
 
-    var r = _ref.doc(userId).set({
-      'name': nameUser,
+    return _ref.doc(_uid).set({
+      'name': name,
       'age': age,
       'height': heightValue,
-      'height_unit': heightUnit,
+      'heightUnit': heightUnit,
       'weight': weightValue,
-      'weight_unit': weightUnit,
-      'bmr_int': bmrInt,
-      'fitness_mode': fitnessMode,
+      'weightUnit': weightUnit,
+      'bmr': bmr,
+      'fitnessMode': fitnessMode,
       'gender': isMale
     }).then((value) {
-      print("add user $userId");
+      print("Added user $_uid");
     }).catchError((err) {
       print(err);
     });
   }
 
   void updateValueRegister(
-      String userId,
-      String nameUser,
+      String uid,
+      String name,
       int age,
       int heightValue,
       String heightUnit,
@@ -110,18 +117,18 @@ class UserService {
     }
     int bmrInt = bmr.toInt();
 
-    return _ref.doc(userId).set({
-      'name': nameUser,
+    return _ref.doc(uid).set({
+      'name': name,
       'age': age,
       'height': heightValue,
-      'height_unit': heightUnit,
+      'heightUnit': heightUnit,
       'weight': weightValue,
-      'weight_unit': weightUnit,
-      'bmr_int': bmrInt,
+      'weightUnit': weightUnit,
+      'bmr': bmrInt,
       'fitness_mode': fitnessMode,
       'gender': isMale
     }).then((value) {
-      print("update user $userId");
+      print("update user $uid");
     }).catchError((err) {
       print(err);
     });

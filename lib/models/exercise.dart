@@ -3,9 +3,17 @@ class Exercise {
   final int id = autoId;
   final String name;
   final double coefficient;
+  final double upperRange;
+  final double lowerRange;
   final List<BodyPart> bodyParts;
 
-  Exercise(this.name, this.coefficient, this.bodyParts) {
+  Exercise(
+    this.name,
+    this.coefficient,
+    this.upperRange,
+    this.lowerRange,
+    this.bodyParts,
+  ) {
     autoId++;
   }
 
@@ -14,7 +22,7 @@ class Exercise {
 
   @override
   String toString() =>
-      'Exercise: ${this.id} / ${this.name} / ${this.coefficient}';
+      'Exercise(${this.id}): ${this.name} / ${this.coefficient}';
 }
 
 enum BodyPart {

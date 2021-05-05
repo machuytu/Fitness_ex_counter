@@ -10,9 +10,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailValid = new TextEditingController(text: 'phuc@gmail.com');
-  TextEditingController passwordVaild = new TextEditingController(text: '123456');
-  AuthService _auth = new AuthService();
+  final _auth = new AuthService();
+  final emailValid = new TextEditingController(text: 'phuc@gmail.com');
+  final passwordVaild = new TextEditingController(text: '123456');
+
+  @override
+  void dispose() {
+    emailValid.dispose();
+    passwordVaild.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;

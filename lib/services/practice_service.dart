@@ -6,14 +6,17 @@ import 'auth_service.dart';
 
 class PracticeService {
   CollectionReference _ref;
-  String _uid;
+  String _uid = ' ';
 
   PracticeService() {
-    _uid = AuthService().getUser().uid;
+    var user = AuthService().getUser();
+    if (user != null) {
+      _uid = user.uid;
+    }
     _ref = FirebaseFirestore.instance
-        .collection('users')
+        .collection('Users')
         .doc(_uid)
-        .collection('practices');
+        .collection('Practices');
   }
 
   Future<void> addPractice(

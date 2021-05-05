@@ -1,163 +1,141 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:get/get.dart';
-import 'package:khoaluan/models/user.dart';
 import 'package:khoaluan/services/auth_service.dart';
-import 'package:khoaluan/services/user_service.dart';
 
-class Setting extends StatefulWidget {
-  @override
-  _SettingState createState() => _SettingState();
-}
-
-class _SettingState extends State<Setting> {
-  final _authService = AuthService();
-
-  final _userService = UserService();
-
-  Future<User> getUser() async {
-    return await _userService.getUser(_authService);
-  }
+class Setting extends StatelessWidget {
+  final _auth = new AuthService();
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return FutureBuilder(
-      future: getUser(),
-      builder: (context, snapshot) {
-        User user = snapshot.data;
-        if (snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            body: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
+                child: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(100.0),
-                            child: Image.asset(
-                              "assets/images/photo.jpeg",
-                              width: 70.0,
-                              height: 70.0,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(_authService.auth.currentUser.email),
-                              SizedBox(height: 5.0),
-                              Text(user.name),
-                            ],
-                          ),
-                        ],
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(100.0),
+                      child: Image.asset(
+                        "assets/images/photo.jpeg",
+                        width: 70.0,
+                        height: 70.0,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: size.height,
-                      child: Stack(
+                    SizedBox(width: 8.0),
+                    Text(_auth.getUser().email),
+                  ],
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: size.height,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 20.0,
+                      left: 0.0,
+                      right: 20.0,
+                      bottom: 0.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: kGreenColor,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(40.0)),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 40.0,
+                      left: 0.0,
+                      right: 30.0,
+                      bottom: 0.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: kIndigoColor,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(40.0)),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 50.0,
+                      left: 5.0,
+                      right: 40.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                            top: 20.0,
-                            left: 0.0,
-                            right: 20.0,
-                            bottom: 0.0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: kGreenColor,
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(40.0)),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () => Get.toNamed("/info_screen"),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Thông tin cá nhân",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 40.0,
-                            left: 0.0,
-                            right: 30.0,
-                            bottom: 0.0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: kIndigoColor,
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(40.0)),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () => Get.toNamed("/notification"),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Thông báo",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 50.0,
-                            left: 5.0,
-                            right: 40.0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () => Get.toNamed("/info_screen"),
-                                    child: Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: deepBlueColor,
-                                        borderRadius: BorderRadius.circular(10.0),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Thông tin cá nhân",
-                                          style: TextStyle(color: kGreyColor, fontSize: 20),
-                                        ),
-                                      ),
-                                    ),
+                          GestureDetector(
+                            onTap: () {
+                              _auth.logout();
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  "/login", (Route<dynamic> route) => false);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: deepBlueColor,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Đăng xuất",
+                                    style: TextStyle(
+                                        color: kGreyColor, fontSize: 20),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () => Get.toNamed("/notification"),
-                                    child: Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: deepBlueColor,
-                                        borderRadius: BorderRadius.circular(10.0),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Thông báo",
-                                          style: TextStyle(color: kGreyColor, fontSize: 20),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    AuthService _auth = new AuthService();
-                                    _auth.logout();
-                                    Navigator.pushNamedAndRemoveUntil(context, "/login", (Route<dynamic> route) => false);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: deepBlueColor,
-                                        borderRadius: BorderRadius.circular(10.0),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Đăng xuất",
-                                          style: TextStyle(color: kGreyColor, fontSize: 20),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -166,11 +144,10 @@ class _SettingState extends State<Setting> {
                   ],
                 ),
               ),
-            ),
-          );
-        }
-        return Center(child: CircularProgressIndicator());
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

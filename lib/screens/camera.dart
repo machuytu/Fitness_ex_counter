@@ -28,8 +28,8 @@ class _CameraState extends State<Camera> {
     } else {
       _controller = CameraController(
         widget.cameras[1],
-        ResolutionPreset.high,
-        imageFormatGroup: ImageFormatGroup.yuv420,
+        ResolutionPreset.low,
+        enableAudio: false,
       );
 
       _controller.initialize().then((_) {
