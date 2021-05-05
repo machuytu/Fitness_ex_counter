@@ -3,15 +3,11 @@ class Exercise {
   final int id = autoId;
   final String name;
   final double coefficient;
-  final double upperRange;
-  final double lowerRange;
   final List<BodyPart> bodyParts;
 
   Exercise(
     this.name,
     this.coefficient,
-    this.upperRange,
-    this.lowerRange,
     this.bodyParts,
   ) {
     autoId++;

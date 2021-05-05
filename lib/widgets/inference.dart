@@ -27,18 +27,20 @@ class _InferencePageState extends State<InferencePage> {
   final flutterTts = FlutterTts();
   final now = DateTime.now();
 
+  DailyExercise dailyExercise;
   Map<String, List<double>> inputArr;
   List<dynamic> recognitions;
   bool midCount;
   bool isCorrectPosture;
   double screenH;
   double screenW;
+  double upper;
+  double lower;
   int imageHeight;
   int imageWidth;
   int previewH;
   int previewW;
   int count;
-  DailyExercise dailyExercise;
 
   Exercise get exercise =>
       (dailyExercise == null) ? widget.exercise : dailyExercise.exercise;
@@ -74,15 +76,18 @@ class _InferencePageState extends State<InferencePage> {
     isCorrectPosture = false;
     screenH = Get.height;
     screenW = Get.width;
+    upper = 0;
+    lower = 0;
     imageHeight = 0;
     imageWidth = 0;
     count = 0;
+    setRangeBasedOnModel();
     if (dailyExercise == null) {
       flutterTts.speak("Your exercise has started");
     } else {
       flutterTts.speak("Your daily exercise has started");
     }
-    // _setRangeBasedOnModel();
+
     super.initState();
   }
 
@@ -101,56 +106,6 @@ class _InferencePageState extends State<InferencePage> {
     return Future.value(true);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: onWillPop,
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            centerTitle: true,
-            title: Text(exercise.name),
-          ),
-          body: Stack(
-            children: <Widget>[
-              Camera(
-                cameras: widget.cameras,
-                setRecognitions: setRecognitions,
-              ),
-              Center(
-                child: Image.asset(
-                  assetName,
-                  color: getImageColor,
-                ),
-              ),
-              Stack(children: renderHelperBlobs()),
-              Stack(children: renderKeypoints()),
-            ],
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Container(
-            height: 100,
-            width: 100,
-            child: FloatingActionButton(
-              backgroundColor: getCounterColor,
-              onPressed: () {},
-              child: Text(
-                countStr,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Positioned createPositionedBlobs(double h, double w, double x, double y) {
     return Positioned(
       height: h,
@@ -164,11 +119,11 @@ class _InferencePageState extends State<InferencePage> {
   List<Widget> renderHelperBlobs() {
     List<Widget> listToReturn = <Widget>[];
     if (exercise.id != 3 && exercise.id != 4) {
-      listToReturn.add(createPositionedBlobs(5, 40, 0, exercise.upperRange));
-      listToReturn.add(createPositionedBlobs(5, 40, 0, exercise.lowerRange));
+      listToReturn.add(createPositionedBlobs(5, 40, 0, upper));
+      listToReturn.add(createPositionedBlobs(5, 40, 0, lower));
     } else {
-      listToReturn.add(createPositionedBlobs(40, 5, exercise.upperRange, 0));
-      listToReturn.add(createPositionedBlobs(40, 5, exercise.lowerRange, 0));
+      listToReturn.add(createPositionedBlobs(40, 5, upper, 0));
+      listToReturn.add(createPositionedBlobs(40, 5, lower, 0));
     }
     return listToReturn;
   }
@@ -252,6 +207,28 @@ class _InferencePageState extends State<InferencePage> {
     });
   }
 
+  void setRangeBasedOnModel() {
+    final h = screenH * 0.8 - 5;
+    final w = screenW - 5;
+
+    if (exercise.id == 0) {
+      upper = h * 0.35;
+      lower = h * 0.75;
+    } else if (exercise.id == 1) {
+      upper = h * 0.45;
+      lower = h * 0.65;
+    } else if (exercise.id == 2) {
+      upper = h * 0.35;
+      lower = h * 0.90;
+    } else if (exercise.id == 3) {
+      upper = w * 0.45;
+      lower = w * 0.80;
+    } else if (exercise.id == 4) {
+      upper = w * 0.45;
+      lower = w * 0.80;
+    }
+  }
+
   void increaseCount() {
     if (dailyExercise == null) {
       setState(() {
@@ -266,11 +243,12 @@ class _InferencePageState extends State<InferencePage> {
         },
         onMax: () {
           flutterTts.speak("Change exercise");
-          // _setRangeBasedOnModel();
+          setRangeBasedOnModel();
           setState(() {});
         },
         onDone: () {
           flutterTts.speak("Your daily exercise done");
+          dailyExerciseService.setDailyExercise(dailyExercise);
           Get.back<DailyExercise>(result: dailyExercise);
         },
       );
@@ -288,8 +266,6 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   bool posture(Map<String, List<double>> poses) {
-    var upper = exercise.upperRange;
-    var lower = exercise.lowerRange;
     var result = false;
 
     if (exercise.id == 0) {
@@ -316,8 +292,6 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   bool midPosture(Map<String, List<double>> poses) {
-    var upper = exercise.upperRange;
-    var lower = exercise.lowerRange;
     var result = false;
 
     if (exercise.id == 0) {
@@ -369,5 +343,55 @@ class _InferencePageState extends State<InferencePage> {
         checkCorrectPosture(poses);
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            centerTitle: true,
+            title: Text(exercise.name),
+          ),
+          body: Stack(
+            children: <Widget>[
+              Camera(
+                cameras: widget.cameras,
+                setRecognitions: setRecognitions,
+              ),
+              Center(
+                child: Image.asset(
+                  assetName,
+                  color: getImageColor,
+                ),
+              ),
+              Stack(children: renderHelperBlobs()),
+              Stack(children: renderKeypoints()),
+            ],
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Container(
+            height: 100,
+            width: 100,
+            child: FloatingActionButton(
+              backgroundColor: getCounterColor,
+              onPressed: () {},
+              child: Text(
+                countStr,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 30,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

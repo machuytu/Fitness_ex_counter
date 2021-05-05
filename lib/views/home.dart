@@ -30,16 +30,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _authService = AuthService();
-  final _userService = UserService();
-  final _practiceService = PracticeService();
-  final _dailyExerciseService = DailyExerciseService();
-  final _now = DateTime.now();
+  final authService = AuthService();
+  final userService = UserService();
+  final practiceService = PracticeService();
+  final dailyExerciseService = DailyExerciseService();
+  final imageService = ImageService();
+  final now = DateTime.now();
   List<double> listMainPart = [];
-  User _user = User();
-  DailyExercise _dailyExercise = DailyExercise();
-
-  ImageService imageService = ImageService();
+  User user = User();
+  DailyExercise dailyExercise = DailyExercise();
 
   showPickerArray(BuildContext context) {
     new Picker(
@@ -50,58 +49,98 @@ class _HomeState extends State<Home> {
         hideHeader: false,
         onConfirm: (Picker picker, List<int> value) {
           setState(() {
-            _userService.updateUser('fitnessMode', value[0] + 1);
+            userService.updateUser('fitnessMode', value[0] + 1);
           });
         }).showModal(context);
   }
 
   Future<User> getUser() async {
-    _user = await _userService.getUser();
-    return _user;
+    user = await userService.getUser();
+    await getDailyExercise(weight: user?.weight, bmr: user?.bmr);
+    return user;
   }
 
-  Future<void> getDailyExercise(
-      {@required int weight, @required int bmr}) async {
+  Future<void> getDailyExercise({
+    @required int weight,
+    @required int bmr,
+  }) async {
     // // for test
-    _dailyExercise =
-        (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
-            DailyExercise();
+    dailyExercise = (await dailyExerciseService.getDailyExerciseByDate(now)) ??
+        DailyExercise();
 
     // for release
-    // _dailyExercise = (await _dailyExerciseService.getDailyExerciseByDate(_now)) ??
+    // dailyExercise = (await dailyExerciseService.getDailyExerciseByDate(now)) ??
     //     DailyExercise(weight: weight, bmr:  bmr);
 
-    print(_dailyExercise);
+    print(dailyExercise);
   }
 
-  String get getDailyExerciseImg => (_dailyExercise.isDone)
+  String get getDailyExerciseImg => (dailyExercise.isDone)
       ? 'assets/images/DailyExercise_done.png'
       : 'assets/images/DailyExercise.png';
 
   String get getfitnessStr {
-    if (_user.fitnessMode == 1) {
+    if (user.fitnessMode == 1) {
       return 'Get Fit';
     }
-    if (_user.fitnessMode == 2) {
+    if (user.fitnessMode == 2) {
       return 'Daily Exercise';
     }
     return 'Gain Muscle';
   }
 
   Color get getfitnessColor {
-    if (_user.fitnessMode == 1) {
+    if (user.fitnessMode == 1) {
       return kGreenColor;
-    } else if (_user.fitnessMode == 2) {
+    } else if (user.fitnessMode == 2) {
       return Colors.yellow;
     }
     return Colors.red;
   }
 
-  @override
-  void initState() {
-    getUser().then(
-        (value) => getDailyExercise(weight: value?.weight, bmr: value?.bmr));
-    super.initState();
+  Widget mainPartWidget(int mainPartIndex) {
+    Color color;
+    String text;
+    String mainPartString;
+
+    final mainPartValue = listMainPart[mainPartIndex];
+
+    if (0 <= mainPartValue && mainPartValue <= 50) {
+      text = 'Need more';
+      color = kGreenColor;
+    } else if (50 < mainPartValue && mainPartValue <= 100) {
+      text = 'Good';
+      color = Colors.yellow;
+    } else if (mainPartValue > 100) {
+      text = 'Need relax';
+      color = Colors.red;
+    }
+
+    if (mainPartIndex == 0) {
+      mainPartString = 'Top: ';
+    } else if (mainPartIndex == 1) {
+      mainPartString = 'Middle: ';
+    } else {
+      mainPartString = 'Bottom: ';
+    }
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: mainPartString,
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+          TextSpan(
+            text: text,
+            style: TextStyle(
+              fontSize: 20,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -125,7 +164,7 @@ class _HomeState extends State<Home> {
                             children: [
                               FutureBuilder(
                                   future: imageService.getImage(
-                                      context, _authService.getUser().uid),
+                                      context, authService.getUser().uid),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.done) {
@@ -139,10 +178,10 @@ class _HomeState extends State<Home> {
                                       );
                                     }
 
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting)
-                                      return Center(
-                                          child: CircularProgressIndicator());
+                                    // if (snapshot.connectionState ==
+                                    //     ConnectionState.waiting)
+                                    //   return Center(
+                                    //       child: CircularProgressIndicator());
                                     return Center(
                                         child: CircularProgressIndicator());
                                   }),
@@ -172,7 +211,7 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 10.0),
                         Padding(
                           padding: const EdgeInsets.only(left: 18.0),
-                          child: Text(_user.name, style: kTitleStyle),
+                          child: Text(user.name, style: kTitleStyle),
                         ),
                         const SizedBox(height: 10.0),
                         Padding(
@@ -181,15 +220,15 @@ class _HomeState extends State<Home> {
                             borderRadius: BorderRadius.circular(15.0),
                             child: InkWell(
                               onTap: () {
-                                if (!_dailyExercise.isDone) {
-                                  _dailyExercise.start = DateTime.now();
+                                if (!dailyExercise.isDone) {
+                                  dailyExercise.start = DateTime.now();
                                   Get.to<DailyExercise>(InferencePage(
                                     cameras,
-                                    dailyExercise: _dailyExercise,
+                                    dailyExercise: dailyExercise,
                                   )).then((value) {
                                     print('inference value $value');
                                     setState(() {
-                                      _dailyExercise = value;
+                                      dailyExercise = value;
                                     });
                                   }).catchError((err) {
                                     print('inference err $err');
@@ -198,9 +237,7 @@ class _HomeState extends State<Home> {
                               },
                               child: Image(
                                   fit: BoxFit.cover,
-                                  image: AssetImage((_dailyExercise.isDone)
-                                      ? "assets/images/Workout_done.png"
-                                      : "assets/images/DailyExercise.png")),
+                                  image: AssetImage(getDailyExerciseImg)),
                             ),
                           ),
                         ),
@@ -275,11 +312,11 @@ class _HomeState extends State<Home> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: FutureBuilder(
-                                    future: _practiceService
-                                        .getPracticeByDate(_now),
+                                    future:
+                                        practiceService.getPracticeByDate(now),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        listMainPart = _practiceService
+                                        listMainPart = practiceService
                                             .getBodyMainPartKcal(snapshot.data);
                                         return Row(
                                           mainAxisAlignment:
@@ -291,10 +328,9 @@ class _HomeState extends State<Home> {
                                               height: 300,
                                               width: 200,
                                               child: BodyPartWidget(
-                                                getBodyPartKcal:
-                                                    _practiceService
-                                                        .getBodyPartKcal(
-                                                            snapshot.data),
+                                                getBodyPartKcal: practiceService
+                                                    .getBodyPartKcal(
+                                                        snapshot.data),
                                               ),
                                             ),
                                             Expanded(
@@ -332,46 +368,6 @@ class _HomeState extends State<Home> {
         }
         return Center(child: CircularProgressIndicator());
       },
-    );
-  }
-
-  Widget mainPartWidget(int mainPartIndex) {
-    Color color;
-    String text;
-
-    final mainPartValue = listMainPart[mainPartIndex];
-
-    if (0 <= mainPartValue && mainPartValue <= 50) {
-      text = 'Need more';
-      color = kGreenColor;
-    } else if (50 < mainPartValue && mainPartValue <= 100) {
-      text = 'Good';
-      color = Colors.yellow;
-    } else if (mainPartValue > 100) {
-      text = 'Need relax';
-      color = Colors.red;
-    }
-
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: (mainPartIndex == 0)
-                ? 'Top: '
-                : (mainPartIndex == 1)
-                    ? 'Middle: '
-                    : 'Bottom: ',
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          TextSpan(
-            text: text,
-            style: TextStyle(
-              fontSize: 20,
-              color: color,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

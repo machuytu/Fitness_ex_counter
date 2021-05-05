@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:khoaluan/constants/home/constants.dart';
 import 'package:khoaluan/constants/home/picker_dart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:khoaluan/services/auth_service.dart';
 import 'package:khoaluan/services/firebase_service.dart';
 import 'package:khoaluan/services/image_service.dart';
@@ -20,20 +18,30 @@ class InfoUser extends StatefulWidget {
 }
 
 class _InfoUserState extends State<InfoUser> {
-  TextEditingController nameUser =
-      new TextEditingController(text: 'Mạc Huy Tú');
-  TextEditingController ageUser = new TextEditingController(text: '18');
-  TextEditingController weightUser = new TextEditingController();
-  TextEditingController heightUser = new TextEditingController();
-  AuthService _auth = new AuthService();
+  final authService = AuthService();
+  final userService = UserService();
+  final imageService = ImageService();
+  final fireStorageService = FireStorageService();
+
+  final nameUser = TextEditingController(text: 'Mạc Huy Tú');
+  final ageUser = TextEditingController(text: '22');
+  final weightUser = TextEditingController();
+  final heightUser = TextEditingController();
+
   int weightValue, heightValue;
   String kindValue;
   bool isMale = true;
   int fitnessMode = 1;
   String heightUnit, weightUnit;
-  UserService userService = UserService();
-  ImageService imageService = new ImageService();
-  FireStorageService fireStorageService = new FireStorageService();
+
+  @override
+  void dispose() {
+    nameUser?.dispose();
+    ageUser?.dispose();
+    weightUser?.dispose();
+    heightUser?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -341,11 +349,8 @@ class _InfoUserState extends State<InfoUser> {
                           side: BorderSide(color: deepBlueColor)),
                       color: deepBlueColor,
                       onPressed: () {
-                        FirebaseAuth auth = FirebaseAuth.instance;
-                        User user = auth.currentUser;
-                        UserService userService = new UserService();
                         fireStorageService.uploadImageToFirebase(context,
-                            imageService.imageFile, _auth.getUser().uid);
+                            imageService.imageFile, authService.getUser().uid);
                         userService.setValueRegister(
                           nameUser.text,
                           int.parse(ageUser.text),
