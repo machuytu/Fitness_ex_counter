@@ -28,7 +28,7 @@ class AuthService with ChangeNotifier {
       NotificationPlugin notificationPlugin = new NotificationPlugin();
       notificationService.getNotification().then((value) {
         for (var i = 0; i < value.length; i++) {
-          notificationPlugin.scheduleDailyNotification(value[i].title, value[i].message, value[i].hour, value[i].minute, value[i].listDaily);
+          notificationPlugin.scheduleDailyNotificationOnLogin(value[i].title, value[i].message, value[i].hour, value[i].minute, value[i].listDaily);
         }
       });
       Navigator.pushNamedAndRemoveUntil(context, "/", (Route<dynamic> route) => false);

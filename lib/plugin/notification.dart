@@ -30,6 +30,24 @@ class NotificationPlugin {
     notificationService.addNotification(idNotification, title, message, hour, minute, listDaily);
   }
 
+  Future<void> scheduleDailyNotificationOnLogin(String title, String message, int hour, int minute, List<int> listDaily) async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Ho_Chi_Minh"));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(prefs.getInt("idNotification"));
+    if (prefs.getInt("idNotification") == null) {
+      prefs.setInt("idNotification", 0);
+      idNotification = 0;
+    } else {
+      idNotification = prefs.getInt("idNotification") + 1;
+    }
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(idNotification, title, message, nextInstanceOfTime(hour: hour, minute: minute, listDaily: listDaily),
+        const NotificationDetails(android: AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description')),
+        androidAllowWhileIdle: true, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, matchDateTimeComponents: DateTimeComponents.time);
+    prefs.setInt("idNotification", idNotification);
+  }
+
   Future<void> updateScheduleDailyNotification(int id, String title, String message, int hour, int minute, List<int> listDaily) async {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Ho_Chi_Minh"));

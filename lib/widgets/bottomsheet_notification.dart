@@ -16,8 +16,7 @@ class BottomsheetNotification extends StatefulWidget {
   BottomsheetNotification({Key key, this.context}) : super(key: key);
 
   @override
-  _BottomsheetNotificationState createState() =>
-      _BottomsheetNotificationState();
+  _BottomsheetNotificationState createState() => _BottomsheetNotificationState();
 }
 
 class _BottomsheetNotificationState extends State<BottomsheetNotification> {
@@ -42,9 +41,8 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
         actions: [
           TextButton(
             onPressed: () {
-              notification.scheduleDailyNotification(
-                  title, message, hour, minute, daily.getListDay());
-              Get.back();
+              notification.scheduleDailyNotification(title, message, hour, minute, daily.getListDay());
+              Get.back(result: 1);
             },
             child: Text("Lưu", style: TextStyle(color: Colors.white)),
           ),
@@ -57,8 +55,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
               padding: const EdgeInsets.all(20.0),
               child: GestureDetector(
                 onTap: () {
-                  DatePicker.showTimePicker(context, showTitleActions: true,
-                      onConfirm: (date) {
+                  DatePicker.showTimePicker(context, showTitleActions: true, onConfirm: (date) {
                     setState(() {
                       hour = date.hour;
                       minute = date.minute;
@@ -70,30 +67,18 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                   children: [
                     Text(
                       "Thời gian",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Container(
                       width: 60,
                       height: 30,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.orange),
-                          color: Colors.transparent),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.orange), color: Colors.transparent),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("$hour",
-                              style: TextStyle(
-                                  color: Colors.orange, fontSize: 20)),
-                          Text(":",
-                              style: TextStyle(
-                                  color: Colors.orange, fontSize: 20)),
-                          Text("$minute",
-                              style: TextStyle(
-                                  color: Colors.orange, fontSize: 20)),
+                          Text("$hour", style: TextStyle(color: Colors.orange, fontSize: 20)),
+                          Text(":", style: TextStyle(color: Colors.orange, fontSize: 20)),
+                          Text("$minute", style: TextStyle(color: Colors.orange, fontSize: 20)),
                         ],
                       ),
                     ),
@@ -120,8 +105,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                       onTap: () {
                         showMaterialModalBottomSheet(
                           context: context,
-                          builder: (context) =>
-                              BottomsheetSetDay(context: context),
+                          builder: (context) => BottomsheetSetDay(context: context),
                         ).then((value) {
                           setState(() {
                             daily = value;
@@ -156,8 +140,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                       onTap: () {
                         showMaterialModalBottomSheet(
                           context: context,
-                          builder: (context) =>
-                              BottomsheetSetTitle(context: context),
+                          builder: (context) => BottomsheetSetTitle(context: context),
                         ).then((value) {
                           if (value != null) {
                             setState(() {
@@ -194,8 +177,7 @@ class _BottomsheetNotificationState extends State<BottomsheetNotification> {
                       onTap: () {
                         showMaterialModalBottomSheet(
                           context: context,
-                          builder: (context) =>
-                              BottomsheetSetTitle(context: context),
+                          builder: (context) => BottomsheetSetTitle(context: context),
                         ).then((value) {
                           if (value != null) {
                             setState(() {

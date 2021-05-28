@@ -11,20 +11,10 @@ class NotificationService {
     if (user != null) {
       _uid = user.uid;
     }
-    _ref = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(_uid)
-        .collection('Notifications');
+    _ref = FirebaseFirestore.instance.collection('Users').doc(_uid).collection('Notifications');
   }
 
-  Future<String> addNotification(
-    int idNotification,
-    String title,
-    String message,
-    int hour,
-    int minute,
-    List<int> listDaily,
-  ) {
+  Future<String> addNotification(int idNotification, String title, String message, int hour, int minute, List<int> listDaily) {
     return _ref
         .add(NotificationModel(
       idNotification: idNotification,
@@ -43,16 +33,7 @@ class NotificationService {
     });
   }
 
-  Future<void> updateNotification(
-    String id,
-    int idNotification,
-    String title,
-    String message,
-    int hour,
-    int minute,
-    List<int> listDaily,
-    bool isOn,
-  ) {
+  Future<void> updateNotification(String id, int idNotification, String title, String message, int hour, int minute, List<int> listDaily, bool isOn) {
     return _ref
         .doc(id)
         .set(NotificationModel(
@@ -72,23 +53,13 @@ class NotificationService {
   Future<void> deleteNotification(
     String id,
   ) {
-    return _ref
-        .doc(id)
-        .delete()
-        .then((value) => print("Notification Delete"))
-        .catchError((err) {
+    return _ref.doc(id).delete().then((value) => print("Notification Delete")).catchError((err) {
       print(err);
     });
   }
 
   Future<List<NotificationModel>> getNotification() {
-    return _ref
-        .get()
-        .then((querySnapshot) => querySnapshot.docs
-            .map(
-                (snapshot) => NotificationModel.fromFirestoreSnapshot(snapshot))
-            .toList())
-        .catchError((err) {
+    return _ref.get().then((querySnapshot) => querySnapshot.docs.map((snapshot) => NotificationModel.fromFirestoreSnapshot(snapshot)).toList()).catchError((err) {
       print(err);
     });
   }

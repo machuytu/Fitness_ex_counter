@@ -67,18 +67,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       onTap: () {
                         showMaterialModalBottomSheet(
                           context: context,
-                          builder: (context) =>
-                              BottomsheetNotification(context: context),
+                          builder: (context) => BottomsheetNotification(context: context),
                         ).then((value) {
+                          print('return');
                           setState(() {});
                         });
                       },
                       child: Container(
                         height: 40,
                         width: 60,
-                        decoration: BoxDecoration(
-                            color: kIndigoColor,
-                            borderRadius: BorderRadius.circular(20)),
+                        decoration: BoxDecoration(color: kIndigoColor, borderRadius: BorderRadius.circular(20)),
                         child: Center(
                             child: Text(
                           "Tạo",
