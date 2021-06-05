@@ -26,7 +26,8 @@ class _InferencePageState extends State<InferencePage> {
   final dailyExerciseService = DailyExerciseService();
   final flutterTts = FlutterTts();
   final now = DateTime.now();
-
+  double heighScreen = Get.height;
+  double widthScreen = Get.width;
   DailyExercise dailyExercise;
   Map<String, List<double>> inputArr;
   List<dynamic> recognitions;
@@ -42,17 +43,13 @@ class _InferencePageState extends State<InferencePage> {
   int previewW;
   int count;
 
-  Exercise get exercise =>
-      (dailyExercise == null) ? widget.exercise : dailyExercise.exercise;
+  Exercise get exercise => (dailyExercise == null) ? widget.exercise : dailyExercise.exercise;
 
   Color get getCounterColor => (isCorrectPosture) ? Colors.green : Colors.red;
 
-  Color get getImageColor =>
-      (isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
+  Color get getImageColor => (isCorrectPosture) ? Colors.transparent : Colors.black.withOpacity(0.5);
 
-  String get countStr => (dailyExercise == null)
-      ? '$count'
-      : '${dailyExercise.count} / ${dailyExercise.max}';
+  String get countStr => (dailyExercise == null) ? '$count' : '${dailyExercise.count} / ${dailyExercise.max}';
 
   String get assetName {
     String name;
@@ -153,12 +150,12 @@ class _InferencePageState extends State<InferencePage> {
         inputArr[k['part']] = [x, y];
 
         // To solve mirror problem on front camera
-        if (x > 320) {
-          var temp = x - 320;
-          x = 320 - temp;
+        if (x > (widthScreen / 2)) {
+          var temp = x - (widthScreen / 2);
+          x = (widthScreen / 2) - temp;
         } else {
-          var temp = 320 - x;
-          x = 320 + temp;
+          var temp = (widthScreen / 2) - x;
+          x = (widthScreen / 2) + temp;
         }
         return Positioned(
             left: x - 250,
@@ -269,24 +266,15 @@ class _InferencePageState extends State<InferencePage> {
     var result = false;
 
     if (exercise.id == 0) {
-      result = poses['leftShoulder'][1] < upper &&
-          poses['rightShoulder'][1] < upper &&
-          poses['leftHip'][1] < lower &&
-          poses['rightHip'][1] < lower;
+      result = poses['leftShoulder'][1] < upper && poses['rightShoulder'][1] < upper && poses['leftHip'][1] < lower && poses['rightHip'][1] < lower;
     } else if (exercise.id == 1) {
-      result = poses['leftShoulder'][1] > upper &&
-          poses['rightShoulder'][1] > upper &&
-          poses['leftShoulder'][1] < lower &&
-          poses['rightShoulder'][1] < lower;
+      result = poses['leftShoulder'][1] > upper && poses['rightShoulder'][1] > upper && poses['leftShoulder'][1] < lower && poses['rightShoulder'][1] < lower;
     } else if (exercise.id == 2) {
-      result =
-          poses['leftShoulder'][1] < upper && poses['rightShoulder'][1] < upper;
+      result = poses['leftShoulder'][1] < upper && poses['rightShoulder'][1] < upper;
     } else if (exercise.id == 3) {
-      result = poses['rightShoulder'][0] > upper &&
-          poses['rightShoulder'][0] < lower;
+      result = poses['rightShoulder'][0] > upper && poses['rightShoulder'][0] < lower;
     } else if (exercise.id == 4) {
-      result = poses['rightShoulder'][0] > upper &&
-          poses['rightShoulder'][0] < lower;
+      result = poses['rightShoulder'][0] > upper && poses['rightShoulder'][0] < lower;
     }
 
     return result;
@@ -296,11 +284,9 @@ class _InferencePageState extends State<InferencePage> {
     var result = false;
 
     if (exercise.id == 0) {
-      result =
-          poses['leftShoulder'][1] > upper && poses['rightShoulder'][1] > upper;
+      result = poses['leftShoulder'][1] > upper && poses['rightShoulder'][1] > upper;
     } else if (exercise.id == 1) {
-      result =
-          poses['leftShoulder'][1] > lower && poses['rightShoulder'][1] > lower;
+      result = poses['leftShoulder'][1] > lower && poses['rightShoulder'][1] > lower;
     } else if (exercise.id == 2) {
       result = poses['leftShoulder'][1] > upper &&
           poses['rightShoulder'][1] > upper &&
@@ -374,8 +360,7 @@ class _InferencePageState extends State<InferencePage> {
               Stack(children: renderKeypoints()),
             ],
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             height: 100,
             width: 100,

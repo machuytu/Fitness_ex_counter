@@ -15,11 +15,7 @@ class UserService {
   }
 
   Future<User> getUser() {
-    return _ref
-        .doc(_uid)
-        .get()
-        .then((value) => User.fromFirestoreSnapshot(value))
-        .catchError((onError) {
+    return _ref.doc(_uid).get().then((value) => User.fromFirestoreSnapshot(value)).catchError((onError) {
       print(onError);
     });
   }
@@ -32,15 +28,7 @@ class UserService {
     });
   }
 
-  Future<void> setValueRegister(
-      String name,
-      int age,
-      int heightValue,
-      String heightUnit,
-      int weightValue,
-      String weightUnit,
-      int fitnessMode,
-      bool isMale) async {
+  Future<void> setValueRegister(String name, int age, int heightValue, String heightUnit, int weightValue, String weightUnit, int fitnessMode, bool isMale) async {
     int bmr;
     double activeLevel;
     if (fitnessMode == 0) {
@@ -51,19 +39,9 @@ class UserService {
       activeLevel = 1.725;
     }
     if (isMale) {
-      bmr = ((66 +
-                  (6.2 * weightValue) +
-                  (12.7 * heightValue) -
-                  (6.76 * age) * activeLevel) /
-              7)
-          .round();
+      bmr = ((66 + (6.2 * weightValue) + (12.7 * heightValue) - (6.76 * age) * activeLevel) / 7).round();
     } else {
-      bmr = ((655.1 +
-                  (4.35 * weightValue) +
-                  (4.7 * heightValue) -
-                  (4.7 * age) * activeLevel) /
-              7)
-          .round();
+      bmr = ((655.1 + (4.35 * weightValue) + (4.7 * heightValue) - (4.7 * age) * activeLevel) / 7).round();
     }
 
     return _ref.doc(_uid).set({
@@ -83,16 +61,7 @@ class UserService {
     });
   }
 
-  void updateValueRegister(
-      String uid,
-      String name,
-      int age,
-      int heightValue,
-      String heightUnit,
-      int weightValue,
-      String weightUnit,
-      int fitnessMode,
-      bool isMale) async {
+  void updateValueRegister(String uid, String name, int age, int heightValue, String heightUnit, int weightValue, String weightUnit, int fitnessMode, bool isMale) async {
     double bmr;
     double activeLevel;
     if (fitnessMode == 0) {
@@ -103,17 +72,9 @@ class UserService {
       activeLevel = 1.725;
     }
     if (isMale) {
-      bmr = (66 +
-              (6.2 * weightValue) +
-              (12.7 * heightValue) -
-              (6.76 * age) * activeLevel) /
-          7;
+      bmr = (66 + (6.2 * weightValue) + (12.7 * heightValue) - (6.76 * age) * activeLevel) / 7;
     } else {
-      bmr = (655.1 +
-              (4.35 * weightValue) +
-              (4.7 * heightValue) -
-              (4.7 * age) * activeLevel) /
-          7;
+      bmr = (655.1 + (4.35 * weightValue) + (4.7 * heightValue) - (4.7 * age) * activeLevel) / 7;
     }
     int bmrInt = bmr.toInt();
 
