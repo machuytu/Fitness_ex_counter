@@ -24,7 +24,8 @@ class NotificationPlugin {
       idNotification = prefs.getInt("idNotification") + 1;
     }
 
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description', importance: Importance.max, priority: Priority.high);
+    var androidPlatformChannelSpecifics =
+        new AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description', importance: Importance.max, priority: Priority.high, showProgress: true);
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentBadge: true);
     var platformChannelSpecifics = new NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
 
