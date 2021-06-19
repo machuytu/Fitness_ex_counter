@@ -133,7 +133,7 @@ class _InferencePageState extends State<InferencePage> {
         var _y = k["y"];
         var scaleW, scaleH, x, y;
 
-        if (screenH / screenW > previewH / previewW) {
+        if (screenW / screenH < previewW / previewH) {
           scaleW = screenH / previewH * previewW;
           scaleH = screenH;
           var difW = (scaleW - screenW) / scaleW;
