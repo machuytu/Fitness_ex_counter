@@ -20,25 +20,27 @@ import 'package:rxdart/rxdart.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'models/receive_notification.dart';
 
-const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialised in the `main` function
-final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
-    BehaviorSubject<ReceivedNotification>();
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject = BehaviorSubject<ReceivedNotification>();
 
-final BehaviorSubject<String> selectNotificationSubject =
-    BehaviorSubject<String>();
+final BehaviorSubject<String> selectNotificationSubject = BehaviorSubject<String>();
 
-const MethodChannel platform =
-    MethodChannel('dexterx.dev/flutter_local_notifications_example');
+const MethodChannel platform = MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
 String selectedNotificationPayload;
 
 List<CameraDescription> cameras;
+Future onDidReceiveLocalNotification(int id, String title, String body, String payload) async {
+  Get.toNamed("/");
+}
+
+Future onSelectNotification(payload) async {
+  Get.toNamed("/");
+}
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -50,33 +52,12 @@ Future<Null> main() async {
   }
 
   // permission notification
-  final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-          onDidReceiveLocalNotification:
-              (int id, String title, String body, String payload) async {
-            didReceiveLocalNotificationSubject.add(ReceivedNotification(
-                id: id, title: title, body: body, payload: payload));
-          });
-  const MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false);
-  final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: initializationSettingsMacOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    selectedNotificationPayload = payload;
-    selectNotificationSubject.add(payload);
-  });
+
+  var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettingsIOS = new IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+  var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
 
   initializeDateFormatting().then((_) => runApp(MyApp()));
 }
@@ -110,9 +91,7 @@ class _MyAppState extends State<MyApp> {
         deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
       }
     } on PlatformException {
-      deviceData = <String, dynamic>{
-        'Error:': 'Failed to get platform version.'
-      };
+      deviceData = <String, dynamic>{'Error:': 'Failed to get platform version.'};
     }
 
     if (!mounted) return;
