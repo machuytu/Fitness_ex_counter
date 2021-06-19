@@ -10,6 +10,7 @@ import '../main.dart';
 
 class NotificationPlugin {
   NotificationService notificationService = new NotificationService();
+
   int idNotification;
   Future<void> scheduleDailyNotification(String title, String message, int hour, int minute, List<int> listDaily) async {
     tz.initializeTimeZones();
@@ -23,8 +24,11 @@ class NotificationPlugin {
       idNotification = prefs.getInt("idNotification") + 1;
     }
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(idNotification, title, message, nextInstanceOfTime(hour: hour, minute: minute, listDaily: listDaily),
-        const NotificationDetails(android: AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description')),
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description', importance: Importance.max, priority: Priority.high);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentBadge: true);
+    var platformChannelSpecifics = new NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(idNotification, title, message, nextInstanceOfTime(hour: hour, minute: minute, listDaily: listDaily), platformChannelSpecifics,
         androidAllowWhileIdle: true, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, matchDateTimeComponents: DateTimeComponents.time);
     prefs.setInt("idNotification", idNotification);
     notificationService.addNotification(idNotification, title, message, hour, minute, listDaily);
