@@ -65,7 +65,8 @@ class _HomeState extends State<Home> {
     @required int bmr,
   }) async {
     // // for test
-    dailyExercise = (await dailyExerciseService.getDailyExerciseByDate(now)) ?? DailyExercise();
+    dailyExercise = (await dailyExerciseService.getDailyExerciseByDate(now)) ??
+        DailyExercise();
 
     // for release
     // dailyExercise = (await dailyExerciseService.getDailyExerciseByDate(now)) ??
@@ -74,7 +75,9 @@ class _HomeState extends State<Home> {
     print(dailyExercise);
   }
 
-  String get getDailyExerciseImg => (dailyExercise.isDone) ? 'assets/images/DailyExercise_done.png' : 'assets/images/DailyExercise.png';
+  String get getDailyExerciseImg => (dailyExercise.isDone)
+      ? 'assets/images/DailyExercise_done.png'
+      : 'assets/images/DailyExercise.png';
 
   String get getfitnessStr {
     if (user.fitnessMode == 1) {
@@ -105,10 +108,10 @@ class _HomeState extends State<Home> {
     if (0 <= mainPartValue && mainPartValue <= 50) {
       text = 'Need more';
       color = kGreenColor;
-    } else if (50 < mainPartValue && mainPartValue <= 100) {
+    } else if (50 < mainPartValue && mainPartValue <= 200) {
       text = 'Good';
       color = Colors.yellow;
-    } else if (mainPartValue > 100) {
+    } else if (mainPartValue > 200) {
       text = 'Need relax';
       color = Colors.red;
     }
@@ -160,9 +163,11 @@ class _HomeState extends State<Home> {
                           child: Row(
                             children: [
                               FutureBuilder(
-                                  future: imageService.getImage(context, authService.getUser().uid),
+                                  future: imageService.getImage(
+                                      context, authService.getUser().uid),
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.done) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
                                       return ClipOval(
                                         child: Image.network(
                                           snapshot.data,
@@ -177,7 +182,8 @@ class _HomeState extends State<Home> {
                                     //     ConnectionState.waiting)
                                     //   return Center(
                                     //       child: CircularProgressIndicator());
-                                    return Center(child: CircularProgressIndicator());
+                                    return Center(
+                                        child: CircularProgressIndicator());
                                   }),
                               Spacer(),
                               GestureDetector(
@@ -229,13 +235,16 @@ class _HomeState extends State<Home> {
                                   });
                                 }
                               },
-                              child: Image(fit: BoxFit.cover, image: AssetImage(getDailyExerciseImg)),
+                              child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(getDailyExerciseImg)),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10.0),
                         CustomListTile(
-                          title: Text("Các bài tập cho bạn", style: kTitleStyle),
+                          title:
+                              Text("Các bài tập cho bạn", style: kTitleStyle),
                           trailing: SvgPicture.asset(
                             "assets/images/fire.svg",
                             width: 35,
@@ -272,7 +281,8 @@ class _HomeState extends State<Home> {
                           Container(
                             decoration: BoxDecoration(
                               color: kGreenColor,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(40.0)),
                             ),
                           ),
                           Container(
@@ -292,30 +302,41 @@ class _HomeState extends State<Home> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 25),
-                                  child: Text("Cường độ tập luyện", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                  child: Text("Cường độ tập luyện",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: FutureBuilder(
-                                    future: practiceService.getPracticeByDate(now),
+                                    future:
+                                        practiceService.getPracticeByDate(now),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        listMainPart = practiceService.getBodyMainPartKcal(snapshot.data);
+                                        listMainPart = practiceService
+                                            .getBodyMainPartKcal(snapshot.data);
                                         return Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Container(
                                               height: 300,
                                               width: 200,
                                               child: BodyPartWidget(
-                                                getBodyPartKcal: practiceService.getBodyPartKcal(snapshot.data),
+                                                getBodyPartKcal: practiceService
+                                                    .getBodyPartKcal(
+                                                        snapshot.data),
                                               ),
                                             ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   mainPartWidget(0),
                                                   const SizedBox(height: 20.0),
@@ -328,7 +349,8 @@ class _HomeState extends State<Home> {
                                           ],
                                         );
                                       }
-                                      return Center(child: CircularProgressIndicator());
+                                      return Center(
+                                          child: CircularProgressIndicator());
                                     },
                                   ),
                                 ),

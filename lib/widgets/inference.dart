@@ -146,6 +146,7 @@ class _InferencePageState extends State<InferencePage> {
           x = _x * scaleW;
           y = (_y - difH / 2) * scaleH;
         }
+        y -= 50;
 
         inputArr[k['part']] = [x, y];
 
@@ -160,7 +161,7 @@ class _InferencePageState extends State<InferencePage> {
 
         return Positioned(
             left: x,
-            top: y - 50,
+            top: y,
             child: Container(
               width: 8,
               height: 8,
@@ -204,18 +205,18 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   void setRangeBasedOnModel() {
-    final h = screenH - 50 - 8;
-    final w = screenW - 8;
+    final h = screenH - 50;
+    final w = screenW;
 
     if (exercise.id == 0) {
-      upper = h * 0.35;
-      lower = h * 0.75;
+      upper = h * 0.25;
+      lower = h * 0.60;
     } else if (exercise.id == 1) {
-      upper = h * 0.45;
-      lower = h * 0.65;
+      upper = h * 0.30;
+      lower = h * 0.50;
     } else if (exercise.id == 2) {
-      upper = h * 0.35;
-      lower = h * 0.90;
+      upper = h * 0.25;
+      lower = h * 0.70;
     } else if (exercise.id == 3) {
       upper = w * 0.45;
       lower = w * 0.80;
@@ -294,8 +295,7 @@ class _InferencePageState extends State<InferencePage> {
     } else if (exercise.id == 2) {
       result = poses['leftShoulder'][1] > upper &&
           poses['rightShoulder'][1] > upper &&
-          (poses['leftKnee'][1] > lower || poses['rightKnee'][1] > lower) &&
-          (poses['leftKnee'][1] < lower || poses['rightKnee'][1] < lower);
+          (poses['leftKnee'][1] > lower || poses['rightKnee'][1] > lower);
     } else if (exercise.id == 3) {
       result = poses['rightShoulder'][0] < upper;
     }
@@ -320,19 +320,35 @@ class _InferencePageState extends State<InferencePage> {
   }
 
   void countingLogic(Map<String, List<double>> poses) {
-    if (poses != null) {
-      if (isCorrectPosture && midPosture(poses)) {
-        setMidCount(true);
-      }
-      if (midCount && posture(poses)) {
+    // if (poses != null) {
+    //   if (isCorrectPosture && midPosture(poses)) {
+    //     setMidCount(true);
+    //   }
+    //   if (midCount && posture(poses)) {
+    //     setMidCount(false);
+    //     increaseCount();
+    //   }
+    //   //check the posture when not in midCount
+    //   if (!midCount) {
+    //     checkCorrectPosture(poses);
+    //   }
+    // }
+    if (poses == null) return;
+
+    if (isCorrectPosture && midPosture(poses)) {
+      setMidCount(true);
+    }
+
+    if (midCount) {
+      if (posture(poses)) {
         increaseCount();
         setMidCount(false);
       }
-      //check the posture when not in midCount
-      if (!midCount) {
-        checkCorrectPosture(poses);
-      }
+    } else {
+      checkCorrectPosture(poses);
     }
+
+    //check the posture when not in midCount
   }
 
   @override
