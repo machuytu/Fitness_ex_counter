@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:khoaluan/constants/home/constants.dart';
+import 'package:khoaluan/models/daily_exercise.dart';
+import 'package:khoaluan/models/exercise.dart';
 import 'package:khoaluan/models/practice.dart';
 import 'package:khoaluan/models/user.dart';
+import 'package:khoaluan/services/daily_exercise_service.dart';
 import 'package:khoaluan/services/practice_service.dart';
 import 'package:khoaluan/services/user_service.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class Analytics extends StatelessWidget {
+class Analytics extends StatefulWidget {
+  @override
+  _AnalyticsState createState() => _AnalyticsState();
+}
+
+class _AnalyticsState extends State<Analytics> {
   final _userService = UserService();
+  DailyExercise dailyExercise;
   final _practiceService = PracticeService();
+  DailyExerciseService dailyExerciseService = DailyExerciseService();
   final now = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getDailyKcal();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +42,7 @@ class Analytics extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 8.0, top: 8.0),
                 child: Text(
                   "Analytic",
-                  style: TextStyle(
-                      color: kGreenColor,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(color: kGreenColor, fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(
@@ -66,7 +79,7 @@ class Analytics extends StatelessWidget {
                       if (snapshot.hasData) {
                         List<Practice> list = snapshot.data;
                         double totalKcal = _practiceService.getTotalKcal(list);
-
+                        totalKcal += dailyExercise.getKcal;
                         return FutureBuilder(
                             future: _userService.getUser(),
                             builder: (context, snapshotUser) {
@@ -89,17 +102,8 @@ class Analytics extends StatelessWidget {
                                         child: RichText(
                                       text: TextSpan(
                                         children: <TextSpan>[
-                                          TextSpan(
-                                              text: totalKcal.toString(),
-                                              style: TextStyle(
-                                                  fontSize: 25,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white)),
-                                          TextSpan(
-                                              text: ' Kcal',
-                                              style: TextStyle(
-                                                  fontSize: 25,
-                                                  color: Colors.white)),
+                                          TextSpan(text: totalKcal.toStringAsFixed(2), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
+                                          TextSpan(text: ' Kcal', style: TextStyle(fontSize: 25, color: Colors.white)),
                                         ],
                                       ),
                                     )),
@@ -136,24 +140,17 @@ class Analytics extends StatelessWidget {
                       return listPractice != null
                           ? ListView.builder(
                               shrinkWrap: true,
-                              itemCount: listPractice.length < 4
-                                  ? listPractice.length
-                                  : 4,
+                              itemCount: listPractice.length < 4 ? listPractice.length : 4,
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 10.0, left: 10.0, bottom: 15.0),
+                                  padding: const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 15.0),
                                   child: Container(
                                     height: 100,
                                     width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
+                                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
@@ -170,23 +167,12 @@ class Analytics extends StatelessWidget {
                                             SizedBox(
                                               width: 20.0,
                                             ),
-                                            Text(
-                                                listPractice[index]
-                                                    .exercise
-                                                    .name,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: kIndigoColor,
-                                                    fontWeight:
-                                                        FontWeight.bold))
+                                            Text(listPractice[index].exercise.name, style: TextStyle(fontSize: 20, color: kIndigoColor, fontWeight: FontWeight.bold))
                                           ],
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 10.0),
-                                          child: Text(timeago.format(
-                                              listPractice[index].end,
-                                              locale: 'en')),
+                                          padding: const EdgeInsets.only(right: 10.0),
+                                          child: Text(timeago.format(listPractice[index].end, locale: 'en')),
                                         ),
                                       ],
                                     ),
@@ -203,5 +189,9 @@ class Analytics extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> getDailyKcal() async {
+    dailyExercise = await dailyExerciseService.getDailyExerciseByDate(DateTime.now());
   }
 }

@@ -26,12 +26,7 @@ class DailyExercise {
     this._end = end ?? DateTime.now();
     if (weight != null && bmr != null) {
       this._listExerciseId = [0, 1, 2, 3, 0, 1, 2, 3];
-      this._listMax = this
-          .listExercise
-          .map((e) =>
-              (((bmr / this.length) * (1 / 3)) / (e.coefficient * weight))
-                  .round())
-          .toList();
+      this._listMax = this.listExercise.map((e) => (((bmr / this.length) * (1 / 3)) / (e.coefficient * weight)).round()).toList();
     } else {
       this._listExerciseId = [0, 1];
       this._listMax = [3, 3];
@@ -39,11 +34,9 @@ class DailyExercise {
   }
 
   @override
-  String toString() =>
-      'DailyExercise($_id): $_index / $_count / $isDone / $_listExerciseId / $_listMax / $getMainPartKcal';
+  String toString() => 'DailyExercise($_id): $_index / $_count / $isDone / $_listExerciseId / $_listMax / $getMainPartKcal';
 
-  List<Exercise> get listExercise =>
-      this._listExerciseId.map((id) => exercises[id]).toList();
+  List<Exercise> get listExercise => this._listExerciseId.map((id) => exercises[id]).toList();
 
   Exercise get exercise => this.listExercise[_index];
 
@@ -95,6 +88,15 @@ class DailyExercise {
     }
   }
 
+  double get getKcal {
+    var sum = 0.0;
+    sum += this._count * this.exercise.coefficient * Weight.weight;
+    for (int i = 0; i < this._index; i++) {
+      sum += this._listMax[i] * this.listExercise[i].coefficient * Weight.weight;
+    }
+    return sum;
+  }
+
   Map<BodyPart, double> get getBodyPartKcal {
     return Map.fromIterables(
       BodyPart.values,
@@ -113,11 +115,7 @@ class DailyExercise {
     final map = this.getBodyPartKcal;
 
     return <double>[
-      map[BodyPart.TRAPS] +
-          map[BodyPart.CHEST] +
-          map[BodyPart.SHOULDERS] +
-          map[BodyPart.BICEPS] +
-          map[BodyPart.FOREARM],
+      map[BodyPart.TRAPS] + map[BodyPart.CHEST] + map[BodyPart.SHOULDERS] + map[BodyPart.BICEPS] + map[BodyPart.FOREARM],
       map[BodyPart.ABS] + map[BodyPart.BACK],
       map[BodyPart.GLUTES] + map[BodyPart.QUADS] + map[BodyPart.CALVES],
     ];
