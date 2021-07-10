@@ -1,8 +1,12 @@
 import 'package:khoaluan/models/exercise.dart';
 
+class Weight {
+  static int weight = 0;
+}
+
 final squat = Exercise(
   'Squats',
-  0.004,
+  Weight.weight * 5.5 * 0.0175 / 25,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -12,7 +16,7 @@ final squat = Exercise(
 
 final pushup = Exercise(
   'Push Ups',
-  0.0055,
+  Weight.weight * 8 * 0.0175 / 25,
   [
     BodyPart.FOREARM,
     BodyPart.BICEPS,
@@ -24,7 +28,7 @@ final pushup = Exercise(
 
 final lunge = Exercise(
   'Stationary Lunges',
-  0.0035,
+  Weight.weight * 4 * 0.0175 / 25,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -34,7 +38,7 @@ final lunge = Exercise(
 
 final crunch = Exercise(
   'Crunches',
-  0.0035,
+  Weight.weight * 5 * 0.0175 / 25,
   [
     BodyPart.ABS,
     BodyPart.BACK,
