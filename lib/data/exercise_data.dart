@@ -4,9 +4,9 @@ class Weight {
   static int weight = 0;
 }
 
-Exercise squat = Exercise(
+final squat = Exercise(
   'Squats',
-  Weight.weight * 5.5 * 0.0175 / 25,
+  5.5 * 0.0175 / 25,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -14,9 +14,9 @@ Exercise squat = Exercise(
   ],
 );
 
-Exercise pushup = Exercise(
+final pushup = Exercise(
   'Push Ups',
-  Weight.weight * 8 * 0.0175 / 25,
+  8 * 0.0175 / 25,
   [
     BodyPart.FOREARM,
     BodyPart.BICEPS,
@@ -26,9 +26,9 @@ Exercise pushup = Exercise(
   ],
 );
 
-Exercise lunge = Exercise(
+final lunge = Exercise(
   'Stationary Lunges',
-  Weight.weight * 4 * 0.0175 / 25,
+  4 * 0.0175 / 25,
   [
     BodyPart.QUADS,
     BodyPart.CALVES,
@@ -36,13 +36,13 @@ Exercise lunge = Exercise(
   ],
 );
 
-Exercise crunch = Exercise(
+final crunch = Exercise(
   'Crunches',
-  Weight.weight * 5 * 0.0175 / 25,
+  5 * 0.0175 / 25,
   [
     BodyPart.ABS,
     BodyPart.BACK,
   ],
 );
 
-List<Exercise> exercises = <Exercise>[squat, pushup, lunge, crunch];
+final exercises = <Exercise>[squat, pushup, lunge, crunch];

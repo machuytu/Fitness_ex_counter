@@ -20,12 +20,11 @@ class Practice {
   });
 
   @override
-  String toString() =>
-      'Practice(${this.id}): ${this.exercise.name} / ${this.exercise.bodyParts} / ${this.count} / ${this.kcal}';
+  String toString() => 'Practice(${this.id}): ${this.exercise.name} / ${this.exercise.bodyParts} / ${this.count} / ${this.kcal}';
 
   Exercise get exercise => exercises[this.exerciseId];
 
-  double get kcal => this.exercise.coefficient * this.count;
+  double get kcal => this.exercise.coefficient * Weight.weight * this.count;
 
   double bodyPartKcal(BodyPart part) => this.exercise.kcal(part) * this.count;
 
